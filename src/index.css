@@ -1,0 +1,10 @@
+@import "tailwindcss";
+@import "swiper/css";  
+@import "swiper/css/navigation";  
+@import "swiper/css/pagination"; 
+@import '@fontsource/inter';
+*{font-family: "Roboto";}
+@font-face {
+    font-family: 'MyCustomFont';
+    src: url('/public/font.otf') format('opentype');
+  }
