@@ -76,10 +76,10 @@ const HomePage = () => {
             </motion.div>
           </div>
 
-          <div className="bg-[url('/grass.png')] h-150 relative flex">
+          <div className="bg-[url('/grass.png')] h-160 relative flex flex-col">
             <div className="bg-white opacity-95 h-full w-full z-5 absolute" />
             <div className="bg-[#208ff7] opacity-15 h-full w-full z-5 absolute" />
-            <div className="w-full h-full ml-30 z-10 relative flex items-center">
+            <div className="w-full h-[90%] ml-30 z-10 relative flex items-center">
               <img
                 src="/aboutus.png"
                 alt="Parallelogram"
@@ -113,14 +113,40 @@ const HomePage = () => {
                     nghiệp Hà Nam Ninh.
                   </div>
                   <div
-                    className="w-40 text-[18px] p-2 mt-6 flex justify-center border-2 border-[#008bd0] 
+                    className="w-40 text-[18px] p-2 mt-6 flex justify-center border-2 border-[#46acdf] 
                   text-[#008bd0] font-bold hover:bg-[#008bd0] hover:text-white 
-                  hover:shadow-lg hover:shadow-[#008bd0] transition-all duration-300"
+                  hover:shadow-lg hover:shadow-[#008bd0] transition-all duration-300 cursor-pointer"
                   >
                     XEM THÊM &gt;&gt;
                   </div>
                 </div>
               </div>
+            </div>
+            <div className="h-[15%] w-full flex space-x-10 bottom-2 items-center justify-center absolute">
+              <img
+                src="/xuanthien.png"
+                className="z-20 h-22 filter hover:scale-110 transition-transform duration-400 cursor-pointer"
+              />
+              <img
+                src="/xuanthanh.png"
+                className="z-20 h-20 filter hover:scale-110 transition-transform duration-400 cursor-pointer"
+              />
+              <img
+                src="/dongluc.png"
+                className="z-20 h-20 filter hover:scale-110 transition-transform duration-400 cursor-pointer"
+              />
+              <img
+                src="/venesto.png"
+                className="z-20 h-27 filter hover:scale-110 transition-transform duration-400 cursor-pointer"
+              />
+              <img
+                src="/mitre.png"
+                className="z-20 h-30 filter hover:scale-110 transition-transform duration-400 cursor-pointer"
+              />
+              <img
+                src="/ocany.png"
+                className="z-20 h-9 filter hover:scale-110 transition-transform duration-400 cursor-pointer"
+              />
             </div>
           </div>
 

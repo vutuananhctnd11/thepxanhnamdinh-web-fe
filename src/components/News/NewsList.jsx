@@ -2,6 +2,7 @@ import React from "react";
 import { ArrowRight } from "lucide-react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
+import { useNavigate } from "react-router-dom";
 
 const responsive = {
   superLargeDesktop: {
@@ -23,6 +24,8 @@ const responsive = {
 };
 
 const NewsList = ({ title }) => {
+  const navigate = useNavigate();
+
   return (
     <div className="mt-4">
       <p className="text-4xl font-bold flex">
@@ -32,7 +35,10 @@ const NewsList = ({ title }) => {
         className="flex items-center space-x-10 pt-6 pl-2"
         responsive={responsive}
       >
-        <div className="w-[300px] h-[350px] relative">
+        <div
+          className="w-[300px] h-[350px] relative"
+          onClick={() => navigate("/news/detail")}
+        >
           <div
             className="w-full h-[95%] hover:scale-105 transition-transform duration-500 
           ease-in-out cursor-pointer overflow-hidden rounded-xl"
