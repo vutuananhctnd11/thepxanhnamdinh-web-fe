@@ -224,6 +224,22 @@ const ClubInfo = () => {
               </Carousel>
             </div>
           </div>
+          {/* Danh sách HLV */}
+          <div className="h-300px w-full relative mt-20">
+            <div className="w-full flex flex-col drop-shadow-[5px_10px_20px_rgba(0,0,0,0.8)]">
+              <div className="flex justify-center">
+                <div
+                  className="bg-white/60 text-[#008bd0] text-[40px] font-bold flex justify-center w-[25%] rounded-xl
+              border-3 border-[#008bd0]"
+                >
+                  Danh sách HLV
+                </div>
+              </div>
+              <div className="">
+                <img src="/hlv.png" className="w-[20%] h-[200px]" />
+              </div>
+            </div>
+          </div>
           <div className="relative h-[600px] mt-30 px-20">
             <div className="w-full h-full justify-center">
               <div className="w-full mb-15 flex justify-center uppercase font-bold text-[70px] ">
