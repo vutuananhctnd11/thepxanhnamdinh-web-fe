@@ -1,5 +1,6 @@
 import React from "react";
 import Layout from "../components/Layout";
+import Coach from "../components/ClubInfo/coach";
 import { motion } from "framer-motion";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
@@ -225,72 +226,38 @@ const ClubInfo = () => {
             </div>
           </div>
           {/* Danh sách HLV */}
-          <div className="h-300px w-full relative mt-20">
-            <div className="w-full flex flex-col drop-shadow-[5px_10px_20px_rgba(0,0,0,0.8)]">
-              <div className="flex justify-center">
+          <Coach />
+
+          {/* Danh hiệu */}
+          <div className="relative h-[600px] mt-20">
+            <div className="w-full h-full justify-center">
+              <div className="w-full mb-15 flex justify-center uppercase font-bold text-[50px] ">
                 <div
-                  className="bg-white/60 text-[#008bd0] text-[40px] font-bold flex justify-center w-[25%] rounded-xl
+                  className="bg-white/60 text-[#008bd0] text-[30px] uppercase font-bold flex justify-center w-[25%] rounded-xl
               border-3 border-[#008bd0]"
                 >
-                  Danh sách HLV
+                  Danh hiệu
                 </div>
               </div>
-              <div className="">
-                <img src="/hlv.png" className="w-[20%] h-[200px]" />
-              </div>
-            </div>
-          </div>
-          <div className="relative h-[600px] mt-30 px-20">
-            <div className="w-full h-full justify-center">
-              <div className="w-full mb-15 flex justify-center uppercase font-bold text-[70px] ">
-                Danh hiệu
-              </div>
+
               <div className="flex items-center w-full h-[60%]">
-                <div className="w-[30%] h-full flex flex-col items-center justify-center">
-                  <img
-                    src="/cup1.png"
-                    className="h-[70%] drop-shadow-[5px_10px_20px_rgba(0,0,0,0.8)] hover:scale-110 transition-transform duration-300"
-                  />
-                  <div
-                    className="mt-4 text-center text-[60px] font-bold"
-                    style={{ fontFamily: "MyCustomFont" }}
-                  >
-                    3
+                {Array.from({ length: 4 }).map((_, index) => (
+                  <div className="w-[30%] h-full flex flex-col items-center justify-center">
+                    <img
+                      src="/cup1.png"
+                      className="h-[70%] drop-shadow-[5px_10px_20px_rgba(0,0,0,0.8)] hover:scale-110 transition-transform duration-300"
+                    />
+                    <div
+                      className="mt-4 text-center text-[60px] font-bold"
+                      style={{ fontFamily: "MyCustomFont" }}
+                    >
+                      3
+                    </div>
+                    <div className=" text-center text-[24px] font-semibold">
+                      Giải hạng Nhất Quốc gia
+                    </div>
                   </div>
-                  <div className=" text-center text-[30px] font-semibold">
-                    Giải hạng Nhất Quốc gia
-                  </div>
-                </div>
-                <div className="w-[40%] h-full flex flex-col items-center justify-center">
-                  <img
-                    src="/cup3.png"
-                    className="h-[80%] drop-shadow-[5px_10px_20px_rgba(0,0,0,0.8)] hover:scale-110 transition-transform duration-300"
-                  />
-                  <div
-                    className="mt-4 text-center text-[60px] font-bold"
-                    style={{ fontFamily: "MyCustomFont" }}
-                  >
-                    1
-                  </div>
-                  <div className=" text-center text-[30px] font-semibold">
-                    Giải Vô định Quốc gia
-                  </div>
-                </div>
-                <div className="w-[30%] h-full flex flex-col items-center justify-center">
-                  <img
-                    src="/cup2.png"
-                    className="h-[60%] drop-shadow-[5px_10px_20px_rgba(0,0,0,0.8)] hover:scale-110 transition-transform duration-300"
-                  />
-                  <div
-                    className="mt-4 text-center text-[60px] font-semibold"
-                    style={{ fontFamily: "MyCustomFont" }}
-                  >
-                    1
-                  </div>
-                  <div className="mt-4 text-center text-[30px] font-semibold">
-                    Cúp Quốc gia
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
