@@ -8,19 +8,20 @@ const Header = () => {
 
   return (
     <div className="bg-[url('/public/bgblue.jpg')] text-white w-[100%] h-13 bg-cover bg-no-repeat">
-      <div className="flex items-center h-full">
+      <div className="flex h-full">
         <div className="flex items-center h-full">
           <img src="/public/logo.png" className="h-[50px] pl-6" />
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className=" h-[10px] text-[24px] font-bold uppercase pl-3 flex items-center"
+            className=" h-[10px] text-[24px] font-bold pl-3 flex items-center cursor-pointer"
+            onClick={() => navigate("/home")}
           >
-            Thép Xanh Nam Định
+            TXND FanZone
           </motion.p>
         </div>
-        <div className="flex text-lg items-center pl-15 space-x-3.5">
+        <div className="flex text-lg m-auto items-center pl-15 space-x-3.5">
           <div
             className="hover:scale-105 transition-transform duration-400 cursor-pointer"
             onClick={() => navigate("/home")}
@@ -28,19 +29,20 @@ const Header = () => {
             Trang chủ
           </div>
           <div>|</div>
+
+          <div className="hover:scale-105 transition-transform duration-400 cursor-pointer">
+            Bảng tin
+          </div>
+          <div>|</div>
+          <div className="hover:scale-105 transition-transform duration-400 cursor-pointer">
+            Kết bạn
+          </div>
+          <div>|</div>
           <div
             className="hover:scale-105 transition-transform duration-400 cursor-pointer"
-            onClick={() => navigate("/about-us")}
+            onClick={() => navigate("/home-club")}
           >
             Thông tin CLB
-          </div>
-          <div>|</div>
-          <div className="hover:scale-105 transition-transform duration-400 cursor-pointer">
-            Trận đấu
-          </div>
-          <div>|</div>
-          <div className="hover:scale-105 transition-transform duration-400 cursor-pointer">
-            Kết quả
           </div>
           <div>|</div>
           <div className="hover:scale-105 transition-transform duration-400 cursor-pointer">

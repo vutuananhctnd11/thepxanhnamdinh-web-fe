@@ -2,27 +2,8 @@ import React from "react";
 import Layout from "../components/Layout";
 import Coach from "../components/ClubInfo/coach";
 import { motion } from "framer-motion";
-import Carousel from "react-multi-carousel";
-import "react-multi-carousel/lib/styles.css";
-
-const responsive = {
-  superLargeDesktop: {
-    breakpoint: { max: 4000, min: 3000 },
-    items: 8,
-  },
-  desktop: {
-    breakpoint: { max: 3000, min: 1024 },
-    items: 6,
-  },
-  tablet: {
-    breakpoint: { max: 1024, min: 464 },
-    items: 4,
-  },
-  mobile: {
-    breakpoint: { max: 464, min: 0 },
-    items: 2,
-  },
-};
+import Player from "../components/ClubInfo/Player";
+import Squad from "../components/ClubInfo/Squad";
 
 const ClubInfo = () => {
   return (
@@ -47,190 +28,17 @@ const ClubInfo = () => {
             src="/logo.png"
             className="object-contain opacity-25 scale-250 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
           />
-          <div className="flex w-full">
-            <div className="w-[35%] pr-10 z-10">
-              <div className="w-full h-[250px] text-[18px] space-y-2">
-                <p className=" font-bold uppercase text-[30px]">
-                  Huấn luyện viên trưởng
-                </p>
-                <img
-                  src="/hlv.png"
-                  className="w-full h-full object-cover rounded-2xl"
-                />
-                <p className=" font-bold uppercase text-[30px]">Vũ Hồng Việt</p>
-                <p>Ngày sinh: 16/09/1979</p>
-                <p>Quốc tịch: Việt Nam</p>
-                <p>Quê quán: Thái Bình</p>
-                <p>Sự nghiệp huấn luyện viên:</p>
-                <div>
-                  <div className="flex w-full">
-                    <div className="w-[40%]">2019 - 2020</div>
-                    <div>Quảng Nam</div>
-                  </div>
-                  <div className="flex w-full">
-                    <div className="w-[40%]">2020 - 2022</div>
-                    <div>ĐT Việt Nam(Trợ lý)</div>
-                  </div>
-                  <div className="flex w-full">
-                    <div className="w-[40%]">2022 - nay</div>
-                    <div>Thép Xanh Nam Định</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="w-[65%] h-[700px]  text-[14px] relative">
-              <div className="h-[86%] w-full">
-                <img
-                  src="/sanco.png"
-                  className="h-[80%] w-full z-5 mt-20 pb-5 opacity-90 absolute drop-shadow-[0px_0px_30px_rgba(0,0,0,0.8)]"
-                />
-
-                {/* Thủ môn */}
-                <div
-                  className="h-25 w-30 z-10 absolute bottom-0 left-1/2 top-2/3 -translate-x-1/2 
-                                hover:scale-110 transition-transform duration-400 cursor-pointer"
-                >
-                  <img src="/nguyenmanhavt.png" className="h-full mx-auto" />
-                  <p className="w-full flex justify-center bg-[#008bd0] text-white rounded-md">
-                    T. Nguyên Mạnh
-                  </p>
-                </div>
-
-                {/* Hậu vệ cánh phải */}
-                <div
-                  className="h-25 w-30 z-10 absolute left-1/6 top-7/13 -translate-x-1/2 -translate-y-1/2
-                                hover:scale-110 transition-transform duration-400 cursor-pointer"
-                >
-                  <img src="/hongduyavt.png" className="h-full mx-auto" />
-                  <p className="w-full flex justify-center bg-[#008bd0] text-white rounded-md">
-                    N. P. Hồng Duy
-                  </p>
-                </div>
-
-                {/* Hậu vệ cánh trái */}
-                <div
-                  className="h-25 w-30 z-10 absolute left-5/6 top-7/13 -translate-x-1/2 -translate-y-1/2
-                                hover:scale-110 transition-transform duration-400 cursor-pointer"
-                >
-                  <img src="/vanviavt.png" className="h-full mx-auto" />
-                  <p className="w-full flex justify-center bg-[#008bd0] text-white rounded-md">
-                    N. Văn Vĩ
-                  </p>
-                </div>
-
-                {/* Hậu vệ lệch trái */}
-                <div
-                  className="h-25 w-30 z-10 absolute left-4/11 top-8/13 -translate-x-1/2 -translate-y-1/2
-                                hover:scale-110 transition-transform duration-400 cursor-pointer"
-                >
-                  <img src="/lucasalvesavt.png" className="h-full mx-auto" />
-                  <p className="w-full flex justify-center bg-[#008bd0] text-white rounded-md">
-                    Lucas Alves
-                  </p>
-                </div>
-
-                {/* Hậu vệ lệch phải */}
-                <div
-                  className="h-25 w-30 z-10 absolute left-7/11 top-8/13 -translate-x-1/2 -translate-y-1/2
-                                hover:scale-110 transition-transform duration-400 cursor-pointer"
-                >
-                  <img src="/hoanganhavt.png" className="h-full mx-auto" />
-                  <p className="w-full flex justify-center bg-[#008bd0] text-white rounded-md">
-                    L. C. Hoàng Anh
-                  </p>
-                </div>
-
-                {/* Tiền vệ trung tâm lệch phải */}
-                <div
-                  className="h-25 w-30 z-10 absolute left-7/11 top-5/13 -translate-x-1/2 -translate-y-1/2
-                                hover:scale-110 transition-transform duration-400 cursor-pointer"
-                >
-                  <img src="/tuananhavt.png" className="h-full mx-auto" />
-                  <p className="w-full flex justify-center bg-[#008bd0] text-white rounded-md">
-                    N. Tuấn Anh
-                  </p>
-                </div>
-
-                {/* Tiền vệ trung tâm lệch trái */}
-                <div
-                  className="h-25 w-30 z-10 absolute left-4/11 top-5/13 -translate-x-1/2 -translate-y-1/2
-                                hover:scale-110 transition-transform duration-400 cursor-pointer"
-                >
-                  <img src="/vankienavt.png" className="h-full mx-auto" />
-                  <p className="w-full flex justify-center bg-[#008bd0] text-white rounded-md">
-                    T. Văn Kiên
-                  </p>
-                </div>
-
-                {/* Tiền vệ tấn công */}
-                <div
-                  className="h-25 w-30 z-10 absolute left-1/2 top-4/13 -translate-x-1/2 -translate-y-1/2
-                                hover:scale-110 transition-transform duration-400 cursor-pointer"
-                >
-                  <img src="/cesaravt.png" className="h-full mx-auto" />
-                  <p className="w-full flex justify-center bg-[#008bd0] text-white rounded-md">
-                    Caio Cesar
-                  </p>
-                </div>
-
-                {/* Tiền đạo cánh trái */}
-                <div
-                  className="h-25 w-30 z-10 absolute left-1/4 top-3/13 -translate-x-1/2 -translate-y-1/2
-                                hover:scale-110 transition-transform duration-400 cursor-pointer"
-                >
-                  <img src="/hendrioavt.png" className="h-full mx-auto" />
-                  <p className="w-full flex justify-center bg-[#008bd0] text-white rounded-md">
-                    Hendrio
-                  </p>
-                </div>
-
-                {/* Tiền đạo cánh phải */}
-                <div
-                  className="h-25 w-30 z-10 absolute left-3/4 top-3/13 -translate-x-1/2 -translate-y-1/2
-                                hover:scale-110 transition-transform duration-400 cursor-pointer"
-                >
-                  <img src="/vantoanavt.png" className="h-full mx-auto" />
-                  <p className="w-full flex justify-center bg-[#008bd0] text-white rounded-md">
-                    N. Văn Toàn
-                  </p>
-                </div>
-
-                {/* Tiền đạu chủ lực */}
-                <div
-                  className="h-25 w-30 z-10 absolute inset-0 mx-auto mt-6
-                                hover:scale-110 transition-transform duration-400 cursor-pointer"
-                >
-                  <img src="/sonavt.png" className="h-full mx-auto" />
-                  <p className="w-full flex justify-center bg-[#008bd0] text-white rounded-md">
-                    N. Xuân Son
-                  </p>
-                </div>
-              </div>
-              <Carousel
-                className="h-[20%] w-full space-x-5 flex relative pb-10"
-                responsive={responsive}
-                renderButtonGroupOutside={true}
-              >
-                {Array.from({ length: 8 }).map((_, index) => (
-                  <div
-                    key={index}
-                    className="h-25 w-30 items-center hover:scale-110 transition-transform duration-400 cursor-pointer"
-                  >
-                    <img src="/sonavt.png" className="h-full mx-auto" />
-                    <p className="w-full flex justify-center bg-[#008bd0] text-white rounded-md">
-                      N. Xuân Son
-                    </p>
-                  </div>
-                ))}
-              </Carousel>
-            </div>
+          {/* Thông tin cầu thủ */}
+          <div className="flex w-full h-[700px]">
+            <Player />
+            <Squad />
           </div>
           {/* Danh sách HLV */}
           <Coach />
 
           {/* Danh hiệu */}
           <div className="relative h-[600px] mt-20">
-            <div className="w-full h-full justify-center">
+            <div className="w-full h-full justify-center drop-shadow-[5px_10px_20px_rgba(0,0,0,0.8)]">
               <div className="w-full mb-15 flex justify-center uppercase font-bold text-[50px] ">
                 <div
                   className="bg-white/60 text-[#008bd0] text-[30px] uppercase font-bold flex justify-center w-[25%] rounded-xl

@@ -5,10 +5,12 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import HomePage from "./pages/HomePage";
 import NewsDetail from "./components/News/NewsDetail";
 import ClubInfo from "./pages/ClubInfo";
+import ClubHomePage from "./pages/ClubHomePage";
+import HomePage from "./pages/HomePage";
 import ScrollToTop from "./parts/ScrollToTop";
+import LoadingNavigate from "./pages/LoadingNavigate";
 
 function App() {
   return (
@@ -16,11 +18,11 @@ function App() {
       <Router>
         <ScrollToTop />
         <Routes>
-          <Route path="/" element={<Navigate to="/home" />} />
-
+          <Route path="/" element={<Navigate to="/home-club" />} />
           <Route path="/home" element={<HomePage />} />
-          <Route path="/news/detail" element={<NewsDetail />} />
-          <Route path="/about-us" element={<ClubInfo />} />
+          <Route path="/loading" element={<LoadingNavigate />} />
+          <Route path="/home-club" element={<ClubHomePage />} />
+          <Route path="/about-club" element={<ClubInfo />} />
         </Routes>
         {/* <Footer /> */}
       </Router>
