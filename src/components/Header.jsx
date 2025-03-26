@@ -3,11 +3,15 @@ import { LogOut } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
-const Header = () => {
+const Header = ({ isFixed }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-[url('/public/bgblue.jpg')] text-white w-[100%] h-13 bg-cover bg-no-repeat">
+    <div
+      className={`bg-[url('/public/bgblue.jpg')] text-white w-[100%] h-13 bg-cover bg-no-repeat ${
+        isFixed ? "fixed z-50" : ""
+      }`}
+    >
       <div className="flex h-full">
         <div className="flex items-center h-full">
           <img src="/public/logo.png" className="h-[50px] pl-6" />

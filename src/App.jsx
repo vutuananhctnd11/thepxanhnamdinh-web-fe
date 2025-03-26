@@ -18,7 +18,7 @@ function App() {
       <Router>
         <ScrollToTop />
         <Routes>
-          <Route path="/" element={<Navigate to="/home-club" />} />
+          <Route path="/" element={<Navigate to="/home" />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/loading" element={<LoadingNavigate />} />
           <Route path="/home-club" element={<ClubHomePage />} />

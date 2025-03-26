@@ -1,19 +1,22 @@
 import React from "react";
-import Layout from "../components/Layout";
-import NavBar from "../components/HomePage/NavBar";
-import LoadingNavigate from "./LoadingNavigate";
+import LayoutSocial from "../components/LayoutSocial";
+import NavBarLeft from "../components/HomePage/NavBarLeft";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import NavBarRight from "@/components/HomePage/NavBarRight";
 
 const HomePage = () => {
   return (
-    <Layout>
-      <div className="w-full h-[700px] flex text-white bg-black/90">
-        <div className="w-[25%]">
-          <NavBar />
+    <LayoutSocial>
+      <div className="w-full h-screen flex text-white bg-black/90 relative">
+        <ScrollArea className="w-[25%] h-[calc(100vh-52px)] left-0 top-13">
+          <NavBarLeft />
+        </ScrollArea>
+        <div className="w-[50%] h-[calc(100vh-52px)] mt-13 bg-red-400">def</div>
+        <div className="w-[25%] h-[calc(100vh-52px)] fixed right-0 top-13 ">
+          <NavBarRight />
         </div>
-        <div className="w-[50%] bg-red-400">def</div>
-        <div className="w-[25%]">ghj</div>
       </div>
-    </Layout>
+    </LayoutSocial>
   );
 };
 
