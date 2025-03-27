@@ -1,12 +1,21 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useAppContext } from "../App";
 
 export default function useNagivateLoading() {
+  const { appState, setAppState } = useAppContext();
   const navigate = useNavigate();
-  const location = useLocation();
   return (pathNavigate) => {
-    navigate("/loading", {
-      state: { path: pathNavigate, oldPath: location.pathname },
-    });
+    setAppState((prev) => ({
+      ...prev,
+      loading: true,
+    }));
+    setTimeout(() => {
+      navigate(pathNavigate);
+      setAppState((prev) => ({
+        ...prev,
+        loading: false,
+      }));
+    }, 1000);
   };
 }

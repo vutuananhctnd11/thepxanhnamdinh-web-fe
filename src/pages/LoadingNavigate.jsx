@@ -1,20 +1,11 @@
 import React, { useEffect, useLayoutEffect } from "react";
 import { motion } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useAppContext } from "../App";
 
 const LoadingPage = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { path, oldPath } = location.state || {};
-  useLayoutEffect(() => {
-    const handleBack = () => navigate(oldPath);
-    window.addEventListener("popstate", handleBack);
-    if (path) {
-      setTimeout(() => {
-        navigate(path);
-      }, 1000);
-    }
-  }, []);
+  const { appState, setAppState } = useAppContext();
+  if (!appState.loading) return <></>;
   return (
     <div className="w-screen h-screen flex items-center justify-center bg-gradient-to-br from-[#0f172a] to-[#1e3a8a]">
       <motion.div

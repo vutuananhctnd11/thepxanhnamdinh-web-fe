@@ -2,9 +2,11 @@ import React from "react";
 import { LogOut } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import useNagivateLoading from "@/hooks/useNagivateLoading";
 
 const Header = ({ isFixed }) => {
   const navigate = useNavigate();
+  const navigateLoading = useNagivateLoading();
 
   return (
     <div
@@ -33,23 +35,21 @@ const Header = ({ isFixed }) => {
             Trang chủ
           </div>
           <div>|</div>
-
-          <div className="hover:scale-105 transition-transform duration-400 cursor-pointer">
-            Bảng tin
-          </div>
-          <div>|</div>
           <div className="hover:scale-105 transition-transform duration-400 cursor-pointer">
             Kết bạn
           </div>
           <div>|</div>
           <div
             className="hover:scale-105 transition-transform duration-400 cursor-pointer"
-            onClick={() => navigate("/home-club")}
+            onClick={() => navigateLoading("/home-club")}
           >
             Thông tin CLB
           </div>
           <div>|</div>
-          <div className="hover:scale-105 transition-transform duration-400 cursor-pointer">
+          <div
+            className="hover:scale-105 transition-transform duration-400 cursor-pointer"
+            onClick={() => navigateLoading("/order-ticket")}
+          >
             Mua vé
           </div>
           <div>|</div>

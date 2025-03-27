@@ -11,10 +11,10 @@ const HomePage = () => {
         <ScrollArea className="w-[25%] h-[calc(100vh-52px)] left-0 top-13">
           <NavBarLeft />
         </ScrollArea>
-        <div className="w-[50%] h-[calc(100vh-52px)] mt-13 bg-red-400">def</div>
-        <div className="w-[25%] h-[calc(100vh-52px)] fixed right-0 top-13 ">
+        <div className="w-[50%] h-[calc(100vh-52px)] mt-13">def</div>
+        <ScrollArea className="w-[25%] h-[calc(100vh-52px)] fixed right-0 top-13 ">
           <NavBarRight />
-        </div>
+        </ScrollArea>
       </div>
     </LayoutSocial>
   );
