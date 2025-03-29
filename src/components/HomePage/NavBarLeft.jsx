@@ -67,6 +67,9 @@ const NewsFeed = () => {
           />
         ))}
       </div>
+      <div className="mt-3 text-[12px] text-gray-400 flex justify-center">
+        <p>TXND FanZone - Copyright © 2025 by TuanAnhDev</p>
+      </div>
     </div>
   );
 };

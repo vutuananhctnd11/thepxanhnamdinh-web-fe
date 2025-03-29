@@ -1,6 +1,20 @@
-import React from "react";
+import { Modal } from "antd";
+import React, { useState } from "react";
+import ChooseTicketPopup from "./ChooseTicketPopup";
 
 const TicketOfMatch = ({ data }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
   const {
     title,
     homeImg,
@@ -25,6 +39,7 @@ const TicketOfMatch = ({ data }) => {
       <button
         className="px-6 my-3 h-10 w-[80%] bg-gradient-to-r from-cyan-500 to-cyan-300 text-white font-semibold 
   text-lg rounded-xl shadow-lg transition-all duration-300 hover:bg-right bg-[length:200%_auto] cursor-pointer"
+        onClick={showModal}
       >
         Đặt vé ngay
       </button>
@@ -71,6 +86,11 @@ const TicketOfMatch = ({ data }) => {
         <p className="text-lg font-bold flex justify-center">{date}</p>
       </div>
       <div className="w-full flex justify-center">{button}</div>
+      <ChooseTicketPopup
+        isModalOpen={isModalOpen}
+        onOk={handleOk}
+        handleCancel={handleCancel}
+      />
     </div>
   );
 };

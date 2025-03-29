@@ -48,7 +48,7 @@ const Footer = () => {
         </div>
       </div>
       <div className="pt-8 w-full flex justify-center">
-        © 2025 Thép Xanh Nam Định bởi TuanAnhDev
+        Thép Xanh Nam Định - Copyright © 2025 by TuanAnhDev
       </div>
     </div>
   );
