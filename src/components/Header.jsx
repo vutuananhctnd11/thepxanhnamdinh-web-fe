@@ -1,8 +1,10 @@
+/* eslint-disable no-unused-vars */
 import React from "react";
 import { LogOut } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import useNagivateLoading from "@/hooks/useNagivateLoading";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 const Header = ({ isFixed }) => {
   const navigate = useNavigate();
@@ -58,8 +60,16 @@ const Header = ({ isFixed }) => {
           </div>
         </div>
         <div className="flex items-center ml-auto gap-4 p-5">
-          <div className="text-lg">Xin chào Vũ Tuấn Anh</div>
-          <LogOut size={25} />
+          <div className="text-lg">
+            <Avatar>
+              <AvatarImage
+                src="hlv.png"
+                alt="Vũ Hồng Việt"
+                className={"object-cover"}
+              />
+            </Avatar>
+          </div>
+          <LogOut size={25} onClick={() => navigate("/login")} />
         </div>
       </div>
     </div>

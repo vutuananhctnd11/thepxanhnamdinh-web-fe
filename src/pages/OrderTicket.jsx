@@ -57,7 +57,7 @@ const OrderTicket = () => {
       time: "19:30",
       date: "06/04/2025",
       location: "SVĐ Thiên Trường",
-      status: "done",
+      status: "selling",
     },
   ];
   return (

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { LucideSearch } from "lucide-react";
 import React from "react";
 import ItemNav from "../ItemNav/ItemNav";
@@ -15,15 +16,9 @@ const NavBarRight = () => {
         />
       </div>
       <div className="mt-3 space-y-2">
-        <p className="text-gray-300">Kết quả gần đây</p>
-        <div className="h-[100px] w-full">
-          <img src="/banner1.jpg" className="h-[100px]" />
-        </div>
-      </div>
-      <div className="mt-3 space-y-2">
-        <p className="text-gray-300">Trận đấu sắp tới</p>
-        <div className="h-[100px] w-full">
-          <img src="/banner2.jpg" className="h-[100px]" />
+        <p className="text-gray-300">Quảng cáo</p>
+        <div className=" w-full">
+          <img src="/banner1.jpg" className="w-full" />
         </div>
       </div>
       <hr className="mt-5 mb-3 mx-2" />

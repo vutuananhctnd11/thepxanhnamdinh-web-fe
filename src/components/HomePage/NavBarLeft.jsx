@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from "react";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import ItemNav from "../ItemNav/ItemNav";
@@ -45,6 +46,7 @@ const NewsFeed = () => {
         <ItemNav
           icon={<i class="fa-solid fa-ticket text-[#f59e0b] scale-130" />}
           name={"Đặt vé"}
+          onClick={() => navigateLoading("/order-ticket")}
         />
         <ItemNav
           icon={<i class="fa-solid fa-people-group text-[#2dc5f3] scale-125" />}

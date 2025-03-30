@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from "react";
 import Layout from "../components/Layout";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -8,6 +9,7 @@ import NewsList from "../components/News/NewsList";
 import { motion } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
 import useNagivateLoading from "@/hooks/useNagivateLoading";
+import Match from "@/components/ClubInfo/Match";
 
 const HomePage = () => {
   const navigateLoading = useNagivateLoading();
@@ -15,7 +17,7 @@ const HomePage = () => {
   return (
     <>
       <Layout>
-        <div className="pb-10">
+        <div>
           <div className="relative w-[100%] h-[calc(100vh-52px)] flex justify-center">
             <div className="bg-black/40 h-full w-full bg-no-repeat absolute z-5" />
             <Swiper
@@ -80,20 +82,20 @@ const HomePage = () => {
             </motion.div>
           </div>
 
-          <div className="bg-[url('/grass.png')] h-160 relative flex flex-col">
+          <div className="bg-[url('/grass.png')] h-160 w-full relative flex flex-col">
             <div className="bg-white opacity-95 h-full w-full z-5 absolute" />
             <div className="bg-[#208ff7] opacity-15 h-full w-full z-5 absolute" />
-            <div className="w-full h-[90%] ml-30 z-10 relative flex items-center">
+            <div className="h-[90%] ml-30 z-10 relative flex items-center">
               <img
                 src="/aboutus.png"
                 alt="Parallelogram"
-                className="w-[40%] h-[60%] object-cover flex"
+                className="w-[30%] h-[60%] object-cover flex"
                 style={{
                   clipPath: "polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%)",
                 }}
               />
-              <div className="w-full h-full flex items-center">
-                <div className="h-[60%] ml-15 space-y-2">
+              <div className="w-[70%] h-full flex items-center">
+                <div className="h-[60%] w-full ml-15 space-y-2">
                   <div
                     className="w-40 text-[20px] p-2 flex justify-center
                   bg-[#008bd0]/20 text-[#008bd0] font-bold"
@@ -127,7 +129,7 @@ const HomePage = () => {
                 </div>
               </div>
             </div>
-            <div className="h-[15%] w-full flex space-x-10 bottom-2 items-center justify-center absolute">
+            <div className="h-[15%] w-full flex space-x-10 bottom-2 items-center justify-center">
               <img
                 src="/xuanthien.png"
                 className="z-20 h-22 filter hover:scale-110 transition-transform duration-400 cursor-pointer"
@@ -155,8 +157,15 @@ const HomePage = () => {
             </div>
           </div>
 
-          <div className="ml-25 mr-25 space-y-5">
-            <NewsList title={"Các trận đấu sắp tới"} />
+          <div className="h-[800px] relative space-y-20">
+            <div className="bg-white/85 z-10 h-full w-full absolute"></div>
+            <div className="bg-[#008bd0]/10 z-10 h-full w-full absolute"></div>
+            <img
+              src="bg2.jpg"
+              className="h-full w-full object-cover opacity-30 absolute"
+            />
+            <Match title={"Trận đấu tiếp theo"} played={false} />
+            <Match title={"Kết quả trận đấu gần nhất"} played={true} />
           </div>
         </div>
       </Layout>

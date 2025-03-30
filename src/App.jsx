@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState } from "react";
 import {
   BrowserRouter as Router,
@@ -12,6 +13,7 @@ import HomePage from "./pages/HomePage";
 import ScrollToTop from "./parts/ScrollToTop";
 import LoadingNavigate from "./pages/LoadingNavigate";
 import OrderTicket from "./pages/OrderTicket";
+import LoginPage from "./pages/LoginPage";
 
 const AppContext = createContext();
 
@@ -32,6 +34,7 @@ function App() {
               <Route path="/home-club" element={<ClubHomePage />} />
               <Route path="/about-club" element={<ClubInfo />} />
               <Route path="/order-ticket" element={<OrderTicket />} />
+              <Route path="/login" element={<LoginPage />} />
             </Routes>
           </Router>
         )}
