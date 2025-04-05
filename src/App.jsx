@@ -14,6 +14,7 @@ import ScrollToTop from "./parts/ScrollToTop";
 import LoadingNavigate from "./pages/LoadingNavigate";
 import OrderTicket from "./pages/OrderTicket";
 import LoginPage from "./pages/LoginPage";
+import SignUpPage from "./pages/SignUpPage";
 
 const AppContext = createContext();
 
@@ -35,6 +36,7 @@ function App() {
               <Route path="/about-club" element={<ClubInfo />} />
               <Route path="/order-ticket" element={<OrderTicket />} />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/sign-up" element={<SignUpPage />} />
             </Routes>
           </Router>
         )}

@@ -1,8 +1,35 @@
+/* eslint-disable */
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import React from "react";
+import useNagivateLoading from "@/hooks/useNagivateLoading";
+import InputPassword from "@/parts/InputPassword";
+import { Form } from "antd";
+import React, { useState } from "react";
 
 const LoginPage = () => {
+  const navigate = useNagivateLoading();
+  const [errorMessage, setErrorMessage] = useState("");
+  const onFinish = async (values) => {
+    try {
+      const res = await fetch("http://localhost:8080/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+        credentials: "include",
+      });
+
+      const response = await res.json();
+
+      if (response.status == "success") {
+        localStorage.setItem("accessToken", response.data.token);
+        navigate("/home");
+      } else {
+        setErrorMessage(response.message);
+      }
+    } catch (error) {
+      console.error("Có lỗi khi gọi API: " + error);
+    }
+  };
+
   return (
     <div className="w-full h-screen relative">
       <img
@@ -23,7 +50,10 @@ const LoginPage = () => {
             >
               TXND FanZone
             </div>
-            <div className="text-lg md:text-2xl font-bold text-[#0897df] flex justify-center">
+            <div
+              className="text-lg md:text-3xl font-bold text-[#0897df] flex justify-center"
+              style={{ fontFamily: "Smooch Sans" }}
+            >
               Nơi kết nối các cổ động viên
             </div>
           </div>
@@ -31,34 +61,57 @@ const LoginPage = () => {
 
         {/* form đăng nhập */}
         <div className="w-[60%] h-[70%]">
-          <div className="w-full p-6 bg-black/60 rounded-2xl text-white">
-            <div className="text-sm lg:text-2xl mb-8 font-bold flex justify-center">
+          <div className="w-full p-5 bg-black/50 rounded-2xl text-white">
+            <div className="text-lg lg:text-2xl mb-8 font-bold flex justify-center">
               ĐĂNG NHẬP
             </div>
-            <div className="grid items-center gap-1.5 mb-5">
-              <Label htmlFor="fullName" className={"text-md"}>
-                Email/Tên đăng nhập
-              </Label>
-              <Input type="text" id="username" />
-            </div>
-            <div className="grid max-w-sm items-center gap-1.5">
-              <Label htmlFor="fullName" className={"text-md"}>
-                Mật khẩu
-              </Label>
-              <Input type="password" id="password" />
-            </div>
-            <div>
-              <div className="underline mt-2 mx-4 flex justify-end">
+            <Form name="login-form" onFinish={onFinish} layout="vertical">
+              <Form.Item
+                style={{ marginBottom: "8px" }}
+                label={
+                  <span className="text-md text-white">Tên đăng nhập</span>
+                }
+                name="username"
+                rules={[
+                  { required: true, message: "Vui lòng nhập tên đăng nhập!" },
+                ]}
+              >
+                <Input className="text-white" />
+              </Form.Item>
+              <Form.Item
+                style={{ marginBottom: "8px" }}
+                label={<span className="text-md text-white">Mật khẩu</span>}
+                name="password"
+                rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
+              >
+                <Input type="password" className="text-white" />
+              </Form.Item>
+
+              <div className="mt-2 mx-4 flex justify-end text-white hover:underline hover:cursor-pointer">
                 Quên mật khẩu?
               </div>
-            </div>
-            <div className="w-full">
-              <button
-                className="px-6 py-2 mt-6 w-full bg-blue-500/60 text-white font-semibold
-               rounded-lg shadow-md hover:bg-blue-600/70 transition"
-              >
-                Đăng nhập
-              </button>
+
+              <Form.Item>
+                <div className="text-red-600 mt-2 font-semibold flex justify-center">
+                  <div className="bg-white/80 rounded-2xl px-2">
+                    {errorMessage}
+                  </div>
+                </div>
+                <button
+                  type="primary"
+                  htmlType="submit"
+                  className="px-6 py-2 mt-3 w-full text-white bg-blue-500/70 font-semibold
+               rounded-lg shadow-md hover:bg-blue-600/90 hover:cursor-pointer transition"
+                >
+                  Đăng nhập
+                </button>
+              </Form.Item>
+            </Form>
+            <div
+              className="mt-2 flex justify-center text-white text-sm hover:underline hover:cursor-pointer"
+              onClick={() => navigate("/sign-up")}
+            >
+              Bạn chưa có tài khoản?
             </div>
           </div>
         </div>
