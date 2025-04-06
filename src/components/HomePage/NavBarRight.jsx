@@ -27,6 +27,7 @@ const NavBarRight = () => {
         <div>
           {Array.from({ length: 8 }).map((_, index) => (
             <ItemNav
+              key={index}
               icon={
                 <Avatar>
                   <AvatarImage src="/bg2.jpg" className={"object-cover"} />

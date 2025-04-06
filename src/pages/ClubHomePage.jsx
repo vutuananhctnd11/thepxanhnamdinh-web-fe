@@ -5,7 +5,6 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
-import NewsList from "../components/News/NewsList";
 import { motion } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
 import useNagivateLoading from "@/hooks/useNagivateLoading";

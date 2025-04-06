@@ -6,7 +6,6 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import NewsDetail from "./components/News/NewsDetail";
 import ClubInfo from "./pages/ClubInfo";
 import ClubHomePage from "./pages/ClubHomePage";
 import HomePage from "./pages/HomePage";

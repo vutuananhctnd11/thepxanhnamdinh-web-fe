@@ -1,7 +1,6 @@
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import useNagivateLoading from "@/hooks/useNagivateLoading";
-import InputPassword from "@/parts/InputPassword";
+import ModalNotification from "@/parts/ModalNotification";
 import { Form, Modal } from "antd";
 import { useState } from "react";
 
@@ -10,9 +9,16 @@ const SignUpPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [modalTitle, setModalTitle] = useState("");
-  const [signUpSuccess, setSignUpSuccess] = useState(false);
+  const [signUpSuccess, setSignUpSuccess] = useState(true);
 
   const onFinish = async (values) => {
+    if (values.password != values.confirmPassword) {
+      setSignUpSuccess(false);
+      setModalTitle("Đăng ký thất bại");
+      setModalMessage("Xác nhận mật khẩu không trùng khớp!");
+      setIsModalOpen(true);
+      return;
+    }
     try {
       const res = await fetch("http://localhost:8080/users", {
         method: "POST",
@@ -25,15 +31,15 @@ const SignUpPage = () => {
         setSignUpSuccess(true);
         setModalTitle("Thành công");
         setModalMessage("Đăng ký thành công vui lòng đăng nhập");
-        setIsModalOpen(true);
       } else {
+        setSignUpSuccess(false);
         setModalTitle("Đăng ký thất bại");
         setModalMessage(response.message);
-        setIsModalOpen(true);
       }
+      setIsModalOpen(true);
     } catch (error) {
       console.error("có lỗi khi gọi api: " + error);
-      alert("Có lỗi sảy ra");
+      alert("Có lỗi xảy ra hayx xem console!");
     }
   };
 
@@ -191,35 +197,26 @@ const SignUpPage = () => {
                 Bạn đã có tài khoản? Hãy đăng nhập
               </div>
             </div>
-            <Modal
-              open={isModalOpen}
-              centered={true}
-              closable={false}
-              footer={null}
-              className="w-auto"
-            >
-              <div className="flex flex-col items-center">
-                <p className="text-[17px] mb-3 font-bold">{modalTitle}</p>
-                <p className="text-[16px] mb-5">{modalMessage}</p>
-                {signUpSuccess ? (
-                  <button
-                    onClick={() => navigate("/login")}
-                    className="px-6 py-1 bg-blue-500/70 text-white rounded-lg shadow-md hover:bg-blue-600/80"
-                  >
-                    Đăng nhập
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => {
-                      setIsModalOpen(false);
-                    }}
-                    className="px-6 py-1 bg-red-500/70 text-white rounded-lg shadow-md hover:bg-red-600/80"
-                  >
-                    Thử lại
-                  </button>
-                )}
-              </div>
-            </Modal>
+            {signUpSuccess ? (
+              <ModalNotification
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+                modalTitle={modalTitle}
+                modalMessage={modalMessage}
+                type={"success"}
+                buttonText={"Đăng nhập"}
+                redirectPath={"/home"}
+              />
+            ) : (
+              <ModalNotification
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+                modalTitle={modalTitle}
+                modalMessage={modalMessage}
+                type={"error"}
+                buttonText={"Thử lại"}
+              />
+            )}
           </div>
         </div>
       </div>

@@ -1,7 +1,5 @@
-/* eslint-disable */
 import { Input } from "@/components/ui/input";
 import useNagivateLoading from "@/hooks/useNagivateLoading";
-import InputPassword from "@/parts/InputPassword";
 import { Form } from "antd";
 import React, { useState } from "react";
 
