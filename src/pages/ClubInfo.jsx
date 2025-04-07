@@ -1,12 +1,15 @@
 /* eslint-disable no-unused-vars */
-import React from "react";
+import React, { useState } from "react";
 import Layout from "../components/Layout";
 import Coach from "../components/ClubInfo/coach";
 import { motion } from "framer-motion";
-import Player from "../components/ClubInfo/Player";
+import PlayerInfo from "../components/ClubInfo/PlayerInfo";
+import HeadCoachInfo from "../components/ClubInfo/HeadCoachInfo";
 import Squad from "../components/ClubInfo/Squad";
 
 const ClubInfo = () => {
+  const [playerId, setPlayerId] = useState();
+
   return (
     <Layout>
       <div className="">
@@ -31,8 +34,8 @@ const ClubInfo = () => {
           />
           {/* Thông tin cầu thủ */}
           <div className="flex w-full h-[700px]">
-            <Player />
-            <Squad />
+            {!playerId ? <HeadCoachInfo /> : <PlayerInfo playerId={playerId} />}
+            <Squad setPlayerId={setPlayerId} />
           </div>
           {/* Danh sách HLV */}
           <Coach />
@@ -51,7 +54,10 @@ const ClubInfo = () => {
 
               <div className="flex items-center w-full h-[60%]">
                 {Array.from({ length: 4 }).map((_, index) => (
-                  <div className="w-[30%] h-full flex flex-col items-center justify-center">
+                  <div
+                    key={index}
+                    className="w-[30%] h-full flex flex-col items-center justify-center"
+                  >
                     <img
                       src="/cup1.png"
                       className="h-[70%] drop-shadow-[5px_10px_20px_rgba(0,0,0,0.8)] hover:scale-110 transition-transform duration-300"

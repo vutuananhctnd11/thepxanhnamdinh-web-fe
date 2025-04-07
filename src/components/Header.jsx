@@ -1,8 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { HomeIcon, LogOut, TicketIcon, UserPlus } from "lucide-react";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
 import useNagivateLoading from "@/hooks/useNagivateLoading";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { refreshAccessToken } from "@/parts/ApiRefreshToken";
@@ -30,6 +28,7 @@ const Header = ({ isFixed }) => {
     const fetchUserLogin = async () => {
       try {
         const accessToken = localStorage.getItem("accessToken");
+        if (!accessToken) return;
         let res = await fetch("http://localhost:8080/users/me", {
           method: "GET",
           headers: { Authorization: "Bearer " + accessToken },
@@ -54,7 +53,6 @@ const Header = ({ isFixed }) => {
             }
             return;
           }
-          setIsLogin(true);
 
           res = await fetch("http://localhost:8080/users/me", {
             method: "GET",
@@ -66,6 +64,7 @@ const Header = ({ isFixed }) => {
 
         if (response.status == "success") {
           setUserLogin(response.data);
+          setIsLogin(true);
         } else alert("có lỗi");
       } catch (error) {
         console.log("có lỗi" + error);

@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { style } from "framer-motion/client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 
@@ -23,7 +23,29 @@ const responsive = {
   },
 };
 
-const coach = () => {
+const Coach = () => {
+  const [listCoach, setListCoach] = useState(null);
+
+  useEffect(() => {
+    const fetchListCoach = async () => {
+      try {
+        const res = await fetch("http://localhost:8080/coaches", {
+          method: "GET",
+        });
+        const response = await res.json();
+        if (response.status === "success") {
+          setListCoach(response.data);
+        } else {
+          alert("Thất bại: ", response.message);
+        }
+      } catch (error) {
+        // alert("Có lỗi khi gọi api player info ", error);
+        console.log("Có lỗi khi gọi api player info ", error);
+      }
+    };
+
+    fetchListCoach();
+  }, []);
   return (
     <>
       <div className=" w-full relative mt-30">
@@ -37,28 +59,33 @@ const coach = () => {
             </div>
           </div>
           <div className="mt-10">
-            <Carousel
-              className="flex overflow-visible h-[500px] pl-5"
-              responsive={responsive}
-            >
-              {Array.from({ length: 8 }).map((_, index) => (
-                <div
-                  key={index}
-                  className="h-full aspect-[1/1.4] transform transition-all duration-300 hover:scale-105 hover:z-10"
-                >
-                  <img
-                    src="/vuhongviet.png"
-                    className=" h-[350px] object-contain shadow-lg"
-                  />
-                  <div className=" pl-2 pt-2">
-                    <p>Huấn luyện viên trưởng</p>
-                    <p>Họ và tên: Vũ Hồng Việt</p>
-                    <p>Quốc tịch: Việt Nam</p>
-                    <p>Ngày sinh: 16/09/1979</p>
+            {listCoach && (
+              <Carousel
+                className="flex overflow-visible h-[500px] pl-5"
+                responsive={responsive}
+              >
+                {listCoach?.map((coachInfo, index) => (
+                  <div
+                    key={coachInfo.coachId}
+                    className="h-full aspect-[1/1.4] transform transition-all duration-300 hover:scale-105 hover:z-10"
+                  >
+                    <img
+                      src={coachInfo.image}
+                      className=" h-[350px] object-contain shadow-lg"
+                    />
+                    <div className=" pl-2 pt-2">
+                      <p>{coachInfo.position}</p>
+                      <p>
+                        Họ và tên:{" "}
+                        {coachInfo.firstName + " " + coachInfo.lastName}
+                      </p>
+                      <p>Quốc tịch: {coachInfo.nationality}</p>
+                      <p>Ngày sinh: {coachInfo.dateOfBirth}</p>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </Carousel>
+                ))}
+              </Carousel>
+            )}
           </div>
         </div>
       </div>
@@ -66,4 +93,4 @@ const coach = () => {
   );
 };
 
-export default coach;
+export default Coach;

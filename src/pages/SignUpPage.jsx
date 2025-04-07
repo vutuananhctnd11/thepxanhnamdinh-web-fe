@@ -205,7 +205,7 @@ const SignUpPage = () => {
                 modalMessage={modalMessage}
                 type={"success"}
                 buttonText={"Đăng nhập"}
-                redirectPath={"/home"}
+                redirectPath={"/login"}
               />
             ) : (
               <ModalNotification
