@@ -41,7 +41,7 @@ const ClubInfo = () => {
           <Coach />
 
           {/* Danh hiệu */}
-          <div className="relative h-[600px] mt-20">
+          <div className="relative h-[600px]">
             <div className="w-full h-full justify-center drop-shadow-[5px_10px_20px_rgba(0,0,0,0.8)]">
               <div className="w-full mb-15 flex justify-center uppercase font-bold text-[50px] ">
                 <div

@@ -58,10 +58,10 @@ const Coach = () => {
               Ban lãnh đạo
             </div>
           </div>
-          <div className="mt-10">
+          <div className="">
             {listCoach && (
               <Carousel
-                className="flex overflow-visible h-[500px] pl-5"
+                className="flex overflow-visible h-[600px] pl-5"
                 responsive={responsive}
               >
                 {listCoach?.map((coachInfo, index) => (
@@ -74,13 +74,19 @@ const Coach = () => {
                       className=" h-[350px] object-contain shadow-lg"
                     />
                     <div className=" pl-2 pt-2">
-                      <p>{coachInfo.position}</p>
+                      <p className="uppercase font-semibold">
+                        {coachInfo.position}
+                      </p>
                       <p>
                         Họ và tên:{" "}
-                        {coachInfo.firstName + " " + coachInfo.lastName}
+                        <b>{coachInfo.firstName + " " + coachInfo.lastName}</b>
                       </p>
-                      <p>Quốc tịch: {coachInfo.nationality}</p>
-                      <p>Ngày sinh: {coachInfo.dateOfBirth}</p>
+                      <p>
+                        Quốc tịch: <b>{coachInfo.nationality}</b>
+                      </p>
+                      <p>
+                        Ngày sinh: <b>{coachInfo.dateOfBirth}</b>
+                      </p>
                     </div>
                   </div>
                 ))}

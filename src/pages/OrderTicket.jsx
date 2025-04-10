@@ -37,28 +37,6 @@ const OrderTicket = () => {
       location: "SVĐ Thiên Trường",
       status: "done",
     },
-    {
-      title: "Vòng 12 -Vleague 2024/2025",
-      homeImg: "/logo.png",
-      homeName: "Thép Xanh Nam Định",
-      awayImg: "viettel.png",
-      awayName: "Thể Công Viettel",
-      time: "19:30",
-      date: "06/04/2025",
-      location: "SVĐ Thiên Trường",
-      status: "done",
-    },
-    {
-      title: "Vòng 12 -Vleague 2024/2025",
-      homeImg: "/logo.png",
-      homeName: "Thép Xanh Nam Định",
-      awayImg: "viettel.png",
-      awayName: "Thể Công Viettel",
-      time: "19:30",
-      date: "06/04/2025",
-      location: "SVĐ Thiên Trường",
-      status: "selling",
-    },
   ];
   return (
     <Layout>

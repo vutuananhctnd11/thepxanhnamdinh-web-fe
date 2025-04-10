@@ -1,23 +1,46 @@
+import { formatDateTime } from "@/parts/FormatDateTime";
 import { MoveRight } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "react-multi-carousel/lib/styles.css";
 
-const matchInfo = {
-  title: "Vòng 14 Giải VĐQG V-League",
-  homeImg: "logo.png",
-  homeName: "Thép Xanh Nam Định",
-  homePlayer: "sonavt.png",
-  homeResult: "3",
-  awayImg: "viettel.png",
-  awayName: "Thể Công Viettel",
-  awayPlayer: "vanviavt.png",
-  awayResult: "2",
-  time: "19:30",
-  location: "SVĐ Thiên Trường",
-  date: "06/04/2025",
-};
-
 const Match = ({ title, played }) => {
+  const [matchInfo, setMatchInfo] = useState(null);
+  const [date, setDate] = useState();
+  const [time, setTime] = useState();
+
+  useEffect(() => {
+    const fetchLatestResult = async () => {
+      try {
+        let res;
+        if (played) {
+          res = await fetch("http://localhost:8080/matches/latest-result", {
+            method: "GET",
+          });
+        } else {
+          res = await fetch("http://localhost:8080/matches/next-match", {
+            method: "GET",
+          });
+        }
+        const response = await res.json();
+        if (response.status === "success") {
+          setMatchInfo(response.data);
+          const { date, time } = formatDateTime(response.data.matchDate);
+          setDate(date);
+          setTime(time);
+        } else {
+          console.log("Thất bại: " + response.message);
+        }
+      } catch (error) {
+        console.log("Có lỗi khi gọi api get match info: ", error);
+        // alert("Có lỗi khi gọi api head coach info ", error);
+      }
+    };
+
+    fetchLatestResult();
+  }, [played]);
+
+  if (!matchInfo) return null;
+
   return (
     <div className="h-[300px] relative">
       <div className="z-10 absolute px-20 h-full w-full">
@@ -29,42 +52,44 @@ const Match = ({ title, played }) => {
           {/* Sân nhà */}
           <div className="w-[40%] flex ">
             <img
-              src={matchInfo.homePlayer}
+              src={matchInfo?.homePlayerImage}
               className="h-full drop-shadow-[0_10px_20px_rgba(0,0,0,0.4)]"
             />
             <div className="flex flex-col items-center justify-center w-full">
               <img
-                src={matchInfo.homeImg}
+                src={matchInfo?.homeLogo}
                 className="h-[150px] drop-shadow-[0_10px_20px_rgba(0,0,0,0.4)]"
               />
-              <div className="text-xl">{matchInfo.homeName}</div>
+              <div className="text-xl">{matchInfo?.homeName}</div>
             </div>
           </div>
           {/* Thông tin */}
           <div className="w-[20%] flex flex-col items-center ">
-            <div className="text-lg mb-8 mt-2">{matchInfo.title}</div>
-            <div className="text-lg">{matchInfo.location}</div>
+            <div className="text-lg mb-8 mt-2">
+              Vòng {matchInfo?.round} {matchInfo?.tournament}
+            </div>
+            <div className="text-lg">{matchInfo?.stadium}</div>
             {played ? (
               <div className="text-6xl font-bold my-4">
-                {matchInfo.homeResult} - {matchInfo.awayResult}
+                {matchInfo?.homeScore} - {matchInfo?.awayScore}
               </div>
             ) : (
               <div className="text-4xl font-bold my-4">VS</div>
             )}
-            <div className="text-xl font-bold">{matchInfo.time}</div>
-            <div className="text-xl font-bold">{matchInfo.date}</div>
+            <div className="text-xl font-bold">{time}</div>
+            <div className="text-xl font-bold">{date}</div>
           </div>
           {/* Sân khách */}
           <div className="flex w-[40%] justify-end">
             <div className="flex flex-col items-center justify-center w-full">
               <img
-                src={matchInfo.awayImg}
+                src={matchInfo?.awayLogo}
                 className="h-[150px] drop-shadow-[0_10px_20px_rgba(0,0,0,0.4)]"
               />
-              <div className="text-xl">{matchInfo.awayName}</div>
+              <div className="text-xl">{matchInfo?.awayName}</div>
             </div>
             <img
-              src={matchInfo.awayPlayer}
+              src={matchInfo?.awayPlayerImage}
               className="h-full drop-shadow-[0_10px_20px_rgba(0,0,0,0.4)]"
             />
           </div>

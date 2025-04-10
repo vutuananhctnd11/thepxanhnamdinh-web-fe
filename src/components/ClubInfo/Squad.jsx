@@ -260,7 +260,7 @@ const Squad = ({ setPlayerId }) => {
       </div>
       {substitute && (
         <Carousel
-          className="h-[20%] w-full space-x-5 flex relative pb-10"
+          className="h-[22%] w-full space-x-5 flex relative pb-10"
           responsive={responsive}
           renderButtonGroupOutside={true}
         >
