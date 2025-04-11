@@ -1,9 +1,13 @@
+/* eslint-disable no-unused-vars */
 import { Modal } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ChooseTicketPopup from "./ChooseTicketPopup";
+import { formatDateTime } from "@/parts/FormatDateTime";
 
 const TicketOfMatch = ({ data }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [date, setDate] = useState();
+  const [time, setTime] = useState();
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -16,25 +20,35 @@ const TicketOfMatch = ({ data }) => {
   };
 
   const {
-    title,
-    homeImg,
+    matchId,
     homeName,
-    awayImg,
+    homeLogo,
     awayName,
-    time,
-    location,
+    awayLogo,
+    matchDate,
+    tournament,
+    round,
+    stadium,
     status,
-    date,
+    sellTicket,
   } = data;
 
+  useEffect(() => {
+    if (matchDate) {
+      const { dateFormat, timeFormat } = formatDateTime(matchDate);
+      setDate(dateFormat);
+      setTime(timeFormat);
+    }
+  }, [matchDate]);
+
   let button;
-  if (status == "done") {
+  if (status.toLowerCase() === "đã đá") {
     button = (
       <button className="px-6 my-3 h-10 w-[80%] bg-gray-400 text-white font-semibold text-lg rounded-2xl">
         Dừng bán vé
       </button>
     );
-  } else if (status == "selling") {
+  } else if (status.toLowerCase() === "chưa đá" && sellTicket == true) {
     button = (
       <button
         className="px-6 my-3 h-10 w-[80%] bg-gradient-to-r from-cyan-500 to-cyan-300 text-white font-semibold 
@@ -44,7 +58,7 @@ const TicketOfMatch = ({ data }) => {
         Đặt vé ngay
       </button>
     );
-  } else {
+  } else if (status.toLowerCase() === "chưa đá" && sellTicket == false) {
     button = (
       <button className="px-6 my-3 h-10 w-[80%] bg-gray-400 text-white font-semibold text-lg rounded-2xl">
         Sắp mở bán
@@ -53,19 +67,21 @@ const TicketOfMatch = ({ data }) => {
   }
   return (
     <div
-      className="h-[330px] w-[400px] bg-[url(/bgmatch.png)] text-white p-3 rounded-2xl hover:scale-102 t
+      className="h-[300px] w-[420px] bg-[url(/bgmatch.png)] text-white p-4 rounded-2xl hover:scale-102 t
     ransition-all duration-300 shadow-[0_10px_20px_rgba(0,0,0,0.6)]"
     >
-      <div className="mb-3 text-lg">{title}</div>
+      <div className="mb-3 text-lg">
+        Vòng {round} {tournament}
+      </div>
       <div>
         <p className="text-lg font-bold flex justify-center drop-shadow-[0_0_10px_rgba(0,255,255,0.9)] ">
-          {location}
+          {stadium}
         </p>
       </div>
       <div className="flex h-[130px]">
         <div className="w-[44%] flex flex-col items-center">
           <img
-            src={homeImg}
+            src={homeLogo}
             className="h-[100px] drop-shadow-[0_10px_20px_rgba(255,255,255,0.5)]"
           />
           <p className="font-medium my-1">{homeName}</p>
@@ -75,7 +91,7 @@ const TicketOfMatch = ({ data }) => {
         </div>
         <div className="w-[44%] flex flex-col items-center">
           <img
-            src={awayImg}
+            src={awayLogo}
             className="h-[100px] drop-shadow-[0_10px_20px_rgba(255,255,255,0.5)]"
           />
           <p className="font-medium my-1">{awayName}</p>
@@ -85,7 +101,7 @@ const TicketOfMatch = ({ data }) => {
         <p className="text-lg font-bold flex justify-center">{time}</p>
         <p className="text-lg font-bold flex justify-center">{date}</p>
       </div>
-      <div className="w-full flex justify-center">{button}</div>
+      <div className="w-full mt-5 flex justify-center">{button}</div>
       <ChooseTicketPopup
         isModalOpen={isModalOpen}
         onOk={handleOk}
