@@ -6,7 +6,7 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 
-const ChooseTicketPopup = ({ isModalOpen, onOk, handleCancel }) => {
+const ChooseTicketPopup = ({ isModalOpen, onOk, handleCancel, matchId }) => {
   const handleOk = async () => {};
 
   return (
@@ -17,28 +17,38 @@ const ChooseTicketPopup = ({ isModalOpen, onOk, handleCancel }) => {
         onOk={handleOk}
         onCancel={handleCancel}
         width={1000}
-        height={"100%"}
         centered
         okText="Thanh Toán"
         cancelText="Hủy bỏ"
       >
-        <ScrollArea className="h-[600px] overflow-y-auto">
-          <div className="flex">
-            <img src="/sodosvd.png" className="mb-5 w-[65%]" />
+        <ScrollArea className="h-full overflow-y-auto">
+          <div className="flex h-[400px]">
+            <img src="/sodosvd.png" className="mb-5 h-full" />
             <div className="w-full h-[500px]">
-              <TicketType />
+              <TicketType matchId={matchId} />
             </div>
           </div>
           <div className="space-y-2 ml-10">
             <div className="text-lg">Thông tin thanh toán</div>
-            <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Label htmlFor="fullName">Họ và tên</Label>
-              <Input
-                type="text"
-                id="fullName"
-                placeholder="Họ và tên người mua vé"
-                className={"ml-6"}
-              />
+            <div className="flex">
+              <div className="grid w-[30%] items-center gap-1.5">
+                <Label htmlFor="fullName">Họ và tên</Label>
+                <Input
+                  type="text"
+                  id="fullName"
+                  placeholder="Họ và tên người mua vé"
+                  className={"w-[250px]"}
+                />
+              </div>
+              <div className="grid items-center gap-1.5">
+                <Label htmlFor="fullName">Số điện thoại</Label>
+                <Input
+                  type="number"
+                  id="phoneNumber"
+                  placeholder="Số điện thoại người mua vé"
+                  className={"w-[250px]"}
+                />
+              </div>
             </div>
             <div className="grid w-full max-w-sm items-center gap-1.5">
               <Label htmlFor="fullName">Địa chỉ email</Label>
@@ -46,16 +56,7 @@ const ChooseTicketPopup = ({ isModalOpen, onOk, handleCancel }) => {
                 type="email"
                 id="email"
                 placeholder="Địa chỉ email nhận thông tin vé"
-                className={"ml-6"}
-              />
-            </div>
-            <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Label htmlFor="fullName">Số điện thoại</Label>
-              <Input
-                type="number"
-                id="phoneNumber"
-                placeholder="Số điện thoại người mua vé"
-                className={"ml-6"}
+                className={"w-[350px]"}
               />
             </div>
           </div>

@@ -106,6 +106,7 @@ const TicketOfMatch = ({ data }) => {
         isModalOpen={isModalOpen}
         onOk={handleOk}
         handleCancel={handleCancel}
+        matchId={data.matchId}
       />
     </div>
   );
