@@ -3,11 +3,14 @@ import { Modal } from "antd";
 import React, { useEffect, useState } from "react";
 import ChooseTicketPopup from "./ChooseTicketPopup";
 import { formatDateTime } from "@/parts/FormatDateTime";
+import ModalNotification from "@/parts/ModalNotification";
 
 const TicketOfMatch = ({ data }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [date, setDate] = useState();
   const [time, setTime] = useState();
+  const [modalProps, setModalProps] = useState({});
+  const [isModalNotiOpen, setIsModalNotiOpen] = useState(false);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -17,6 +20,16 @@ const TicketOfMatch = ({ data }) => {
   };
   const handleCancel = () => {
     setIsModalOpen(false);
+  };
+  const openModalNoti = () => {
+    setModalProps({
+      modalTitle: "Bạn chưa đăng nhập",
+      modalMessage: "Vui lòng đăng nhập để được đặt vé",
+      type: "error",
+      buttonText: "Đăng nhập",
+      redirectPath: "/login",
+    });
+    setIsModalNotiOpen(true);
   };
 
   const {
@@ -53,7 +66,14 @@ const TicketOfMatch = ({ data }) => {
       <button
         className="px-6 my-3 h-10 w-[80%] bg-gradient-to-r from-cyan-500 to-cyan-300 text-white font-semibold 
   text-lg rounded-xl shadow-lg transition-all duration-300 hover:bg-right bg-[length:200%_auto] cursor-pointer"
-        onClick={showModal}
+        onClick={() => {
+          const accessToken = localStorage.getItem("accessToken");
+          if (accessToken) {
+            showModal();
+          } else {
+            openModalNoti();
+          }
+        }}
       >
         Đặt vé ngay
       </button>
@@ -107,6 +127,11 @@ const TicketOfMatch = ({ data }) => {
         onOk={handleOk}
         handleCancel={handleCancel}
         matchId={data.matchId}
+      />
+      <ModalNotification
+        isModalOpen={isModalNotiOpen}
+        setIsModalOpen={setIsModalNotiOpen}
+        {...modalProps}
       />
     </div>
   );

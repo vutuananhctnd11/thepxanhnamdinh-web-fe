@@ -3,7 +3,7 @@ import useNagivateLoading from "@/hooks/useNagivateLoading";
 import { Form } from "antd";
 import React, { useState } from "react";
 
-const LoginPage = () => {
+const ForgotPassword = () => {
   const navigate = useNagivateLoading();
   const [errorMessage, setErrorMessage] = useState("");
   const onFinish = async (values) => {
@@ -27,7 +27,6 @@ const LoginPage = () => {
       console.error("Có lỗi khi gọi API: " + error);
     }
   };
-
   return (
     <div className="w-full h-screen relative">
       <img
@@ -61,13 +60,15 @@ const LoginPage = () => {
         <div className="w-[60%] h-[70%]">
           <div className="w-full p-5 bg-black/50 rounded-2xl text-white">
             <div className="text-lg lg:text-2xl mb-8 font-bold flex justify-center">
-              ĐĂNG NHẬP
+              Quên mật khẩu
             </div>
             <Form name="login-form" onFinish={onFinish} layout="vertical">
               <Form.Item
                 style={{ marginBottom: "8px" }}
                 label={
-                  <span className="text-md text-white">Tên đăng nhập</span>
+                  <span className="text-md text-white">
+                    Tên đăng nhập/Email
+                  </span>
                 }
                 name="username"
                 rules={[
@@ -85,10 +86,7 @@ const LoginPage = () => {
                 <Input type="password" className="text-white" />
               </Form.Item>
 
-              <div
-                className="mt-2 mx-4 flex justify-end text-white hover:underline hover:cursor-pointer"
-                onClick={() => navigate("/forgot-password")}
-              >
+              <div className="mt-2 mx-4 flex justify-end text-white hover:underline hover:cursor-pointer">
                 Quên mật khẩu?
               </div>
 
@@ -124,4 +122,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default ForgotPassword;

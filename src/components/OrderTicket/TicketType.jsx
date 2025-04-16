@@ -8,10 +8,12 @@ const TicketType = ({ matchId }) => {
   useEffect(() => {
     const fetchTicketType = async () => {
       try {
+        const accessToken = localStorage.getItem("accessToken");
         const res = await fetch(
           "http://localhost:8080/tickets/ticket-of-match?matchId=" + matchId,
           {
             method: "GET",
+            headers: { Authorization: "Bearer " + accessToken },
           }
         );
         const response = await res.json();
