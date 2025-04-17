@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
-import Layout from "../components/Layout";
-import Coach from "../components/ClubInfo/coach";
 import { motion } from "framer-motion";
-import PlayerInfo from "../components/ClubInfo/PlayerInfo";
-import HeadCoachInfo from "../components/ClubInfo/HeadCoachInfo";
-import Squad from "../components/ClubInfo/Squad";
+import PlayerInfo from "@/components/ClubInfo/PlayerInfo";
+import HeadCoachInfo from "@/components/ClubInfo/HeadCoachInfo";
+import Squad from "@/components/ClubInfo/Squad";
+import Layout from "@/components/Layout";
+import Coach from "@/components/ClubInfo/Coach";
 
 const ClubInfo = () => {
   const [playerId, setPlayerId] = useState();

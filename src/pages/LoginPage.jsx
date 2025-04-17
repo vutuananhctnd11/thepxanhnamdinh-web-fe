@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui/input";
 import useNagivateLoading from "@/hooks/useNagivateLoading";
 import { Form } from "antd";
+import { jwtDecode } from "jwt-decode";
 import React, { useState } from "react";
 
 const LoginPage = () => {
@@ -18,8 +19,14 @@ const LoginPage = () => {
       const response = await res.json();
 
       if (response.status == "success") {
-        localStorage.setItem("accessToken", response.data.token);
-        navigate("/home");
+        const token = response.data.token;
+        localStorage.setItem("accessToken", token);
+        const role = jwtDecode(token).role;
+        if (role === "ROLE_USER") {
+          navigate("/home");
+        } else {
+          navigate("/admin/dashboard");
+        }
       } else {
         setErrorMessage(response.message);
       }

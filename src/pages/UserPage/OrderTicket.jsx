@@ -30,7 +30,7 @@ const OrderTicket = () => {
   }, []);
   return (
     <Layout>
-      <div className="w-screen h-[300px] relative overflow-hidden lg:h-[500px]">
+      <div className="w-full h-[300px] relative overflow-hidden lg:h-[500px]">
         <img
           src="/bgticket.png"
           className=" absolute scale-110 object-center"

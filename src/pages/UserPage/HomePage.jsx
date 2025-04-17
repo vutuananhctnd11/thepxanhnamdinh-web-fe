@@ -1,9 +1,9 @@
 import React from "react";
-import LayoutSocial from "../components/LayoutSocial";
-import NavBarLeft from "../components/HomePage/NavBarLeft";
+import LayoutSocial from "../../components/LayoutSocial";
+import NavBarLeft from "../../components/HomePage/NavBarLeft";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import NavBarRight from "@/components/HomePage/NavBarRight";
-import NewsFeed from "../components/HomePage/NewsFeed";
+import NewsFeed from "../../components/HomePage/NewsFeed";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Image, Smile, VideoIcon } from "lucide-react";
 

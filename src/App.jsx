@@ -6,15 +6,19 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import ClubInfo from "./pages/ClubInfo";
-import ClubHomePage from "./pages/ClubHomePage";
-import HomePage from "./pages/HomePage";
 import ScrollToTop from "./parts/ScrollToTop";
 import LoadingNavigate from "./pages/LoadingNavigate";
-import OrderTicket from "./pages/OrderTicket";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
 import ForgotPassword from "./pages/ForgotPassword";
+import LayoutAdmin from "./pages/AdminPage/LayoutAdmin";
+import OrderTicket from "./pages/UserPage/OrderTicket";
+import ClubInfo from "./pages/UserPage/ClubInfo";
+import HomePage from "./pages/UserPage/HomePage";
+import ClubHomePage from "./pages/UserPage/ClubHomePage";
+import Dashboard from "./pages/AdminPage/Dashboard";
+import ListPlayer from "./pages/AdminPage/ListPlayer";
+import AccessDeniedPage from "./pages/AccessDeniedPage";
 
 const AppContext = createContext();
 
@@ -38,6 +42,11 @@ function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/sign-up" element={<SignUpPage />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/admin" element={<LayoutAdmin />}>
+                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="list-player" element={<ListPlayer />} />
+              </Route>
+              <Route path="/access-denied" element={<AccessDeniedPage />} />
             </Routes>
           </Router>
         )}

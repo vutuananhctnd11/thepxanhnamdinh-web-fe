@@ -1,4 +1,5 @@
-import { Collapse, InputNumber } from "antd";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { Collapse, Form, InputNumber } from "antd";
 import React, { useEffect, useState } from "react";
 import { ScrollArea } from "../ui/scroll-area";
 
@@ -46,15 +47,17 @@ const TicketType = ({ matchId }) => {
               <div>Khán đài {itemC.position}</div>
               <div>Giá tiền: {itemC.price.toLocaleString()} VNĐ</div>
             </div>
-            <InputNumber
-              min={0}
-              max={10}
-              defaultValue={0}
-              size="large"
-              style={{ width: "70px" }}
-              parser={(value) => value.replace(/\D/g, "")}
-              formatter={(value) => `${value}`}
-            />
+            <Form.Item name={""}>
+              <InputNumber
+                min={0}
+                max={10}
+                defaultValue={0}
+                size="large"
+                style={{ width: "70px" }}
+                parser={(value) => value.replace(/\D/g, "")}
+                formatter={(value) => `${value}`}
+              />
+            </Form.Item>
           </div>
           {itemC.note && (
             <div className="text-red-600 italic px-3">{itemC.note}</div>
@@ -67,10 +70,12 @@ const TicketType = ({ matchId }) => {
   return (
     <div className="h-full w-full ">
       <ScrollArea className="ml-3 h-[480px]">
-        <Collapse
-          items={renderItemsStand}
-          style={{ backgroundColor: "#f0f2f5" }}
-        />
+        <Form>
+          <Collapse
+            items={renderItemsStand}
+            style={{ backgroundColor: "#f0f2f5" }}
+          />
+        </Form>
       </ScrollArea>
       <div className="mt-10 text-lg font-bold flex justify-center">
         Tổng số tiền: 1.000.000 VNĐ
