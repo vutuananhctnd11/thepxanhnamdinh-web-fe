@@ -20,6 +20,8 @@ const ModalNotification = ({
   type = "info",
   buttonText,
   redirectPath = null,
+  cancelButtonText,
+  onConfirm,
 }) => {
   const navigate = useNagivateLoading();
 
@@ -28,7 +30,12 @@ const ModalNotification = ({
       navigate(redirectPath);
     } else {
       setIsModalOpen(false);
+      if (onConfirm) onConfirm();
     }
+  };
+
+  const handleCancelClick = () => {
+    setIsModalOpen(false);
   };
 
   return (
@@ -49,9 +56,35 @@ const ModalNotification = ({
         <p className="text-base text-gray-600 mb-6 text-center">
           {modalMessage}
         </p>
-        <button
-          onClick={handleButtonClick}
-          className={`px-6 py-2 rounded-xl text-white shadow-lg transition-all
+        {cancelButtonText ? (
+          <div className="space-x-6">
+            <button
+              onClick={handleCancelClick}
+              className="px-6 py-2 rounded-xl text-gray-700 bg-gray-200 hover:bg-gray-300"
+            >
+              {cancelButtonText}
+            </button>
+            <button
+              onClick={handleButtonClick}
+              className={`px-6 py-2 rounded-xl text-white shadow-lg transition-all
+                ${
+                  type === "success"
+                    ? "bg-green-500 hover:bg-green-600"
+                    : type === "error"
+                    ? "bg-red-500 hover:bg-red-600"
+                    : type === "warning"
+                    ? "bg-yellow-500 hover:bg-yellow-600 text-black"
+                    : "bg-blue-500 hover:bg-blue-600"
+                }
+              `}
+            >
+              {buttonText}
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={handleButtonClick}
+            className={`px-6 py-2 rounded-xl text-white shadow-lg transition-all
               ${
                 type === "success"
                   ? "bg-green-500 hover:bg-green-600"
@@ -62,9 +95,10 @@ const ModalNotification = ({
                   : "bg-blue-500 hover:bg-blue-600"
               }
             `}
-        >
-          {buttonText}
-        </button>
+          >
+            {buttonText}
+          </button>
+        )}
       </motion.div>
     </Modal>
   );

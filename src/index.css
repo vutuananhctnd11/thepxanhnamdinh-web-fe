@@ -27,3 +27,39 @@
     .ant-image-mask {
       display: none !important;
     }
+  /* dropdown antd */
+.custom-dropdown-menu {
+  background-color: #202020 !important;
+  color: white !important;
+}
+
+.custom-dropdown-menu .ant-dropdown-menu-item {
+  color: white !important;
+}
+
+.custom-dropdown-menu .ant-dropdown-menu-item:hover {
+  background-color: #333 !important;
+  color: white !important;
+}
+
+.custom-dark-modal .ant-modal-content,.custom-dark-modal .ant-modal-header, .ant-input, .ant-select-selector {
+  background-color: #333 !important;
+  color: white !important;
+}
+
+/* Select status */
+
+.custom-select-dark .ant-select-selector {
+  background-color: #202020 !important;
+  color: white !important;
+  border: none !important;
+}
+
+.custom-select-dark .ant-select-selection-item {
+  color: white !important;
+}
+
+.custom-select-dark .ant-select-arrow {
+  color: white !important;
+}
+

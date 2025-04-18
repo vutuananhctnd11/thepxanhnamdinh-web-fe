@@ -19,6 +19,7 @@ import ClubHomePage from "./pages/UserPage/ClubHomePage";
 import Dashboard from "./pages/AdminPage/Dashboard";
 import ListPlayer from "./pages/AdminPage/ListPlayer";
 import AccessDeniedPage from "./pages/AccessDeniedPage";
+import PaymentStatus from "./pages/UserPage/PaymentStatus";
 
 const AppContext = createContext();
 
@@ -47,6 +48,7 @@ function App() {
                 <Route path="list-player" element={<ListPlayer />} />
               </Route>
               <Route path="/access-denied" element={<AccessDeniedPage />} />
+              <Route path="/payment-status" element={<PaymentStatus />} />
             </Routes>
           </Router>
         )}

@@ -42,7 +42,7 @@ const OrderTicket = () => {
         />
       </div>
       <div className="w-full flex flex-wrap gap-8 justify-around my-5 px-15">
-        {listMatches?.map((item, index) => (
+        {listMatches?.map((item) => (
           <div key={item.matchId} className="">
             <TicketOfMatch data={item} />
           </div>

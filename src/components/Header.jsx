@@ -5,6 +5,7 @@ import useNagivateLoading from "@/hooks/useNagivateLoading";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { refreshAccessToken } from "@/parts/ApiRefreshToken";
 import ModalNotification from "@/parts/ModalNotification";
+import { Dropdown, Menu } from "antd";
 
 const Header = ({ isFixed }) => {
   const navigate = useNagivateLoading();
@@ -13,16 +14,37 @@ const Header = ({ isFixed }) => {
   const [modalProps, setModalProps] = useState({});
   const [isLogin, setIsLogin] = useState(false);
 
-  const openModal = ({ title, message, type, buttonText, redirectPath }) => {
+  const openModal = ({
+    title,
+    message,
+    type,
+    buttonText,
+    redirectPath,
+    cancelButtonText,
+    onConfirm,
+  }) => {
     setModalProps({
       modalTitle: title,
       modalMessage: message,
       type: type,
       buttonText: buttonText,
-      redirectPath,
+      redirectPath: redirectPath,
+      cancelButtonText: cancelButtonText,
+      onConfirm: onConfirm,
     });
     setIsModalOpen(true);
   };
+
+  const items = [
+    {
+      key: "1",
+      label: <span>Thông tin cá nhân</span>,
+    },
+    {
+      key: "2",
+      label: <span>Đăng xuất</span>,
+    },
+  ];
 
   useEffect(() => {
     const fetchUserLogin = async () => {
@@ -63,6 +85,7 @@ const Header = ({ isFixed }) => {
         const response = await res.json();
 
         if (response.status == "success") {
+          localStorage.setItem("userLogin", JSON.stringify(response.data));
           setUserLogin(response.data);
           setIsLogin(true);
         } else alert("có lỗi");
@@ -72,6 +95,31 @@ const Header = ({ isFixed }) => {
     };
     fetchUserLogin();
   }, []);
+
+  const deleteCookie = (name) => {
+    document.cookie = `${name}=; Max-Age=-99999999; path=/;`;
+  };
+
+  const handleMenuClick = async ({ key }) => {
+    if (key === "1") {
+      console.log("Thông tin cá nhân");
+    }
+
+    if (key === "2") {
+      openModal({
+        title: "Đăng xuất?",
+        message: "Bạn có chắc chắn muốn đăng xuất không?",
+        type: "warning",
+        buttonText: "Đăng xuất",
+        cancelButtonText: "Hủy",
+        onConfirm: () => {
+          localStorage.removeItem("accessToken");
+          deleteCookie("refreshToken");
+          location.reload();
+        },
+      });
+    }
+  };
 
   return (
     <div
@@ -121,12 +169,24 @@ const Header = ({ isFixed }) => {
         <div className="flex items-center justify-end gap-4 p-5 w-[20%]">
           {isLogin ? (
             <div>
-              <Avatar className="scale-105">
-                <AvatarImage
-                  src={userLogin.avatar ? userLogin.avatar : "/hlv.png"}
-                  className={"object-cover"}
-                />
-              </Avatar>
+              <Dropdown
+                menu={{
+                  items,
+                  onClick: handleMenuClick,
+                  className: "custom-dropdown-menu",
+                }}
+                trigger={["click"]}
+                placement="bottomRight"
+              >
+                <div className="cursor-pointer">
+                  <Avatar className="scale-105">
+                    <AvatarImage
+                      src={userLogin.avatar ? userLogin.avatar : "/hlv.png"}
+                      className="object-cover"
+                    />
+                  </Avatar>
+                </div>
+              </Dropdown>
             </div>
           ) : (
             <div className="flex gap-3">

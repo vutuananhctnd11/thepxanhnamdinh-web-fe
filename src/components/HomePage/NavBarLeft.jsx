@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React from "react";
+import React, { useState } from "react";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import ItemNav from "../ItemNav/ItemNav";
 import { AvatarFallback } from "@radix-ui/react-avatar";
@@ -8,6 +8,7 @@ import useNagivateLoading from "@/hooks/useNagivateLoading";
 
 const NewsFeed = () => {
   const navigateLoading = useNagivateLoading();
+  const userLogin = JSON.parse(localStorage.getItem("userLogin"));
 
   return (
     <div className="w-full h-full text-white p-3">
@@ -15,10 +16,10 @@ const NewsFeed = () => {
         <ItemNav
           icon={
             <Avatar>
-              <AvatarImage src="/hlv.png" className={"object-cover"} />
+              <AvatarImage src={userLogin.avatar} className={"object-cover"} />
             </Avatar>
           }
-          name={"Vũ Tuấn Anh"}
+          name={userLogin.firstName + " " + userLogin.lastName}
         />
         <ItemNav
           icon={<i class="fa-solid fa-user-plus text-[#00C4B4] scale-120" />}

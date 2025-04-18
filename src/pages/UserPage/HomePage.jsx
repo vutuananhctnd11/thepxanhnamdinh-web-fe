@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import LayoutSocial from "../../components/LayoutSocial";
 import NavBarLeft from "../../components/HomePage/NavBarLeft";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -6,25 +6,40 @@ import NavBarRight from "@/components/HomePage/NavBarRight";
 import NewsFeed from "../../components/HomePage/NewsFeed";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Image, Smile, VideoIcon } from "lucide-react";
+import CreateNewsFeed from "@/components/HomePage/CreateNewsFeed";
 
 const HomePage = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const userLogin = JSON.parse(localStorage.getItem("userLogin"));
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
   return (
     <LayoutSocial>
       <div className="w-full h-screen flex text-white bg-black/90 relative">
+        {/* left nav bar */}
         <ScrollArea className="w-[25%] h-[calc(100vh-52px)] left-0 top-13">
           <NavBarLeft />
         </ScrollArea>
+
         <ScrollArea className={"w-[50%] h-[calc(100vh-52px)] top-13"}>
           <div className="flex flex-col items-center">
             {/* tạo bài viết mới */}
             <div className="h-[110px] w-[80%] bg-white/10 mt-5 mb-2 rounded-lg">
               <div className="space-x-3 flex h-[40%] px-4 my-2 justify-center items-center">
                 <Avatar className={"scale-120"}>
-                  <AvatarImage src="hlv.png" className={"object-cover"} />
+                  <AvatarImage
+                    src={userLogin.avatar}
+                    className={"object-cover"}
+                  />
                 </Avatar>
                 <div className="h-10 w-full relative">
                   <input
                     type="text"
+                    onClick={showModal}
                     placeholder="Bạn đang nghĩ gì?"
                     className="w-full h-full bg-white/10 rounded-2xl pl-4 pr-4 outline-none placeholder-white/30"
                   />
@@ -45,12 +60,19 @@ const HomePage = () => {
                   <div>Cảm xúc/hoạt động</div>
                 </div>
               </div>
+              {/* Modal điền thông tin bài viết */}
+              <CreateNewsFeed
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+              />
             </div>
 
             {/* Bài viết */}
             <NewsFeed />
             <NewsFeed />
           </div>
+
+          {/* right nav bar */}
         </ScrollArea>
         <ScrollArea className="w-[25%] h-[calc(100vh-52px)] fixed right-0 top-13 ">
           <NavBarRight />
