@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { Avatar } from "../ui/avatar";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import { Textarea } from "../ui/textarea";
-import { Plus } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -47,11 +46,11 @@ const CreateNewsFeed = ({ isModalOpen, setIsModalOpen }) => {
           </div>
           <div className="flex mb-2 h-10 items-center">
             <Avatar className={"scale-120 mx-2"}>
-              <AvatarImage src={userLogin.avatar} className={"object-cover"} />
+              <AvatarImage src={userLogin?.avatar} className={"object-cover"} />
             </Avatar>
             <div className="ml-2 w-full flex space-x-5">
               <div className="flex items-center">
-                {userLogin.firstName + " " + userLogin.lastName}
+                {userLogin?.firstName + " " + userLogin?.lastName}
               </div>
               <div className="text-[12px] text-white/80 flex items-center">
                 <Select value={status} onValueChange={setStatus}>

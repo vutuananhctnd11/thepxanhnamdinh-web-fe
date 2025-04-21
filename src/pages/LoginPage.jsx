@@ -23,7 +23,7 @@ const LoginPage = () => {
         localStorage.setItem("accessToken", token);
         const role = jwtDecode(token).role;
         if (role === "ROLE_USER") {
-          navigate("/home");
+          navigate("/social/home");
         } else {
           navigate("/admin/dashboard");
         }

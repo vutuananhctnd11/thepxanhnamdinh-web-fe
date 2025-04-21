@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+/* eslint-disable no-unused-vars */
+import React, { useEffect, useState } from "react";
 import LayoutSocial from "../../components/LayoutSocial";
 import NavBarLeft from "../../components/HomePage/NavBarLeft";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -7,9 +8,14 @@ import NewsFeed from "../../components/HomePage/NewsFeed";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Image, Smile, VideoIcon } from "lucide-react";
 import CreateNewsFeed from "@/components/HomePage/CreateNewsFeed";
+import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
+import ModalNotification from "@/parts/ModalNotification";
+import { redirect } from "react-router-dom";
 
 const HomePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalNotiProps, setModalNotiProps] = useState({});
+  const [isModalNotiOpen, setIsModalNotiOpen] = useState(false);
 
   const userLogin = JSON.parse(localStorage.getItem("userLogin"));
 
@@ -32,7 +38,7 @@ const HomePage = () => {
               <div className="space-x-3 flex h-[40%] px-4 my-2 justify-center items-center">
                 <Avatar className={"scale-120"}>
                   <AvatarImage
-                    src={userLogin.avatar}
+                    src={userLogin?.avatar}
                     className={"object-cover"}
                   />
                 </Avatar>
@@ -78,6 +84,11 @@ const HomePage = () => {
           <NavBarRight />
         </ScrollArea>
       </div>
+      <ModalNotification
+        isModalOpen={isModalNotiOpen}
+        setIsModalOpen={setIsModalNotiOpen}
+        {...modalNotiProps}
+      />
     </LayoutSocial>
   );
 };

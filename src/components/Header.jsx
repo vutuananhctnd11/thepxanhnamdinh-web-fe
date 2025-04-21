@@ -6,12 +6,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { refreshAccessToken } from "@/parts/ApiRefreshToken";
 import ModalNotification from "@/parts/ModalNotification";
 import { Dropdown, Menu } from "antd";
+import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
 
 const Header = ({ isFixed }) => {
   const navigate = useNagivateLoading();
   const [userLogin, setUserLogin] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalProps, setModalProps] = useState({});
+  const [isModalNotiOpen, setIsModalNotiOpen] = useState(false);
+  const [modalNotiProps, setModalNotiProps] = useState({});
   const [isLogin, setIsLogin] = useState(false);
 
   const openModal = ({
@@ -23,7 +24,7 @@ const Header = ({ isFixed }) => {
     cancelButtonText,
     onConfirm,
   }) => {
-    setModalProps({
+    setModalNotiProps({
       modalTitle: title,
       modalMessage: message,
       type: type,
@@ -32,7 +33,7 @@ const Header = ({ isFixed }) => {
       cancelButtonText: cancelButtonText,
       onConfirm: onConfirm,
     });
-    setIsModalOpen(true);
+    setIsModalNotiOpen(true);
   };
 
   const items = [
@@ -49,38 +50,9 @@ const Header = ({ isFixed }) => {
   useEffect(() => {
     const fetchUserLogin = async () => {
       try {
-        const accessToken = localStorage.getItem("accessToken");
-        if (!accessToken) return;
-        let res = await fetch("http://localhost:8080/users/me", {
+        const res = await fetchWithAuth("http://localhost:8080/users/me", {
           method: "GET",
-          headers: { Authorization: "Bearer " + accessToken },
         });
-
-        if (res.status === 403) {
-          console.log("Token hết hạn, đang gọi refresh...");
-          const newToken = await refreshAccessToken();
-          console.log("New access token: " + newToken);
-
-          if (!newToken) {
-            if (localStorage.getItem("accessToken")) {
-              openModal({
-                title: "Phiên đăng nhập đã hết hạn",
-                message: "Vui lòng đăng nhập lại!",
-                type: "error",
-                buttonText: "Đăng nhập",
-                redirectPath: "/login",
-              });
-              localStorage.clear();
-              return;
-            }
-            return;
-          }
-
-          res = await fetch("http://localhost:8080/users/me", {
-            method: "GET",
-            headers: { Authorization: "Bearer " + newToken },
-          });
-        }
 
         const response = await res.json();
 
@@ -88,9 +60,34 @@ const Header = ({ isFixed }) => {
           localStorage.setItem("userLogin", JSON.stringify(response.data));
           setUserLogin(response.data);
           setIsLogin(true);
-        } else alert("có lỗi");
+        } else {
+          console.log("Thất bại: ", response.message);
+        }
       } catch (error) {
-        console.log("có lỗi" + error);
+        console.log("có lỗi khi gọi api: " + error);
+        const accessToken = localStorage.getItem("accessToken");
+        const currentPath = window.location.pathname;
+        const isSocialPath = currentPath.startsWith("/social");
+
+        if (accessToken && isSocialPath) {
+          setModalNotiProps({
+            modalTitle: "Phiên đăng nhập đã hết hạn",
+            modalMessage: "Vui lòng đăng nhập lại!",
+            type: "error",
+            buttonText: "Đăng nhập",
+            redirectPath: "/login",
+          });
+          setIsModalNotiOpen(true);
+          localStorage.clear();
+        } else if (isSocialPath) {
+          setModalNotiProps({
+            modalTitle: "Bạn chưa đăng nhập",
+            modalMessage: "Vui lòng đăng nhập để sử dụng TXND FanZone!",
+            buttonText: "Đăng nhập",
+            redirectPath: "/login",
+          });
+          setIsModalNotiOpen(true);
+        }
       }
     };
     fetchUserLogin();
@@ -135,7 +132,7 @@ const Header = ({ isFixed }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
             className=" h-[10px] text-[24px] font-bold pl-3 flex items-center cursor-pointer"
-            onClick={() => navigate("/home")}
+            onClick={() => navigate("/social/home")}
           >
             TXND FanZone
           </motion.p>
@@ -143,7 +140,7 @@ const Header = ({ isFixed }) => {
         <div className="flex text-lg m-auto items-center justify-center">
           <div
             className="px-12 py-2 rounded-t-md hover:bg-white/20 hover:border-b-5 transition-all cursor-pointer"
-            onClick={() => navigate("/home")}
+            onClick={() => navigate("/social/home")}
           >
             <i class="fa-solid fa-house scale-120" />
           </div>
@@ -209,9 +206,9 @@ const Header = ({ isFixed }) => {
       </div>
 
       <ModalNotification
-        isModalOpen={isModalOpen}
-        setIsModalOpen={setIsModalOpen}
-        {...modalProps}
+        isModalOpen={isModalNotiOpen}
+        setIsModalOpen={setIsModalNotiOpen}
+        {...modalNotiProps}
       />
     </div>
   );
