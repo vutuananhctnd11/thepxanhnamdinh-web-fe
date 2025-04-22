@@ -63,3 +63,36 @@
   color: white !important;
 }
 
+/* Status dropdown */
+.ant-select-selector {
+  background-color: #333 !important;
+  color: #fff !important;
+  border-color: #555 !important;
+}
+
+.ant-select-dropdown {
+  background-color: #333 !important;
+  color: #fff !important;
+}
+
+.ant-select-item-option-content {
+  color: #fff !important;
+}
+.ant-select-item-option:hover {
+  background-color: #444 !important;
+  color: #fff !important;
+}
+
+/* Các item không hover vẫn giữ màu tối */
+.ant-select-item-option {
+  background-color: #333 !important;
+  color: #fff !important;
+}
+
+.ant-image-img, .ant-image{
+  width: 100% !important;
+}
+
+.infinite-scroll-component__outerdiv {
+  width: 100% !important;
+}

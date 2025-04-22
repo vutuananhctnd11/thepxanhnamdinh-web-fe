@@ -7,15 +7,15 @@ import NavBarRight from "@/components/HomePage/NavBarRight";
 import NewsFeed from "../../components/HomePage/NewsFeed";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Image, Smile, VideoIcon } from "lucide-react";
-import CreateNewsFeed from "@/components/HomePage/CreateNewsFeed";
-import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
+import CreatePost from "@/components/HomePage/CreatePost";
 import ModalNotification from "@/parts/ModalNotification";
-import { redirect } from "react-router-dom";
+import { Spin } from "antd";
 
 const HomePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalNotiProps, setModalNotiProps] = useState({});
   const [isModalNotiOpen, setIsModalNotiOpen] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const userLogin = JSON.parse(localStorage.getItem("userLogin"));
 
@@ -32,7 +32,7 @@ const HomePage = () => {
         </ScrollArea>
 
         <ScrollArea className={"w-[50%] h-[calc(100vh-52px)] top-13"}>
-          <div className="flex flex-col items-center">
+          <div className="h-full flex flex-col items-center">
             {/* tạo bài viết mới */}
             <div className="h-[110px] w-[80%] bg-white/10 mt-5 mb-2 rounded-lg">
               <div className="space-x-3 flex h-[40%] px-4 my-2 justify-center items-center">
@@ -67,14 +67,25 @@ const HomePage = () => {
                 </div>
               </div>
               {/* Modal điền thông tin bài viết */}
-              <CreateNewsFeed
+              <CreatePost
                 isModalOpen={isModalOpen}
                 setIsModalOpen={setIsModalOpen}
+                setIsUploading={setIsUploading}
+                setModalNotiProps={setModalNotiProps}
+                setIsModalNotiOpen={setIsModalNotiOpen}
               />
             </div>
+            {/* loading create post */}
+            {isUploading ? (
+              <div className="w-[80%] h-10 py-10 my-3 text-md flex flex-col items-center justify-center bg-white/10 rounded-lg">
+                <div className="my-3">
+                  <Spin style={{ marginBottom: 0 }}></Spin>
+                </div>
+                <div>Đang tải lên bài viết của bạn...</div>
+              </div>
+            ) : null}
 
             {/* Bài viết */}
-            <NewsFeed />
             <NewsFeed />
           </div>
 

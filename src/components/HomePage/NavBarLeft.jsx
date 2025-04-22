@@ -62,7 +62,7 @@ const NewsFeed = () => {
             key={index}
             icon={
               <img
-                src="aboutus.png"
+                src="/aboutus.png"
                 className="h-full object-cover rounded-sm"
               />
             }

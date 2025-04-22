@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import useNagivateLoading from "@/hooks/useNagivateLoading";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { refreshAccessToken } from "@/parts/ApiRefreshToken";
 import ModalNotification from "@/parts/ModalNotification";
 import { Dropdown, Menu } from "antd";
 import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
@@ -90,6 +89,7 @@ const Header = ({ isFixed }) => {
         }
       }
     };
+
     fetchUserLogin();
   }, []);
 
