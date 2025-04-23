@@ -144,7 +144,10 @@ const Header = ({ isFixed }) => {
           >
             <i class="fa-solid fa-house scale-120" />
           </div>
-          <div className="px-12 py-2 rounded-t-md hover:bg-white/20 hover:border-b-5 transition-all cursor-pointer">
+          <div
+            className="px-12 py-2 rounded-t-md hover:bg-white/20 hover:border-b-5 transition-all cursor-pointer"
+            onClick={() => navigate("/social/friends")}
+          >
             <i class="fa-solid fa-user-plus scale-120" />
           </div>
           <div
@@ -178,7 +181,7 @@ const Header = ({ isFixed }) => {
                 <div className="cursor-pointer">
                   <Avatar className="scale-105">
                     <AvatarImage
-                      src={userLogin.avatar ? userLogin.avatar : "/hlv.png"}
+                      src={userLogin?.avatar || "/defaultavt.png"}
                       className="object-cover"
                     />
                   </Avatar>

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import LayoutSocial from "../../components/LayoutSocial";
@@ -10,6 +11,9 @@ import { Image, Smile, VideoIcon } from "lucide-react";
 import CreatePost from "@/components/HomePage/CreatePost";
 import ModalNotification from "@/parts/ModalNotification";
 import { Spin } from "antd";
+import "./custom-scroll-bar.css";
+import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const HomePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,22 +27,71 @@ const HomePage = () => {
     setIsModalOpen(true);
   };
 
+  const [listPost, setListPost] = useState([]);
+  const [page, setPage] = useState(1);
+  const limit = 1;
+  const [hasMore, setHasMore] = useState(true);
+
+  const fetchNewsFeed = async () => {
+    try {
+      const res = await fetchWithAuth(
+        `http://localhost:8080/posts/news-feed?page=${page}&limit=${limit}`,
+        {
+          method: "GET",
+        }
+      );
+      const response = await res.json();
+
+      if (response.status === "success") {
+        const newPosts = response.data;
+
+        setListPost((prev) => [...prev, ...newPosts]);
+
+        if (newPosts.length < limit) {
+          setHasMore(false);
+        } else {
+          setPage((prev) => prev + 1);
+        }
+      }
+    } catch (error) {
+      console.log("Có lỗi khi gọi api: ", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchNewsFeed();
+  }, []);
+
   return (
     <LayoutSocial>
-      <div className="w-full h-screen flex text-white bg-black/90 relative">
+      <div className="w-full pt-13 h-screen flex text-white bg-black/90 relative">
         {/* left nav bar */}
-        <ScrollArea className="w-[25%] h-[calc(100vh-52px)] left-0 top-13">
+        <ScrollArea className="w-[25%] h-[calc(100vh-52px)] left-0 fixed">
           <NavBarLeft />
         </ScrollArea>
 
-        <ScrollArea className={"w-[50%] h-[calc(100vh-52px)] top-13"}>
-          <div className="h-full flex flex-col items-center">
+        {/* home page */}
+        <div
+          className="w-[50%] h-[calc(100vh-52px)] overflow-y-auto flex flex-col items-center custom-scroll-bar"
+          id="scrollableDiv"
+        >
+          {/* Bài viết */}
+          <InfiniteScroll
+            dataLength={listPost.length}
+            next={fetchNewsFeed}
+            hasMore={hasMore}
+            scrollThreshold={0.9}
+            scrollableTarget="scrollableDiv"
+            loader={<h4>Đang tải thêm...</h4>}
+            endMessage={<p>Không còn bài viết nào.</p>}
+            className="w-full flex flex-col items-center"
+          >
             {/* tạo bài viết mới */}
             <div className="h-[110px] w-[80%] bg-white/10 mt-5 mb-2 rounded-lg">
               <div className="space-x-3 flex h-[40%] px-4 my-2 justify-center items-center">
                 <Avatar className={"scale-120"}>
                   <AvatarImage
-                    src={userLogin?.avatar}
+                    src={userLogin?.avatar || "/defaultavt.png"}
                     className={"object-cover"}
                   />
                 </Avatar>
@@ -84,14 +137,12 @@ const HomePage = () => {
                 <div>Đang tải lên bài viết của bạn...</div>
               </div>
             ) : null}
+            <NewsFeed listPost={listPost} />
+          </InfiniteScroll>
+        </div>
 
-            {/* Bài viết */}
-            <NewsFeed />
-          </div>
-
-          {/* right nav bar */}
-        </ScrollArea>
-        <ScrollArea className="w-[25%] h-[calc(100vh-52px)] fixed right-0 top-13 ">
+        {/* right nav bar */}
+        <ScrollArea className="w-[25%] h-[calc(100vh-52px)] fixed right-0">
           <NavBarRight />
         </ScrollArea>
       </div>

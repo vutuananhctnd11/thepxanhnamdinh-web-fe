@@ -16,7 +16,10 @@ const NewsFeed = () => {
         <ItemNav
           icon={
             <Avatar>
-              <AvatarImage src={userLogin?.avatar} className={"object-cover"} />
+              <AvatarImage
+                src={userLogin?.avatar || "/defaultavt.png"}
+                className={"object-cover"}
+              />
             </Avatar>
           }
           name={userLogin?.firstName + " " + userLogin?.lastName}

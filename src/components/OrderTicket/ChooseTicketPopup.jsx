@@ -6,6 +6,7 @@ import { Collapse, InputNumber } from "antd";
 import { useEffect, useState } from "react";
 import { ScrollArea } from "../ui/scroll-area";
 import ModalNotification from "@/parts/ModalNotification";
+import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
 
 const ChooseTicketPopup = ({ isModalOpen, onOk, handleCancel, matchId }) => {
   const [listStands, setListStands] = useState([]);
@@ -16,11 +17,10 @@ const ChooseTicketPopup = ({ isModalOpen, onOk, handleCancel, matchId }) => {
     const fetchTicketType = async () => {
       try {
         const accessToken = localStorage.getItem("accessToken");
-        const res = await fetch(
+        const res = await fetchWithAuth(
           "http://localhost:8080/tickets/ticket-of-match?matchId=" + matchId,
           {
             method: "GET",
-            headers: { Authorization: "Bearer " + accessToken },
           }
         );
         const response = await res.json();

@@ -110,7 +110,7 @@ const CreateNewsFeed = ({
             <div className="flex mb-2 h-10 items-center">
               <Avatar className={"scale-120 mx-2"}>
                 <AvatarImage
-                  src={userLogin?.avatar}
+                  src={userLogin?.avatar || "/defaultavt.png"}
                   className={"object-cover"}
                 />
               </Avatar>
@@ -146,7 +146,7 @@ const CreateNewsFeed = ({
               <Form.Item name="content">
                 <Textarea
                   placeholder="Bạn đang nghĩ gì."
-                  className="border-none outline-none ring-0 focus:outline-none focus:ring-0 focus:border-none"
+                  className="text-white border-none outline-none ring-0 focus:outline-none focus:ring-0 focus:border-none"
                 />
               </Form.Item>
             </div>

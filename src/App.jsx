@@ -20,6 +20,7 @@ import Dashboard from "./pages/AdminPage/Dashboard";
 import ListPlayer from "./pages/AdminPage/ListPlayer";
 import AccessDeniedPage from "./pages/AccessDeniedPage";
 import PaymentStatus from "./pages/UserPage/PaymentStatus";
+import FriendPage from "./pages/UserPage/FriendPage";
 
 const AppContext = createContext();
 
@@ -49,6 +50,7 @@ function App() {
               </Route>
               <Route path="/access-denied" element={<AccessDeniedPage />} />
               <Route path="/payment-status" element={<PaymentStatus />} />
+              <Route path="/social/friends" element={<FriendPage />} />
             </Routes>
           </Router>
         )}

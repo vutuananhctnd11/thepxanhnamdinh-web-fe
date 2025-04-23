@@ -1,61 +1,11 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Avatar, AvatarImage } from "../ui/avatar";
-import { Image } from "antd";
+import { Carousel, Image } from "antd";
 import { ExternalLink, MessageCircleIcon, ThumbsUp } from "lucide-react";
-import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
-import InfiniteScroll from "react-infinite-scroll-component";
 
-const NewsFeed = () => {
-  const [listPost, setListPost] = useState([]);
-  const [page, setPage] = useState(1);
-  const limit = 1;
-  const [hasMore, setHasMore] = useState(true);
-
-  console.log(listPost);
-  console.log(page);
-  console.log(hasMore);
-
-  const fetchNewsFeed = async () => {
-    try {
-      const res = await fetchWithAuth(
-        `http://localhost:8080/posts/news-feed?page=${page}&limit=${limit}`,
-        {
-          method: "GET",
-        }
-      );
-      const response = await res.json();
-
-      if (response.status === "success") {
-        const newPosts = response.data;
-
-        setListPost((prev) => [...prev, ...newPosts]);
-
-        if (newPosts.length < limit) {
-          setHasMore(false);
-        } else {
-          setPage((prev) => prev + 1);
-        }
-      }
-    } catch (error) {
-      console.log("Có lỗi khi gọi api: ", error);
-    }
-  };
-  console.log(hasMore);
-  useEffect(() => {
-    fetchNewsFeed();
-  }, []);
-
+const NewsFeed = ({ listPost }) => {
   return (
-    <InfiniteScroll
-      dataLength={listPost.length}
-      next={fetchNewsFeed}
-      hasMore={true}
-      scrollThreshold={0.9}
-      loader={<h4>Đang tải thêm...</h4>}
-      endMessage={<p>Không còn bài viết nào.</p>}
-      className="w-[100%] flex flex-col items-center"
-    >
+    <>
       {/* Thông tin bài viết */}
       {listPost.map((post) => (
         <div
@@ -76,17 +26,36 @@ const NewsFeed = () => {
               </div>
             </div>
             <div className="px-4 pb-3">{post.content}</div>
-            {post.medias.map((media) => (
-              <Image
-                src={media.linkCloud}
-                className="w-full object-cover"
-                style={{ height: "400px" }}
-              />
-            ))}
+
+            <Carousel
+              arrows={true}
+              arrowOffset={20}
+              style={{ display: "block" }}
+            >
+              {post.medias.map((media) => (
+                <div
+                  key={media.mediaId}
+                  style={{ display: "flex" }}
+                  className="h-[400px] items-center justify-center bg-black/50 !flex"
+                >
+                  <Image
+                    src={media.linkCloud}
+                    preview={true}
+                    style={{
+                      maxHeight: "100%",
+                      maxWidth: "100%",
+                      objectFit: "contain",
+                      display: "block",
+                    }}
+                  />
+                </div>
+              ))}
+            </Carousel>
+
             {/* Lượt tương tác */}
-            <div className="flex items-center">
+            <div className="flex items-center mt-2">
               <div className="h-5 w-5 mx-3 rounded-2xl bg-blue-500 flex justify-center items-center hover:scale-105 transition">
-                <i class="fa-solid fa-thumbs-up scale-85" />
+                <i className="fa-solid fa-thumbs-up scale-85" />
               </div>
               <div className="text-[13px] hover:underline">
                 {post.reactCount}
@@ -111,7 +80,7 @@ const NewsFeed = () => {
           </div>
         </div>
       ))}
-    </InfiniteScroll>
+    </>
   );
 };
 
