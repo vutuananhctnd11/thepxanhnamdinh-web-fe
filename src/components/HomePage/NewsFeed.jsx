@@ -1,9 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { Carousel, Image } from "antd";
 import { ExternalLink, MessageCircleIcon, ThumbsUp } from "lucide-react";
+import CommentModal from "./CommentModal";
 
 const NewsFeed = ({ listPost }) => {
+  const userLogin = JSON.parse(localStorage.getItem("userLogin"));
+  const [isCmtModalOpen, setIsCmtModalOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+
+  const handleCmt = (id) => {
+    setSelectedId(id);
+    setIsCmtModalOpen(true);
+  };
+
   return (
     <>
       {/* Thông tin bài viết */}
@@ -68,7 +78,10 @@ const NewsFeed = ({ listPost }) => {
                 <ThumbsUp className="scale-90 mr-2" />
                 <div>Thích</div>
               </div>
-              <div className="w-[30%] py-1 flex justify-center items-center hover:bg-white/10 rounded-lg">
+              <div
+                className="w-[30%] py-1 flex justify-center items-center hover:bg-white/10 rounded-lg"
+                onClick={() => handleCmt(post.postId)}
+              >
                 <MessageCircleIcon className="scale-90 mr-2" />
                 <div>Bình luận</div>
               </div>
@@ -77,9 +90,18 @@ const NewsFeed = ({ listPost }) => {
                 <div>Chia sẻ</div>
               </div>
             </div>
+
+            <hr className="border-white/30 my-1 mx-2" />
+            {/* Comment */}
           </div>
         </div>
       ))}
+      <CommentModal
+        postId={selectedId}
+        userLogin={userLogin}
+        isCmtModalOpen={isCmtModalOpen}
+        setIsCmtModalOpen={setIsCmtModalOpen}
+      />
     </>
   );
 };
