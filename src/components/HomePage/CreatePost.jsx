@@ -20,7 +20,6 @@ const CreateNewsFeed = ({
   const fileList = Form.useWatch("medias", form) || [];
 
   const userLogin = JSON.parse(localStorage.getItem("userLogin"));
-  const accessToken = localStorage.getItem("accessToken");
 
   const handleCancel = () => {
     setIsModalOpen(false);

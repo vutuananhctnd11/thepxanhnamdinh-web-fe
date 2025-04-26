@@ -42,9 +42,13 @@
   color: white !important;
 }
 
+/* modal */
 .custom-dark-modal .ant-modal-content,.custom-dark-modal .ant-modal-header, .ant-input, .ant-select-selector {
   background-color: #333 !important;
   color: white !important;
+}
+.ant-modal-wrap {
+  overflow: hidden !important;
 }
 
 /* Select status */

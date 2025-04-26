@@ -8,9 +8,11 @@ const NewsFeed = ({ listPost }) => {
   const userLogin = JSON.parse(localStorage.getItem("userLogin"));
   const [isCmtModalOpen, setIsCmtModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
+  const [userPostFullName, setUserPostFullName] = useState(null);
 
-  const handleCmt = (id) => {
+  const handleCmt = (id, fullName) => {
     setSelectedId(id);
+    setUserPostFullName(fullName);
     setIsCmtModalOpen(true);
   };
 
@@ -80,7 +82,7 @@ const NewsFeed = ({ listPost }) => {
               </div>
               <div
                 className="w-[30%] py-1 flex justify-center items-center hover:bg-white/10 rounded-lg"
-                onClick={() => handleCmt(post.postId)}
+                onClick={() => handleCmt(post.postId, post.userFullName)}
               >
                 <MessageCircleIcon className="scale-90 mr-2" />
                 <div>Bình luận</div>
@@ -90,15 +92,13 @@ const NewsFeed = ({ listPost }) => {
                 <div>Chia sẻ</div>
               </div>
             </div>
-
-            <hr className="border-white/30 my-1 mx-2" />
-            {/* Comment */}
           </div>
         </div>
       ))}
       <CommentModal
         postId={selectedId}
         userLogin={userLogin}
+        userPostFullName={userPostFullName}
         isCmtModalOpen={isCmtModalOpen}
         setIsCmtModalOpen={setIsCmtModalOpen}
       />

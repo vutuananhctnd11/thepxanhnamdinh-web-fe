@@ -1,10 +1,40 @@
 /* eslint-disable no-unused-vars */
 import { LucideSearch } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ItemNav from "../ItemNav/ItemNav";
 import { Avatar, AvatarImage } from "../ui/avatar";
+import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
 
 const NavBarRight = () => {
+  const [listFriends, setListFriends] = useState([]);
+
+  const fetchListFriend = async () => {
+    const userLogin = JSON.parse(localStorage.getItem("userLogin"));
+    const userId = userLogin.userId;
+
+    try {
+      const res = await fetchWithAuth(
+        `http://localhost:8080/friends?userId=${userId}&page=1&limit=10`,
+        {
+          method: "GET",
+        }
+      );
+      const response = await res.json();
+
+      if (response.status === "success") {
+        setListFriends(response.data);
+      } else {
+        alert("ERROR: ", response.message);
+      }
+    } catch (error) {
+      console.log("Lỗi khi gọi api: ", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchListFriend();
+  }, []);
+
   return (
     <div className="m-3">
       <div className="h-8 relative">
@@ -25,15 +55,18 @@ const NavBarRight = () => {
       <div>
         <p className="text-gray-300 my-1">Người liên hệ</p>
         <div>
-          {Array.from({ length: 8 }).map((_, index) => (
+          {listFriends.map((friend) => (
             <ItemNav
-              key={index}
+              key={friend.id}
               icon={
                 <Avatar>
-                  <AvatarImage src="/bg2.jpg" className={"object-cover"} />
+                  <AvatarImage
+                    src={friend.avatar || "defaultavt.png"}
+                    className={"object-cover"}
+                  />
                 </Avatar>
               }
-              name={"Nguyễn Văn Toàn"}
+              name={friend.fullName}
             />
           ))}
         </div>
