@@ -21,6 +21,9 @@ import ListPlayer from "./pages/AdminPage/ListPlayer";
 import AccessDeniedPage from "./pages/AccessDeniedPage";
 import PaymentStatus from "./pages/UserPage/PaymentStatus";
 import FriendPage from "./pages/UserPage/FriendPage";
+import PersonalPage from "./pages/UserPage/PersonalPage";
+import ListGroupPage from "./pages/UserPage/ListGroupPage";
+import GroupDetailPage from "./pages/UserPage/GroupDetailPage";
 
 const AppContext = createContext();
 
@@ -51,6 +54,15 @@ function App() {
               <Route path="/access-denied" element={<AccessDeniedPage />} />
               <Route path="/payment-status" element={<PaymentStatus />} />
               <Route path="/social/friends" element={<FriendPage />} />
+              <Route
+                path="/social/personal-page/:userId"
+                element={<PersonalPage />}
+              />
+              <Route path="/social/groups/list" element={<ListGroupPage />} />
+              <Route
+                path="/social/groups/detail/:groupId"
+                element={<GroupDetailPage />}
+              />
             </Routes>
           </Router>
         )}

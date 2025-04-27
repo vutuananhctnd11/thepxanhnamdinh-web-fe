@@ -23,10 +23,14 @@ const NewsFeed = () => {
             </Avatar>
           }
           name={userLogin?.firstName + " " + userLogin?.lastName}
+          onClick={() =>
+            navigateLoading(`/social/personal-page/${userLogin.userId}`)
+          }
         />
         <ItemNav
           icon={<i class="fa-solid fa-user-plus text-[#00C4B4] scale-120" />}
           name={"Kết bạn"}
+          onClick={() => navigateLoading("/social/friends")}
         />
         <ItemNav
           icon={
@@ -37,6 +41,7 @@ const NewsFeed = () => {
             </Avatar>
           }
           name={"Nhóm"}
+          onClick={() => navigateLoading("/social/groups/list")}
         />
         <ItemNav
           icon={
@@ -51,10 +56,6 @@ const NewsFeed = () => {
           icon={<i class="fa-solid fa-ticket text-[#f59e0b] scale-130" />}
           name={"Đặt vé"}
           onClick={() => navigateLoading("/order-ticket")}
-        />
-        <ItemNav
-          icon={<i class="fa-solid fa-people-group text-[#2dc5f3] scale-125" />}
-          name={"Hội cổ động viên"}
         />
       </div>
       <hr className="m-3" />

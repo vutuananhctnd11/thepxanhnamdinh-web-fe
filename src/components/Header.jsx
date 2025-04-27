@@ -162,7 +162,10 @@ const Header = ({ isFixed }) => {
           >
             <i class="fa-solid fa-ticket scale-130" />
           </div>
-          <div className="px-12 py-2 rounded-t-md hover:bg-white/20 hover:border-b-5 transition-all cursor-pointer">
+          <div
+            className="px-12 py-2 rounded-t-md hover:bg-white/20 hover:border-b-5 transition-all cursor-pointer"
+            onClick={() => navigate("/social/groups/list")}
+          >
             <i class="fa-solid fa-people-group scale-125" />
           </div>
         </div>
