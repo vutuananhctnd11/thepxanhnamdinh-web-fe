@@ -4,9 +4,11 @@ import React, { useEffect, useState } from "react";
 import ItemNav from "../ItemNav/ItemNav";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
+import useNagivateLoading from "@/hooks/useNagivateLoading";
 
 const NavBarRight = () => {
   const [listFriends, setListFriends] = useState([]);
+  const navigate = useNagivateLoading();
 
   const fetchListFriend = async () => {
     const userLogin = JSON.parse(localStorage.getItem("userLogin"));
@@ -57,16 +59,17 @@ const NavBarRight = () => {
         <div>
           {listFriends.map((friend) => (
             <ItemNav
-              key={friend.id}
+              key={friend.friendId}
               icon={
                 <Avatar>
                   <AvatarImage
-                    src={friend.avatar || "defaultavt.png"}
+                    src={friend.avatar || "/defaultavt.png"}
                     className={"object-cover"}
                   />
                 </Avatar>
               }
               name={friend.fullName}
+              onClick={() => navigate(`/social/personal-page/${friend.userId}`)}
             />
           ))}
         </div>

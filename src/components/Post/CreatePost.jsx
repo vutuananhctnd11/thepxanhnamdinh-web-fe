@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import CreatePostModal from "@/components/HomePage/CreatePostModal";
 import ModalNotification from "@/parts/ModalNotification";
+import { Spin } from "antd";
 
 const CreatePost = () => {
   const userLogin = JSON.parse(localStorage.getItem("userLogin"));
@@ -60,7 +61,7 @@ const CreatePost = () => {
       </div>
       {/* loading create post */}
       {isUploading ? (
-        <div className="w-[80%] h-10 py-10 my-3 text-md flex flex-col items-center justify-center bg-white/10 rounded-lg">
+        <div className="w-full h-10 py-10 my-3 text-md flex flex-col items-center justify-center bg-white/10 rounded-lg">
           <div className="my-3">
             <Spin style={{ marginBottom: 0 }}></Spin>
           </div>

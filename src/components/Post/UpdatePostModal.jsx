@@ -1,25 +1,55 @@
 /* eslint-disable no-unused-vars */
 import { Button, Form, Modal, Select, Upload } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Avatar } from "../ui/avatar";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import { Textarea } from "../ui/textarea";
 import { UploadOutlined } from "@ant-design/icons";
 import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
 import { useParams } from "react-router-dom";
+import { handleAuthError } from "@/parts/HandleAuthError";
 
-const CreateNewsFeed = ({
+const UpdatePostModal = ({
   isModalOpen,
   setIsModalOpen,
   setIsUploading,
   setModalNotiProps,
   setIsModalNotiOpen,
+  post,
+  setPost,
 }) => {
   const [form] = Form.useForm();
-  const fileList = Form.useWatch("medias", form) || [];
   const { groupId } = useParams();
 
   const userLogin = JSON.parse(localStorage.getItem("userLogin"));
+
+  //load old medias
+  const initialFileList = post?.medias.map((media) => ({
+    uid: media?.mediaId.toString(),
+    name: media?.linkCloud,
+    url: media?.linkCloud,
+  }));
+  const [fileList, setFileList] = useState(initialFileList);
+
+  //load old data
+  useEffect(() => {
+    if (post) {
+      form.setFieldsValue({
+        status: post?.status,
+        content: post?.content,
+        medias: initialFileList,
+      });
+
+      setFileList(
+        post?.medias.map((media) => ({
+          uid: media.mediaId.toString(),
+          name: media.linkCloud,
+          status: "done",
+          url: media.linkCloud,
+        }))
+      );
+    }
+  }, [post]);
 
   const handleCancel = () => {
     setIsModalOpen(false);
@@ -30,67 +60,102 @@ const CreateNewsFeed = ({
   };
 
   const handleFileChange = ({ fileList }) => {
+    setFileList(fileList);
     form.setFieldsValue({ medias: fileList });
-    fileList;
   };
 
   const handleFinish = async (values) => {
-    const medias = form.getFieldValue("medias");
+    //filter old image
+    const oldImages = fileList.filter((file) => !file.originFileObj);
+    const newImages = fileList.filter((file) => file.originFileObj);
+
     setIsUploading(true);
     setIsModalOpen(false);
 
     //upload file
+    let listUploadMedias = [];
     try {
-      const formData = new FormData();
-      medias.forEach((fileWrapper) => {
-        formData.append("files", fileWrapper.originFileObj);
-      });
-      const fileRes = await fetchWithAuth(
-        "http://localhost:8080/cloudinary/list-file",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-      const fileResponse = await fileRes.json();
-      const listUploadMedias = fileResponse.data;
+      if (newImages.length !== 0) {
+        const formData = new FormData();
+        newImages.forEach((fileWrapper) => {
+          formData.append("files", fileWrapper.originFileObj);
+        });
+        const fileRes = await fetchWithAuth(
+          "http://localhost:8080/cloudinary/list-file",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+        const fileResponse = await fileRes.json();
+        listUploadMedias = fileResponse.data || [];
+      }
 
       //format to api request
       const combinedData = {
         ...values,
+        postId: post?.postId,
         groupId: groupId,
-        medias: listUploadMedias.map((media) => ({
-          linkCloud: media.linkCloud,
-          type: media.type,
-        })),
+        medias: [
+          ...oldImages.map((media) => ({
+            mediaId: media.uid,
+            linkCloud: media.url,
+            type: media.type,
+          })),
+          ...listUploadMedias.map((media) => ({
+            linkCloud: media.linkCloud,
+            type: media.type,
+          })),
+        ],
       };
       console.log("RESPONSE: ", JSON.stringify(combinedData));
 
-      //call api create post
+      //call api update post
 
-      const createPostRes = await fetchWithAuth("http://localhost:8080/posts", {
-        method: "POST",
+      const updatePostRes = await fetchWithAuth("http://localhost:8080/posts", {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(combinedData),
       });
-      const createPostResponse = await createPostRes.json();
+      const updatePostResponse = await updatePostRes.json();
 
-      if (createPostResponse.status === "success") {
+      if (updatePostResponse.status === "success") {
         setModalNotiProps({
           modalTitle: "Thành công!",
-          modalMessage: "Đã đăng bài thành công!",
+          modalMessage: "Đã sửa bài viết thành công!",
           type: "success",
           buttonText: "Xác nhận",
         });
         setIsModalNotiOpen(true);
+        fetchGetPost(post?.postId);
       }
 
       setIsUploading(false);
     } catch (error) {
       console.log("ERROR", error);
       setIsUploading(false);
+    }
+  };
+
+  //fetch get post by id
+  const fetchGetPost = async (postId) => {
+    try {
+      const res = await fetchWithAuth(
+        `http://localhost:8080/posts?postId=${postId}`,
+        {
+          method: "GET",
+        }
+      );
+      const response = await res.json();
+
+      if (response.status === "success") {
+        setPost(response.data);
+      }
+    } catch (error) {
+      console.log("Có lỗi khi gọi api: ", error);
+      handleAuthError(error, setModalNotiProps, setIsModalNotiOpen);
     }
   };
 
@@ -106,7 +171,7 @@ const CreateNewsFeed = ({
         <Form form={form} onFinish={handleFinish}>
           <div>
             <div className="text-white text-lg w-full flex flex-col items-center mb-3">
-              Tạo bài viết mới
+              Chỉnh sửa bài viết
             </div>
             <div className="flex mb-2 h-10 items-center">
               <Avatar className={"scale-120 mx-2"}>
@@ -120,7 +185,7 @@ const CreateNewsFeed = ({
                   {userLogin?.firstName + " " + userLogin?.lastName}
                 </div>
                 <div className="flex items-center">
-                  <Form.Item name="type" initialValue={groupId ? "1" : "0"}>
+                  <Form.Item name="type" initialValue={groupId ? 1 : 0}>
                     <input type="hidden" />
                   </Form.Item>
                   <Form.Item
@@ -129,14 +194,13 @@ const CreateNewsFeed = ({
                     style={{ marginBottom: 0 }}
                   >
                     <Select
-                      defaultValue="1"
                       style={{
                         width: 120,
                       }}
                       onChange={handleStatusChange}
                       options={[
-                        { value: "1", label: "Công khai" },
-                        { value: "0", label: "Bạn bè" },
+                        { value: 1, label: "Công khai" },
+                        { value: 0, label: "Bạn bè" },
                       ]}
                     />
                   </Form.Item>
@@ -155,7 +219,7 @@ const CreateNewsFeed = ({
               <Form.Item
                 name="medias"
                 valuePropName="fileList"
-                getValueFromEvent={() => fileList}
+                getValueFromEvent={(e) => e?.fileList}
                 style={{ marginBottom: 0 }}
               >
                 <Upload
@@ -164,7 +228,9 @@ const CreateNewsFeed = ({
                   beforeUpload={() => false}
                   onChange={handleFileChange}
                 >
-                  <UploadOutlined style={{ color: "white", scale: "1.3" }} />
+                  {fileList?.length >= 8 ? null : (
+                    <UploadOutlined style={{ color: "white", scale: "1.3" }} />
+                  )}
                 </Upload>
               </Form.Item>
             </div>
@@ -180,4 +246,4 @@ const CreateNewsFeed = ({
   );
 };
 
-export default CreateNewsFeed;
+export default UpdatePostModal;

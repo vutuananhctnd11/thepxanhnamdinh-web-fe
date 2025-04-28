@@ -9,11 +9,13 @@ import {
   LucideSearch,
   CheckCircle2Icon,
   PlusCircle,
+  CheckSquare,
 } from "lucide-react";
 import { handleAuthError } from "@/parts/HandleAuthError";
 import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
 import ModalNotification from "@/parts/ModalNotification";
 import useNagivateLoading from "@/hooks/useNagivateLoading";
+import { CloseSquareOutlined } from "@ant-design/icons";
 
 const ListGroupPage = () => {
   const [modalNotiProps, setModalNotiProps] = useState({});
@@ -24,49 +26,6 @@ const ListGroupPage = () => {
   const [hasMore, setHasMore] = useState(true);
 
   const navigate = useNagivateLoading();
-
-  const initialGroups = [
-    {
-      groupId: 1,
-      groupName: "LFC Việt Nam",
-      type: 2, // 1: fandom, 0: nhóm thường
-      censorPost: true,
-      censorMember: true,
-      avatarImage: "/hlv.png",
-      createdDate: "20/04/2025",
-      totalMembers: 2,
-    },
-    {
-      groupId: 2,
-      groupName: "Cộng đồng React Việt Nam",
-      type: 1,
-      censorPost: false,
-      censorMember: true,
-      avatarImage: "",
-      createdDate: "15/04/2025",
-      totalMembers: 156,
-    },
-    {
-      groupId: 3,
-      groupName: "Manchester United FC",
-      type: 1,
-      censorPost: true,
-      censorMember: false,
-      avatarImage: "",
-      createdDate: "10/03/2025",
-      totalMembers: 325,
-    },
-    {
-      groupId: 4,
-      groupName: "Chia sẻ kinh nghiệm du lịch",
-      type: 0,
-      censorPost: false,
-      censorMember: false,
-      avatarImage: "",
-      createdDate: "05/01/2025",
-      totalMembers: 89,
-    },
-  ];
 
   const [groups, setGroups] = useState([]);
   const [filter, setFilter] = useState("all"); // all, fandom, normal
@@ -230,9 +189,10 @@ const ListGroupPage = () => {
                         title="Kiểm duyệt thành viên"
                       >
                         <Shield size={16} className="mr-1" />
-                        <span>
-                          Kiểm duyệt TV: {group.censorMember ? "Có" : "Không"}
-                        </span>
+                        <div className="flex items-center">
+                          Kiểm duyệt thành viên:{" "}
+                          {group.censorMember ? "Có" : "Không"}
+                        </div>
                       </div>
                     </div>
                   </div>

@@ -1,13 +1,14 @@
 import React from "react";
 import PostInfo from "../Post/PostInfo";
+import PostNoInteraction from "../Post/PostNoInteraction";
 
-const NewsFeed = ({ listPost }) => {
+const NewsFeed = ({ listPost, isReaction }) => {
   return (
     <>
       {/* Thông tin bài viết */}
-      {listPost.map((post) => (
-        <PostInfo post={post} />
-      ))}
+      {isReaction && listPost.map((post) => <PostInfo postInput={post} />)}
+      {!isReaction &&
+        listPost.map((post) => <PostNoInteraction postInput={post} />)}
     </>
   );
 };

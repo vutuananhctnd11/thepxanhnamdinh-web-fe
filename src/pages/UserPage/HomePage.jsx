@@ -91,7 +91,7 @@ const HomePage = () => {
             <div className="w-[80%]">
               <CreatePost />
             </div>
-            <NewsFeed listPost={listPost} />
+            <NewsFeed listPost={listPost} isReaction={true} />
           </InfiniteScroll>
         </div>
 
