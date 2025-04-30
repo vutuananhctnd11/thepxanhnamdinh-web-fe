@@ -111,7 +111,6 @@ const UpdatePostModal = ({
       console.log("RESPONSE: ", JSON.stringify(combinedData));
 
       //call api update post
-
       const updatePostRes = await fetchWithAuth("http://localhost:8080/posts", {
         method: "PUT",
         headers: {

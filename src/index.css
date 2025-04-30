@@ -102,3 +102,22 @@
 .infinite-scroll-component__outerdiv {
   width: 100% !important;
 }
+
+/* input */
+.ant-input, .ant-input-textarea {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: white;
+  border-radius: 1rem;
+}
+.ant-form-item-required, label {
+  color: white !important;
+}
+
+.ant-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.ant-input::placeholder,
+.ant-input-textarea::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}

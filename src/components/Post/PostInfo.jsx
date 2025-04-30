@@ -8,7 +8,6 @@ import {
   MessageCircleIcon,
   MoreHorizontal,
   ThumbsUp,
-  Users,
   UsersIcon,
 } from "lucide-react";
 import { handleAuthError } from "@/parts/HandleAuthError";

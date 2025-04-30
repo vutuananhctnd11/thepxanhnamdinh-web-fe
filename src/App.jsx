@@ -24,6 +24,7 @@ import FriendPage from "./pages/UserPage/FriendPage";
 import PersonalPage from "./pages/UserPage/PersonalPage";
 import ListGroupPage from "./pages/UserPage/ListGroupPage";
 import GroupDetailPage from "./pages/UserPage/GroupDetailPage";
+import CreateGroupForm from "./components/Group/CreateGroupModal";
 
 const AppContext = createContext();
 

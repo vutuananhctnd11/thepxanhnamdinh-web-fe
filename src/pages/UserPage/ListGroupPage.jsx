@@ -11,16 +11,14 @@ import {
   PlusCircle,
   CheckSquare,
 } from "lucide-react";
-import { handleAuthError } from "@/parts/HandleAuthError";
 import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
 import ModalNotification from "@/parts/ModalNotification";
 import useNagivateLoading from "@/hooks/useNagivateLoading";
 import { CloseSquareOutlined } from "@ant-design/icons";
+import { message } from "antd";
+import CreateGroupModal from "@/components/Group/CreateGroupModal";
 
 const ListGroupPage = () => {
-  const [modalNotiProps, setModalNotiProps] = useState({});
-  const [isModalNotiOpen, setIsModalNotiOpen] = useState(false);
-
   const [page, setPage] = useState(1);
   const limit = 5;
   const [hasMore, setHasMore] = useState(true);
@@ -28,7 +26,9 @@ const ListGroupPage = () => {
   const navigate = useNagivateLoading();
 
   const [groups, setGroups] = useState([]);
-  const [filter, setFilter] = useState("all"); // all, fandom, normal
+  const [filter, setFilter] = useState("all");
+
+  const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
 
   // Lọc nhóm theo loại
   const filteredGroups = groups.filter((group) => {
@@ -61,7 +61,10 @@ const ListGroupPage = () => {
       }
     } catch (error) {
       console.log("Có lỗi khi gọi api: ", error);
-      handleAuthError(error, setModalNotiProps, setIsModalNotiOpen);
+      message.error({
+        content: "Lỗi khi lấy danh sách: " + error,
+        duration: 3,
+      });
     }
   };
 
@@ -120,7 +123,10 @@ const ListGroupPage = () => {
                 </div>
               </div>
               <div>
-                <div className="px-4 py-1 text-white bg-blue-500/80 flex justify-center rounded-lg hover:cursor-pointer hover:bg-blue-500">
+                <div
+                  className="px-4 py-1 text-white bg-blue-500/80 flex justify-center rounded-lg hover:cursor-pointer hover:bg-blue-500"
+                  onClick={() => setIsModalCreateOpen(true)}
+                >
                   <PlusCircle className="scale-70 mr-1" /> Tạo nhóm
                 </div>
               </div>
@@ -219,10 +225,9 @@ const ListGroupPage = () => {
           </div>
         </div>
       </div>
-      <ModalNotification
-        isModalOpen={isModalNotiOpen}
-        setIsModalOpen={setIsModalNotiOpen}
-        {...modalNotiProps}
+      <CreateGroupModal
+        isModalOpen={isModalCreateOpen}
+        setIsModalOpen={setIsModalCreateOpen}
       />
     </LayoutSocial>
   );
