@@ -68,7 +68,7 @@ const ChatPage = () => {
   };
 
   //fetch list conversation
-  const fetchOldMessages = async () => {
+  const fetchOldMessages = async (page, userId) => {
     try {
       const res = await fetchWithAuth(
         `http://localhost:8080/conversations/old-message?page=${page}&limit=${limit}&userId=${userId}`,
@@ -82,11 +82,12 @@ const ChatPage = () => {
 
         const messages = response.data.listResults;
         setChatMessages((prev) => [...messages, ...prev]);
+        if (page === 1) setIsScrollBottom(true);
 
         if (response.data.totalPage <= page) {
           setHasMore(false);
         } else {
-          setPage(page + 1);
+          setPage((prev) => prev + 1);
         }
 
         setTimeout(() => {
@@ -103,7 +104,7 @@ const ChatPage = () => {
     }
   };
 
-  //check scroll
+  //check scroll to top
   const handleScroll = () => {
     const div = containerRef.current;
     if (!div) return;
@@ -115,10 +116,10 @@ const ChatPage = () => {
     }
   };
 
-  //loading data
+  //loading more data
   const handleLoadMore = async () => {
     console.log("has more: ", hasMore);
-    fetchOldMessages();
+    fetchOldMessages(page, userId);
   };
 
   // scroll bottom
@@ -131,16 +132,16 @@ const ChatPage = () => {
 
   useLayoutEffect(() => {
     fetchSelectConversations();
-  }, [userId]);
+  }, []);
 
   useLayoutEffect(() => {
+    setIsScrollBottom(true);
     setChatMessages([]);
-
     setPage(1);
     setHasMore(true);
-    navigate(`/social/chat/${selectConversation?.userId}`);
-    fetchOldMessages();
-    setIsScrollBottom(true);
+    selectConversation?.userId &&
+      navigate(`/social/chat/${selectConversation?.userId}`);
+    fetchOldMessages(1, selectConversation?.userId);
   }, [selectConversation]);
 
   //web socket

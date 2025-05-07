@@ -26,7 +26,7 @@ const SideBarChat = ({ selectConversation, setSelectConversation }) => {
 
   useEffect(() => {
     fetchConversations();
-  }, [selectConversation]);
+  }, []);
 
   return (
     <div className="w-80 bg-black/80 border-r border-white flex flex-col text-white">
