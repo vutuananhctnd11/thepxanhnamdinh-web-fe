@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import useNagivateLoading from "@/hooks/useNagivateLoading";
 import ModalNotification from "@/parts/ModalNotification";
-import { Form, Modal } from "antd";
+import { Form, message, Modal } from "antd";
 import { useState } from "react";
 
 const SignUpPage = () => {
@@ -10,6 +10,8 @@ const SignUpPage = () => {
   const [modalMessage, setModalMessage] = useState("");
   const [modalTitle, setModalTitle] = useState("");
   const [signUpSuccess, setSignUpSuccess] = useState(true);
+
+  const [messageApi, contextHolder] = message.useMessage();
 
   const onFinish = async (values) => {
     if (values.password != values.confirmPassword) {
@@ -32,19 +34,20 @@ const SignUpPage = () => {
         setModalTitle("Thành công");
         setModalMessage("Đăng ký thành công vui lòng đăng nhập");
       } else {
-        setSignUpSuccess(false);
-        setModalTitle("Đăng ký thất bại");
-        setModalMessage(response.message);
+        messageApi.error({
+          content: "Đăng ký thất bại: " + response.message,
+          duration: 3,
+        });
       }
       setIsModalOpen(true);
     } catch (error) {
       console.error("có lỗi khi gọi api: " + error);
-      alert("Có lỗi xảy ra hayx xem console!");
     }
   };
 
   return (
     <div className="w-full h-screen relative">
+      {contextHolder}
       <img
         src="/signupbg.png"
         className="w-full h-full object-cover absolute opacity-80"

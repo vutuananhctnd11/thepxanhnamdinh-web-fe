@@ -30,7 +30,7 @@ const HomePage = () => {
 
   const [listPost, setListPost] = useState([]);
   const [page, setPage] = useState(1);
-  const limit = 1;
+  const limit = 5;
   const [hasMore, setHasMore] = useState(true);
 
   const fetchNewsFeed = async () => {

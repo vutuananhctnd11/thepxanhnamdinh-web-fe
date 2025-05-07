@@ -7,6 +7,7 @@ import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
 import { handleAuthError } from "@/parts/HandleAuthError";
 import ModalNotification from "@/parts/ModalNotification";
 import InfiniteScroll from "react-infinite-scroll-component";
+import CreatePost from "@/components/Post/CreatePost";
 
 const PersonalPage = () => {
   const { userId } = useParams();
@@ -16,8 +17,10 @@ const PersonalPage = () => {
 
   const [listPost, setListPost] = useState([]);
   const [page, setPage] = useState(1);
-  const limit = 2;
+  const limit = 5;
   const [hasMore, setHasMore] = useState(true);
+
+  const userLogin = JSON.parse(localStorage.getItem("userLogin"));
 
   //fetch personal page
   const fetchPersonalPage = async () => {
@@ -76,7 +79,7 @@ const PersonalPage = () => {
   return (
     <LayoutSocial>
       <div
-        className="mt-13 w-full px-[20%] overflow-y-auto bg-black/90 py-3 text-white"
+        className="mt-13 w-full h-[calc(100vh-52px)] px-[20%] overflow-y-auto bg-black/90 py-3 text-white custom-scroll-bar"
         id="scrollableDiv"
       >
         <InfiniteScroll
@@ -131,32 +134,35 @@ const PersonalPage = () => {
               </div>
             </div>
           </div>
+
           <div className="space-y-3">
-            <div className="bg-white/10 p-5 space-y-2 rounded-2xl">
-              <div className="font-semibold">Thông tin cá nhân</div>
-              <div className="flex justify-between">
-                <div className="space-y-2 ml-3">
-                  <div>
-                    Số điện thoại:{" "}
-                    {user.userId == userId ? user.phoneNumber : "********"}
-                  </div>
-                  <div>
-                    Email:{" "}
-                    {user.userId == userId ? user.emailAddress : "********"}
-                  </div>
-                  <div>
-                    Địa chỉ: {user.userId == userId ? user.address : "********"}
+            {userId == userLogin.userId && (
+              <div className="w-full">
+                <div className="bg-white/10 p-5 space-y-2 rounded-2xl">
+                  <div className="font-semibold">Thông tin cá nhân</div>
+                  <div className="flex justify-between">
+                    <div className="space-y-2 ml-3">
+                      <div>Số điện thoại: {user.phoneNumber}</div>
+                      <div>Email: {user.emailAddress}</div>
+                      <div>Địa chỉ: {user.address}</div>
+                    </div>
+                    <div>
+                      <div className="px-3 py-2 bg-white/20 flex justify-center rounded-lg hover:cursor-pointer hover:bg-white/40">
+                        Lịch sử đặt vé
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <div className="px-3 py-2 bg-white/20 flex justify-center rounded-lg hover:cursor-pointer hover:bg-white/40">
-                    Lịch sử đặt vé
-                  </div>
+                <div className="mt-3 w-[80%] mx-auto">
+                  <CreatePost />
                 </div>
               </div>
-            </div>
-            <div className="flex flex-col items-center ">
-              <NewsFeed listPost={listPost} />
+            )}
+            <div className="flex flex-col items-center">
+              {listPost.length === 0 && (
+                <div className="my-10">Chưa có bài viết nào!</div>
+              )}
+              <NewsFeed listPost={listPost} isReaction={true} />
             </div>
           </div>
         </InfiniteScroll>

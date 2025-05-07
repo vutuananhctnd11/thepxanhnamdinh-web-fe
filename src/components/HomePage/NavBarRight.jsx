@@ -5,10 +5,43 @@ import ItemNav from "../ItemNav/ItemNav";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
 import useNagivateLoading from "@/hooks/useNagivateLoading";
+import { Dropdown } from "antd";
 
 const NavBarRight = () => {
   const [listFriends, setListFriends] = useState([]);
   const navigate = useNagivateLoading();
+  const [search, setSearch] = useState("");
+
+  const getMenuItems = (userId) => [
+    {
+      key: `chat-${userId}`,
+      label: <span className="w-[150px]">Nhắn tin</span>,
+    },
+    {
+      key: `profile-${userId}`,
+      label: <span className="w-[150px]">Trang cá nhân</span>,
+    },
+  ];
+
+  const handleMenuClick = ({ key }) => {
+    const [action, userId] = key.split("-");
+
+    if (action === "chat") {
+      navigate(`/social/chat/${userId}`);
+    } else if (action === "profile") {
+      navigate(`/social/personal-page/${userId}`);
+    }
+  };
+
+  const handleSearch = () => {
+    navigate(`/social/search?query=${encodeURIComponent(search.trim())}`);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
 
   const fetchListFriend = async () => {
     const userLogin = JSON.parse(localStorage.getItem("userLogin"));
@@ -40,11 +73,19 @@ const NavBarRight = () => {
   return (
     <div className="m-3">
       <div className="h-8 relative">
-        <LucideSearch className="absolute left-2 h-8 justify-center scale-85" />
+        <button
+          onClick={handleSearch}
+          className="absolute left-2 top-0 bottom-0 flex items-center justify-center px-2 hover:cursor-pointer"
+        >
+          <LucideSearch className="h-4 w-4 text-white/70" />
+        </button>
         <input
           type="text"
           placeholder="Tìm kiếm trên TXND FanZone"
           className="w-full h-full bg-white/20 rounded-2xl pl-10 pr-4 outline-none placeholder-white/30"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={handleKeyDown}
         />
       </div>
       <div className="mt-3 space-y-2">
@@ -58,19 +99,31 @@ const NavBarRight = () => {
         <p className="text-gray-300 my-1">Người liên hệ</p>
         <div>
           {listFriends.map((friend) => (
-            <ItemNav
-              key={friend.friendId}
-              icon={
-                <Avatar>
-                  <AvatarImage
-                    src={friend.avatar || "/defaultavt.png"}
-                    className={"object-cover"}
-                  />
-                </Avatar>
-              }
-              name={friend.fullName}
-              onClick={() => navigate(`/social/personal-page/${friend.userId}`)}
-            />
+            <Dropdown
+              menu={{
+                items: getMenuItems(friend.userId),
+                onClick: handleMenuClick,
+                className: "custom-dropdown-menu",
+              }}
+              trigger={["click"]}
+              placement="bottom"
+              overlayStyle={{ width: "140px" }}
+            >
+              <div>
+                <ItemNav
+                  key={friend.friendId}
+                  icon={
+                    <Avatar>
+                      <AvatarImage
+                        src={friend.avatar || "/defaultavt.png"}
+                        className={"object-cover"}
+                      />
+                    </Avatar>
+                  }
+                  name={friend.fullName}
+                />
+              </div>
+            </Dropdown>
           ))}
         </div>
       </div>

@@ -1,4 +1,6 @@
 import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
+import { handleFriendAction } from "@/parts/HandleApiAction";
+import { message } from "antd";
 import React, { useEffect, useState } from "react";
 import Carousel from "react-multi-carousel";
 
@@ -23,6 +25,7 @@ const responsive = {
 
 const FriendRequestSent = () => {
   const [listFriendRequestsent, setListFriendRequestsent] = useState([]);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const fetchAddFriendSent = async () => {
     try {
@@ -44,6 +47,18 @@ const FriendRequestSent = () => {
     }
   };
 
+  const handleDeleteAddFriendRequest = (addFriendRequest) =>
+    handleFriendAction({
+      url: `http://localhost:8080/friends/add-request/${addFriendRequest.userId}`,
+      method: "DELETE",
+      onSuccess: () => {
+        fetchAddFriendSent();
+      },
+      successMessage: `Bạn hủy lời mời kết bạn đến ${addFriendRequest.fullName}!`,
+      errorMessage: "Hủy lời mời thất bại",
+      messageApi: messageApi,
+    });
+
   useEffect(() => {
     fetchAddFriendSent();
   }, []);
@@ -62,6 +77,7 @@ const FriendRequestSent = () => {
   } else
     return (
       <div className="px-10 mt-5">
+        {contextHolder}
         <div className="text-white text-xl font-bold my-2">
           Lời mời kết bạn đã gửi
         </div>
@@ -85,7 +101,10 @@ const FriendRequestSent = () => {
                   </div>
                 </div>
                 <div className="space-x-4 my-2 mx-4 flex justify-center">
-                  <button className="w-full py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg shadow transition duration-200">
+                  <button
+                    className="w-full py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg shadow transition duration-200"
+                    onClick={handleDeleteAddFriendRequest}
+                  >
                     Hủy lời mời
                   </button>
                 </div>

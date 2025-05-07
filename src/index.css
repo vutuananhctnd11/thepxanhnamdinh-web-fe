@@ -32,6 +32,9 @@
   background-color: #333 !important;
   opacity: "10" !important;
   color: white !important;
+  display: inline-block ;
+  padding: 0px 5px !important;
+
 }
 
 .custom-dropdown-menu .ant-dropdown-menu-item {

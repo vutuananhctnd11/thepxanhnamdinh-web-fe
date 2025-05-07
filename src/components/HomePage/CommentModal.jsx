@@ -103,7 +103,18 @@ const CommentModal = ({
         console.log("WebSocket connected");
         client.subscribe(`/topic/post/${postId}`, (message) => {
           const newComment = JSON.parse(message.body);
-          setListComments((prev) => [newComment, ...prev]);
+          setListComments((prev) => {
+            const exists = prev.some(
+              (c) => c.commentId === newComment.commentId
+            );
+            if (exists) {
+              return prev.map((c) =>
+                c.commentId === newComment.commentId ? newComment : c
+              );
+            } else {
+              return [newComment, ...prev];
+            }
+          });
         });
       },
       onStompError: (frame) => {

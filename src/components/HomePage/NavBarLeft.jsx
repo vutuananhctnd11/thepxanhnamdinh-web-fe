@@ -1,14 +1,40 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import ItemNav from "../ItemNav/ItemNav";
 import { AvatarFallback } from "@radix-ui/react-avatar";
 import { useLocation, useNavigate } from "react-router-dom";
 import useNagivateLoading from "@/hooks/useNagivateLoading";
+import { handleFriendAction } from "@/parts/HandleApiAction";
+import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
 
 const NewsFeed = () => {
   const navigateLoading = useNagivateLoading();
   const userLogin = JSON.parse(localStorage.getItem("userLogin"));
+  const [listGroups, setListGroups] = useState([]);
+
+  const fetchListGroupJoined = async () => {
+    try {
+      const res = await fetchWithAuth(
+        `http://localhost:8080/groups/user-joined?page=1&limit=10&userId=${userLogin.userId}`,
+        {
+          method: "GET",
+        }
+      );
+      const response = await res.json();
+
+      if (response.status === "success") {
+        const groups = response.data.listResults;
+        setListGroups(groups);
+      }
+    } catch (error) {
+      console.log("Lỗi khi lấy danh sách nhóm: ", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchListGroupJoined();
+  }, []);
 
   return (
     <div className="w-full h-full text-white p-3">
@@ -61,16 +87,19 @@ const NewsFeed = () => {
       <hr className="m-3" />
       <div className="text-gray-300 my-1">Nhóm của bạn</div>
       <div>
-        {Array.from({ length: 8 }).map((_, index) => (
+        {listGroups?.map((group) => (
           <ItemNav
-            key={index}
+            key={group.groupId}
             icon={
               <img
-                src="/aboutus.png"
+                src={group.avatarImage || "/defaultavt.png"}
                 className="h-full object-cover rounded-sm"
               />
             }
-            name={"Nhóm của hội cổ động viên Trực Ninh Nam Định"}
+            name={group.groupName}
+            onClick={() =>
+              navigateLoading(`/social/groups/detail/${group.groupId}`)
+            }
           />
         ))}
       </div>

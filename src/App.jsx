@@ -25,6 +25,8 @@ import PersonalPage from "./pages/UserPage/PersonalPage";
 import ListGroupPage from "./pages/UserPage/ListGroupPage";
 import GroupDetailPage from "./pages/UserPage/GroupDetailPage";
 import CreateGroupForm from "./components/Group/CreateGroupModal";
+import SearchResultPage from "./pages/UserPage/SearchResultPage";
+import ChatPage from "./pages/UserPage/ChatPage";
 
 const AppContext = createContext();
 
@@ -64,6 +66,8 @@ function App() {
                 path="/social/groups/detail/:groupId"
                 element={<GroupDetailPage />}
               />
+              <Route path="/social/search" element={<SearchResultPage />} />
+              <Route path="/social/chat/:userId" element={<ChatPage />} />
             </Routes>
           </Router>
         )}

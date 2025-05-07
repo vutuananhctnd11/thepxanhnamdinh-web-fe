@@ -1,4 +1,6 @@
 import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
+import { handleFriendAction } from "@/parts/HandleApiAction";
+import { message } from "antd";
 import React, { useEffect, useState } from "react";
 import Carousel from "react-multi-carousel";
 
@@ -25,6 +27,7 @@ const FriendRequestReceived = () => {
   const [listFriendRequestReceived, setListFriendRequestReceived] = useState(
     []
   );
+  const [messageApi, contextHolder] = message.useMessage();
 
   const fetchAddFriendReceived = async () => {
     try {
@@ -46,6 +49,36 @@ const FriendRequestReceived = () => {
     }
   };
 
+  const handleRejectAddFriend = (friend) => {
+    handleFriendAction({
+      url: `http://localhost:8080/friends/reject/${friend.senderId}`,
+      method: "DELETE",
+      onSuccess: () => {
+        fetchAddFriendReceived();
+      },
+      successMessage: `Bạn đã từ chối lời kết bạn của ${friend.fullName}!`,
+      errorMessage: "Từ chối thất bại",
+      messageApi: messageApi,
+    });
+    console.log("fullname: ", friend.fullName);
+  };
+
+  const handleAcceptAddFriend = (friend) => {
+    handleFriendAction({
+      url: `http://localhost:8080/friends/accept/${friend.senderId}`,
+      method: "PATCH",
+      onSuccess: () => {
+        setTimeout(() => {
+          fetchAddFriendReceived();
+        }, 2000);
+      },
+      successMessage: `Bạn và ${friend.fullName} đã trở thành bạn bè của nhau!`,
+      errorMessage: "Lỗi khi chấp nhận lời mời",
+      messageApi: messageApi,
+    });
+    console.log("fullname: ", friend.fullName);
+  };
+
   useEffect(() => {
     fetchAddFriendReceived();
   }, []);
@@ -64,15 +97,13 @@ const FriendRequestReceived = () => {
   } else
     return (
       <div className="px-10">
+        {contextHolder}
         <div className="text-white text-xl font-bold my-2">
           Lời mời kết bạn nhận được
         </div>
         <Carousel className="flex py-4" responsive={responsive}>
           {listFriendRequestReceived.map((friend) => (
-            <div
-              key={listFriendRequestReceived.senderId}
-              className="flex justify-center"
-            >
+            <div key={friend.senderId} className="flex justify-center">
               <div className="w-[220px] bg-white/20 border-1 rounded-lg overflow-hidden">
                 <img
                   src={friend.avatar || "/defaultavt.png"}
@@ -87,11 +118,17 @@ const FriendRequestReceived = () => {
                   </div>
                 </div>
                 <div className="space-x-4 my-2 mx-4 flex justify-between">
-                  <button className="px-4 py-2 bg-blue-500/80 hover:bg-blue-500 text-white rounded-lg shadow transition duration-200">
+                  <button
+                    className="px-4 py-2 bg-blue-500/80 hover:bg-blue-500 text-white rounded-lg shadow transition duration-200"
+                    onClick={() => handleAcceptAddFriend(friend)}
+                  >
                     Xác nhận
                   </button>
 
-                  <button className="px-5 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg shadow transition duration-200">
+                  <button
+                    className="px-5 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg shadow transition duration-200"
+                    onClick={() => handleRejectAddFriend(friend)}
+                  >
                     Xóa
                   </button>
                 </div>

@@ -8,12 +8,13 @@ import { useParams } from "react-router-dom";
 import { handleAuthError } from "@/parts/HandleAuthError";
 import ApiCheckIsMember from "@/parts/ApiCheckIsMember";
 import ModalNotification from "@/parts/ModalNotification";
-import CreatePost from "@/components/Post/CreatePost";
-import NewsFeed from "@/components/HomePage/NewsFeed";
 import { message } from "antd";
 import UpdateGroupModal from "@/components/Group/UpdateGroupModal";
 import { DeleteOutlined } from "@ant-design/icons";
 import useNagivateLoading from "@/hooks/useNagivateLoading";
+import { handleFriendAction } from "@/parts/HandleApiAction";
+import NewsFeedInGroup from "@/components/GroupDetail/NewsFeedInGroup";
+import CensorMember from "@/components/GroupDetail/CensorMember";
 
 const GroupDetailPage = () => {
   const { groupId } = useParams();
@@ -21,14 +22,11 @@ const GroupDetailPage = () => {
   const [groupInfo, setGroupInfo] = useState("discussion");
   const [listPosts, setListPosts] = useState([]);
   const [checkMember, setCheckMember] = useState(null);
+  const [statusMember, setStatusMember] = useState(null);
 
   const [isModalUpdateOpen, setIsModalUpdateOpen] = useState(false);
   const [modalNotiProps, setModalNotiProps] = useState({});
   const [isModalNotiOpen, setIsModalNotiOpen] = useState(false);
-
-  const [page, setPage] = useState(1);
-  const limit = 5;
-  const [hasMore, setHasMore] = useState(true);
 
   const [messageApi, contextHolder] = message.useMessage();
   const navigate = useNagivateLoading();
@@ -51,36 +49,7 @@ const GroupDetailPage = () => {
       }
     } catch (error) {
       console.log("Có lỗi khi gọi api: ", error);
-      message.error({
-        content: "Lỗi khi lấy danh sách bài viết: " + error,
-        duration: 3,
-      });
-    }
-  };
-
-  const fetchGroupPost = async () => {
-    try {
-      const res = await fetchWithAuth(
-        `http://localhost:8080/posts/group?page=${page}&limit=${limit}&groupId=${groupId}`,
-        {
-          method: "GET",
-        }
-      );
-      const response = await res.json();
-
-      if (response.status === "success") {
-        const posts = response.data.listResults;
-        setListPosts((prev) => [...prev, ...posts]);
-
-        if (response.totalPage == page) {
-          setHasMore(false);
-        } else {
-          setPage((prev) => prev + 1);
-        }
-      }
-    } catch (error) {
-      console.log("Có lỗi khi gọi api: ", error);
-      message.error({
+      messageApi.error({
         content: "Lỗi khi lấy danh sách bài viết: " + error,
         duration: 3,
       });
@@ -133,15 +102,64 @@ const GroupDetailPage = () => {
     }
   };
 
+  const handleJoinGroup = () =>
+    handleFriendAction({
+      url: "http://localhost:8080/group-members/join-group",
+      method: "POST",
+      body: {
+        userId: userLogin.userId,
+        groupId: groupId,
+      },
+      onSuccess: () => {
+        if (groupInfo?.censorMember) {
+          setStatusMember(1);
+        } else {
+          setStatusMember(2);
+        }
+      },
+      successMessage: `Gửi lời tham gia đến ${groupInfo.groupName} thành công!`,
+      errorMessage: "Tham gia thất bại",
+      messageApi: messageApi,
+    });
+
+  const handleLeavedGroup = () =>
+    handleFriendAction({
+      url: `http://localhost:8080/group-members?groupId=${groupId}&userId=${userLogin.userId}`,
+      method: "DELETE",
+      onSuccess: () => {
+        setStatusMember(0);
+      },
+      successMessage: `Bạn ra không còn là thành viên của ${groupInfo.groupName}!`,
+      errorMessage: "Rời nhóm thất bại",
+      messageApi: messageApi,
+    });
+
+  const handleDeleteRequestGroup = () =>
+    handleFriendAction({
+      url: `http://localhost:8080/group-members/join-request?groupId=${groupId}&userId=${userLogin.userId}`,
+      method: "DELETE",
+      onSuccess: () => {
+        setStatusMember(0);
+      },
+      successMessage: `Hủy yêu cầu tham gia ${groupInfo.groupName}!`,
+      errorMessage: "Hủy yêu cầu thất bại",
+      messageApi: messageApi,
+    });
+
   useEffect(() => {
     fetchGroupInfo();
-    fetchGroupPost();
     const checkMemberStatus = async () => {
       const result = await ApiCheckIsMember(userLogin.userId, groupId);
       setCheckMember(result);
     };
     checkMemberStatus();
   }, []);
+
+  useEffect(() => {
+    if (groupInfo?.statusMember !== undefined) {
+      setStatusMember(groupInfo.statusMember);
+    }
+  }, [groupInfo]);
 
   return (
     <LayoutSocial>
@@ -155,7 +173,7 @@ const GroupDetailPage = () => {
             className="w-full h-full object-cover"
           />
           <div className="w-full h-full absolute bg-black/60 inset-0"></div>
-          <div className="absolute bottom-4 left-4 md:left-8 flex items-end">
+          <div className="w-[80%] absolute bottom-4 left-4 md:left-8 flex items-end">
             <div className="relative">
               <div className="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-white bg-white overflow-hidden">
                 <img
@@ -165,18 +183,45 @@ const GroupDetailPage = () => {
                 />
               </div>
             </div>
-            <div className="ml-4 pb-2">
-              <div className="text-2xl md:text-4xl font-bold text-white drop-shadow-lg">
-                {groupInfo.groupName}
+            <div className="w-full flex items-end justify-between">
+              <div className="ml-4 pb-2 w-full">
+                <div className="text-2xl md:text-4xl font-bold text-white drop-shadow-lg">
+                  {groupInfo.groupName}
+                </div>
+
+                <div className="flex items-center mt-1">
+                  <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                    {groupInfo.type == 2 ? "Hội cổ động viên" : "Nhóm trao đổi"}
+                  </span>
+                  <span className="text-white text-sm ml-2 drop-shadow-md">
+                    {groupInfo.type == 1 ? "Công khai" : "Riêng tư"} •{" "}
+                    {groupInfo.totalMembers} thành viên
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center mt-1">
-                <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                  {groupInfo.type == 2 ? "Hội cổ động viên" : "Nhóm trao đổi"}
-                </span>
-                <span className="text-white text-sm ml-2 drop-shadow-md">
-                  {groupInfo.type == 1 ? "Công khai" : "Riêng tư"} •{" "}
-                  {groupInfo.totalMembers} thành viên
-                </span>
+              <div className="w-full flex justify-end">
+                {statusMember == 2 ? (
+                  <button
+                    className="px-3 py-1.5 bg-black/30 text-white rounded-md text-sm font-medium hover:bg-white/40 hover:cursor-pointer"
+                    onClick={handleLeavedGroup}
+                  >
+                    Rời khỏi nhóm
+                  </button>
+                ) : statusMember == 0 ? (
+                  <button
+                    className="px-3 py-1.5 bg-blue-500/80 text-white rounded-md text-sm font-medium hover:bg-blue-500 hover:cursor-pointer"
+                    onClick={handleJoinGroup}
+                  >
+                    Tham gia nhóm
+                  </button>
+                ) : (
+                  <button
+                    className="px-3 py-1.5 bg-white/30 text-white rounded-md text-sm font-medium hover:bg-white/40 hover:cursor-pointer"
+                    onClick={handleDeleteRequestGroup}
+                  >
+                    Hủy yêu cầu tham gia
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -206,14 +251,36 @@ const GroupDetailPage = () => {
               >
                 Thành viên
               </button>
+              <button
+                onClick={() => setActiveTab("moderationMember")}
+                className={`px-4 py-3 font-medium text-sm whitespace-nowrap ${
+                  activeTab === "moderationMember"
+                    ? "text-white border-b-2 border-white bg-white/10"
+                    : "text-white/70"
+                }`}
+              >
+                Kiểm duyệt thành viên
+              </button>
+              <button
+                onClick={() => setActiveTab("moderationPost")}
+                className={`px-4 py-3 font-medium text-sm whitespace-nowrap ${
+                  activeTab === "moderationPost"
+                    ? "text-white border-b-2 border-white bg-white/10"
+                    : "text-white/70"
+                }`}
+              >
+                Kiểm duyệt bài viết
+              </button>
             </div>
           </div>
-          <div
-            className="px-4 flex items-center hover:bg-white/10 rounded-lg"
-            onClick={handleDeleteGroup}
-          >
-            <DeleteOutlined />
-          </div>
+          {checkMember?.memberRole == 2 && (
+            <div
+              className="px-4 flex items-center hover:bg-white/10 rounded-lg"
+              onClick={handleDeleteGroup}
+            >
+              <DeleteOutlined />
+            </div>
+          )}
         </div>
 
         {/* Main Content */}
@@ -259,23 +326,6 @@ const GroupDetailPage = () => {
                   <h2 className="font-bold text-lg mb-3">
                     Quản trị viên và người kiểm duyệt
                   </h2>
-                  {/* <div className="space-y-3">
-                    {groupInfo.admins.map((admin) => (
-                      <div key={admin.id} className="flex items-center">
-                        <div className="w-10 h-10 rounded-full overflow-hidden">
-                          <img
-                            src={admin.avatar}
-                            alt={admin.name}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div className="ml-3">
-                          <p className="font-medium text-sm">{admin.name}</p>
-                          <p className="text-xs text-white/70">Quản trị viên</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div> */}
                   <button className="w-full mt-3 text-blue-600 text-sm font-medium">
                     Xem tất cả
                   </button>
@@ -285,42 +335,15 @@ const GroupDetailPage = () => {
 
             {/* Main Content */}
             <div className="w-full md:w-2/3 lg:w-5/7 order-1 md:order-2">
-              {/* list post */}
-              {(() => {
-                if (checkMember?.isMember) {
-                  // is member
-                  return (
-                    <div>
-                      <div className="w-[80%]">
-                        <CreatePost />
-                      </div>
-                      {listPosts.length === 0 ? (
-                        <div className="text-white/70 w-[80%] my-10 flex justify-center">
-                          Hãy cùng các thành viên thảo luận trong nhóm!
-                        </div>
-                      ) : (
-                        <NewsFeed listPost={listPosts} isReaction={true} />
-                      )}
-                    </div>
-                  );
-                } else if (groupInfo.type !== 1) {
-                  // group private and is not member
-                  return (
-                    <div className="text-white/70 w-[80%] my-10 flex justify-center">
-                      Bạn chưa là thành viên của nhóm!
-                    </div>
-                  );
-                } else {
-                  // group public and is not member
-                  return listPosts.length === 0 ? (
-                    <div className="text-white/70 w-[80%] my-10 flex justify-center">
-                      Chưa có bài viết nào trong nhóm!
-                    </div>
-                  ) : (
-                    <NewsFeed listPost={listPosts} isReaction={false} />
-                  );
-                }
-              })()}
+              {activeTab === "discussion" && (
+                <NewsFeedInGroup
+                  checkMember={checkMember}
+                  groupInfo={groupInfo}
+                />
+              )}
+              {activeTab === "moderationMember" && (
+                <CensorMember/>
+              )}
             </div>
           </div>
         </div>

@@ -10,30 +10,30 @@ const PostInfo = ({ post }) => {
   return (
     <div
       className="w-full text-[14px] bg-white/10 rounded-lg my-3 py-1"
-      key={post.postId}
+      key={post?.postId}
     >
       <div className="w-full">
         <div className="flex items-center px-4 pt-4 pb-2">
           <Avatar
             className={"scale-120 hover:cursor-pointer"}
-            onClick={() => navigate(`/social/personal-page/${post.userId}`)}
+            onClick={() => navigate(`/social/personal-page/${post?.userId}`)}
           >
             <AvatarImage
-              src={post.avatar || "/defaultavt.png"}
+              src={post?.avatar || "/defaultavt.png"}
               className={"object-cover"}
             />
           </Avatar>
           <div className="ml-3">
             <div className="font-semibold hover:underline">
-              {post.userFullName}
+              {post?.userFullName}
             </div>
-            <div className="text-white/50 text-[13px]">{post.seenAt}</div>
+            <div className="text-white/50 text-[13px]">{post?.seenAt}</div>
           </div>
         </div>
-        <div className="px-4 pb-3">{post.content}</div>
+        <div className="px-4 pb-3">{post?.content}</div>
 
         <Carousel arrows={true} arrowOffset={20} style={{ display: "block" }}>
-          {post.medias.map((media) => (
+          {post?.medias.map((media) => (
             <div
               key={media.mediaId}
               style={{ display: "flex" }}
@@ -60,11 +60,11 @@ const PostInfo = ({ post }) => {
               <i className="fa-solid fa-thumbs-up scale-85" />
             </div>
             <div className="text-[13px] hover:underline hover:cursor-default">
-              {post.reactCount} lượt thích
+              {post?.reactCount} lượt thích
             </div>
           </div>
           <div className="text-[13px] hover:underline hover:cursor-default mr-3">
-            {post.commentCount} bình luận
+            {post?.commentCount} bình luận
           </div>
         </div>
         <hr className="border-white/30 mx-3 mt-2 mb-1" />
