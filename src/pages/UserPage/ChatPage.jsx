@@ -24,6 +24,8 @@ const ChatPage = () => {
   const { userId } = useParams();
   const [messageText, setMessageText] = useState("");
   const [chatMessages, setChatMessages] = useState([]);
+  const [lastMessage, setLastMessage] = useState(null);
+
   const stompRef = useRef(null);
   const accessToken = localStorage.getItem("accessToken");
   const userLogin = JSON.parse(localStorage.getItem("userLogin"));
@@ -157,11 +159,9 @@ const ChatPage = () => {
       onConnect: () => {
         console.log("WebSocket in chat connected");
 
-        client.subscribe(`/topic/chat/${selectConversation.id}`, (message) => {
-          const newMessage = JSON.parse(message.body);
-          console.log("mesage: ", newMessage);
-          // setChatMessages((prev) => [...prev, newMessage]);
-          handleIncomingMessage(newMessage);
+        client.subscribe("/user/queue/chat", (message) => {
+          const msg = JSON.parse(message.body);
+          handleIncomingMessage(msg);
           setIsScrollBottom(true);
         });
       },
@@ -181,12 +181,13 @@ const ChatPage = () => {
   }, [selectConversation]);
 
   const handleIncomingMessage = (message) => {
+    console.log("selectConversationid: ", selectConversation.id);
     if (message.conversationId !== selectConversation.id) {
-      // Người B nhắn khi đang nhắn với người A
       showNotification(message, selectConversation);
     } else {
       setChatMessages((prev) => [...prev, message]);
     }
+    setLastMessage(message);
   };
 
   //show notification when chat another conversation
@@ -238,6 +239,7 @@ const ChatPage = () => {
         <SideBarChat
           selectConversation={selectConversation}
           setSelectConversation={setSelectConversation}
+          message={lastMessage}
         />
 
         {/* Khung chat chính */}

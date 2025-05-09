@@ -26,7 +26,7 @@ const MessageChat = ({ message, selectConversation }) => {
           <img
             src={message.content}
             alt="Ảnh đã gửi"
-            className={`max-w-full max-h-60 rounded-md border-b-0 border-1 border-blue-500 ${
+            className={`max-w-full mb-1 max-h-60 rounded-md border-b-0 border-1 border-blue-500 ${
               message.senderId === userLogin.userId
                 ? "border-blue-500"
                 : "border-white/20"

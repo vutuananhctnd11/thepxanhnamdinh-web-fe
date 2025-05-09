@@ -2,8 +2,14 @@ import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
 import { Search } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
-const SideBarChat = ({ selectConversation, setSelectConversation }) => {
+const SideBarChat = ({
+  selectConversation,
+  setSelectConversation,
+  message,
+}) => {
   const [listConversation, setListConversation] = useState([]);
+  console.log("last message: ", message);
+
   //fetch list conversation
   const fetchConversations = async () => {
     try {
@@ -31,7 +37,7 @@ const SideBarChat = ({ selectConversation, setSelectConversation }) => {
   return (
     <div className="w-80 bg-black/80 border-r border-white flex flex-col text-white">
       <div className="p-4 border-b border-gray-200">
-        <h1 className="text-2xl font-bold text-blue-500 drop-shadow-[0_5px_10px_rgba(255,255,255,0.4)]">
+        <h1 className="text-2xl font-bold text-white drop-shadow-[0_5px_10px_rgba(255,255,255,0.4)]">
           TXND FanZone Chat
         </h1>
       </div>
@@ -71,8 +77,19 @@ const SideBarChat = ({ selectConversation, setSelectConversation }) => {
                 </h3>
               </div>
               <div className="flex justify-between items-center space-y-1">
-                <p className="text-sm text-white/90 truncate">
-                  {conversation.lastMessage}
+                <p className="text-sm text-white/70 truncate">
+                  {message ? (
+                    message?.conversationId == conversation.id ? (
+                      <div className="flex mt-1.5 space-x-5">
+                        <div>{message?.content}</div>
+                        <div className="text-white text-[12px] font-bold px-2 rounded-2xl bg-green-400 flex items-center">
+                          Mới
+                        </div>
+                      </div>
+                    ) : null
+                  ) : (
+                    conversation.lastMessage
+                  )}
                 </p>
               </div>
             </div>
