@@ -67,7 +67,10 @@ function App() {
                 element={<GroupDetailPage />}
               />
               <Route path="/social/search" element={<SearchResultPage />} />
-              <Route path="/social/chat/:userId" element={<ChatPage />} />
+              <Route
+                path="/social/chat/:conversationId"
+                element={<ChatPage />}
+              />
             </Routes>
           </Router>
         )}

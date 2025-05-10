@@ -8,7 +8,8 @@ const SideBarChat = ({
   message,
 }) => {
   const [listConversation, setListConversation] = useState([]);
-  console.log("last message: ", message);
+  const userLogin = JSON.parse(localStorage.getItem("userLogin"));
+  // console.log("last message: ", message);
 
   //fetch list conversation
   const fetchConversations = async () => {
@@ -35,7 +36,7 @@ const SideBarChat = ({
   }, []);
 
   return (
-    <div className="w-80 bg-black/80 border-r border-white flex flex-col text-white">
+    <div className="w-50 lg:w-90 bg-black/80 border-r border-white flex flex-col text-white">
       <div className="p-4 border-b border-gray-200">
         <h1 className="text-2xl font-bold text-white drop-shadow-[0_5px_10px_rgba(255,255,255,0.4)]">
           TXND FanZone Chat
@@ -82,9 +83,11 @@ const SideBarChat = ({
                     message?.conversationId == conversation.id ? (
                       <div className="flex mt-1.5 space-x-5">
                         <div>{message?.content}</div>
-                        <div className="text-white text-[12px] font-bold px-2 rounded-2xl bg-green-400 flex items-center">
-                          Mới
-                        </div>
+                        {message.senderId !== userLogin.userId && (
+                          <div className="text-white text-[12px] font-bold px-2 rounded-2xl bg-green-400 flex items-center">
+                            Mới
+                          </div>
+                        )}
                       </div>
                     ) : null
                   ) : (

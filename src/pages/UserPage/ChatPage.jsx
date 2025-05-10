@@ -21,14 +21,13 @@ import MessageChat from "@/components/Chat/MessageChat";
 import InputMessage from "@/components/Chat/InputMessage";
 
 const ChatPage = () => {
-  const { userId } = useParams();
+  const { conversationId } = useParams();
   const [messageText, setMessageText] = useState("");
   const [chatMessages, setChatMessages] = useState([]);
   const [lastMessage, setLastMessage] = useState(null);
 
   const stompRef = useRef(null);
   const accessToken = localStorage.getItem("accessToken");
-  const userLogin = JSON.parse(localStorage.getItem("userLogin"));
   const [messageApi, contextHolder] = message.useMessage();
 
   const [selectConversation, setSelectConversation] = useState(null);
@@ -37,19 +36,20 @@ const ChatPage = () => {
   const containerRef = useRef(null);
 
   const [page, setPage] = useState(1);
-  const limit = 7;
+  const limit = 10;
   const [hasMore, setHasMore] = useState(true);
 
   const messagesRef = useRef(null);
   const messageEndRef = useRef(null);
-
   const navigate = useNavigate();
+
+  const [replyingMessage, setReplyingMessage] = useState(null);
 
   //fetch select conversation
   const fetchSelectConversations = async () => {
     try {
       const res = await fetchWithAuth(
-        `http://localhost:8080/conversations?userId=${userId}`,
+        `http://localhost:8080/conversations?conversationId=${conversationId}`,
         {
           method: "GET",
         }
@@ -69,11 +69,11 @@ const ChatPage = () => {
     }
   };
 
-  //fetch list conversation
-  const fetchOldMessages = async (page, userId) => {
+  //fetch old message of conversation
+  const fetchOldMessages = async (page, conversationId) => {
     try {
       const res = await fetchWithAuth(
-        `http://localhost:8080/conversations/old-message?page=${page}&limit=${limit}&userId=${userId}`,
+        `http://localhost:8080/conversations/old-message?page=${page}&limit=${limit}&conversationId=${conversationId}`,
         { method: "GET" }
       );
       const response = await res.json();
@@ -121,7 +121,7 @@ const ChatPage = () => {
   //loading more data
   const handleLoadMore = async () => {
     console.log("has more: ", hasMore);
-    fetchOldMessages(page, userId);
+    fetchOldMessages(page, conversationId);
   };
 
   // scroll bottom
@@ -132,7 +132,7 @@ const ChatPage = () => {
     }
   }, [isScrollBottom]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     fetchSelectConversations();
   }, []);
 
@@ -142,8 +142,8 @@ const ChatPage = () => {
     setPage(1);
     setHasMore(true);
     selectConversation?.userId &&
-      navigate(`/social/chat/${selectConversation?.userId}`);
-    fetchOldMessages(1, selectConversation?.userId);
+      navigate(`/social/chat/${selectConversation?.id}`);
+    fetchOldMessages(1, selectConversation?.id);
   }, [selectConversation]);
 
   //web socket
@@ -168,6 +168,10 @@ const ChatPage = () => {
       onStompError: (frame) => {
         console.error("Broker error: " + frame.headers["message"]);
         console.error("Details: " + frame.body);
+        messageApi.error({
+          content: "Kết nối thất bại: " + frame.headers["message"],
+          duration: 2,
+        });
       },
     });
 
@@ -181,7 +185,6 @@ const ChatPage = () => {
   }, [selectConversation]);
 
   const handleIncomingMessage = (message) => {
-    console.log("selectConversationid: ", selectConversation.id);
     if (message.conversationId !== selectConversation.id) {
       showNotification(message, selectConversation);
     } else {
@@ -192,43 +195,11 @@ const ChatPage = () => {
 
   //show notification when chat another conversation
   const showNotification = (message, selectConversation) => {
-    // Hiển thị thông báo UI
     messageApi.info({
       content: `Tin nhắn mới từ ${
         selectConversation.firstName + " " + selectConversation.lastName
       }: ${message.content}`,
     });
-  };
-
-  const handleSendMessage = () => {
-    if (!messageText) return;
-
-    const payload = {
-      conversationId: selectConversation.id,
-      senderId: userLogin.userId,
-      content: messageText,
-      type: 0,
-    };
-
-    const stompClient = stompRef.current;
-
-    if (!stompClient || !stompClient.connected) {
-      console.warn("Chưa kết nối STOMP WebSocket.");
-      return;
-    }
-
-    stompClient.publish({
-      destination: "/app/chat.sendMessage",
-      body: JSON.stringify(payload),
-    });
-    setMessageText("");
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
-    }
   };
 
   return (
@@ -299,6 +270,7 @@ const ChatPage = () => {
                 <MessageChat
                   message={message}
                   selectConversation={selectConversation}
+                  setReplyingMessage={setReplyingMessage}
                 />
               ))}
               <div ref={messageEndRef} />
@@ -309,10 +281,10 @@ const ChatPage = () => {
           <InputMessage
             messageText={messageText}
             setMessageText={setMessageText}
-            handleKeyPress={handleKeyPress}
-            handleSendMessage={handleSendMessage}
             selectConversation={selectConversation}
             stompRef={stompRef}
+            replyingMessage={replyingMessage}
+            setReplyingMessage={setReplyingMessage}
           />
         </div>
       </div>

@@ -1,15 +1,15 @@
 import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
-import { message, Upload } from "antd";
-import { Image, Mic, Send, Smile, X } from "lucide-react";
-import React, { useState, useRef } from "react";
+import { message, Spin, Upload } from "antd";
+import { Image, Mic, ReplyIcon, Send, Smile, X } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
 
 const InputMessage = ({
   messageText,
   setMessageText,
-  handleSendMessage,
-  handleKeyPress,
   selectConversation,
   stompRef,
+  replyingMessage,
+  setReplyingMessage,
 }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
@@ -18,13 +18,12 @@ const InputMessage = ({
   const [isLoading, setIsLoading] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
 
-
   const handleSendImage = async () => {
     try {
       let content;
       if (selectedImage) {
         const formData = new FormData();
-        formData.append("file", selectedImage); // single image
+        formData.append("file", selectedImage);
 
         const fileRes = await fetchWithAuth(
           "http://localhost:8080/cloudinary",
@@ -50,6 +49,7 @@ const InputMessage = ({
         senderId: userLogin.userId,
         content: content,
         type: 1,
+        replyToId: replyingMessage.messageId,
       };
       console.log("layload: ", payload);
 
@@ -69,11 +69,36 @@ const InputMessage = ({
       setMessageText("");
       setSelectedImage(null);
       setPreviewImage(null);
-      console.log("đã gử websocket");
     } catch (error) {
       console.error("Lỗi khi gửi tin nhắn:", error);
-      message.error("Lỗi khi gửi tin nhắn");
+      messageApi.error("Lỗi khi gửi tin nhắn");
     }
+  };
+
+  const handleSendMessage = () => {
+    if (!messageText) return;
+
+    const payload = {
+      conversationId: selectConversation.id,
+      senderId: userLogin.userId,
+      content: messageText,
+      type: 0,
+      replyToId: replyingMessage?.messageId || null,
+    };
+    console.log("payload no image: ", payload);
+
+    const stompClient = stompRef.current;
+
+    if (!stompClient || !stompClient.connected) {
+      console.warn("Chưa kết nối STOMP WebSocket.");
+      return;
+    }
+
+    stompClient.publish({
+      destination: "/app/chat.sendMessage",
+      body: JSON.stringify(payload),
+    });
+    setMessageText("");
   };
 
   const handleSend = async () => {
@@ -91,6 +116,14 @@ const InputMessage = ({
       message.error("Lỗi khi gửi tin nhắn");
     } finally {
       setIsLoading(false);
+      setReplyingMessage(null);
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
     }
   };
 
@@ -133,9 +166,32 @@ const InputMessage = ({
           </button>
         </div>
       )}
+      {replyingMessage && (
+        <div className="mb-4 px-5 py-2 bg-white/10 text-white rounded-2xl relative">
+          <div className="text-white/70 flex items-center space-x-2 w-full pr-4">
+            <ReplyIcon className="text-white scale-70 rotate-180 shrink-0 mt-1" />
+            <span className=" text-white/70 px-1 rounded shrink-0 mt-1">
+              Đang trả lời:
+            </span>
+            <div className="text-white flex-1 break-words">
+              {replyingMessage.content}
+            </div>
+          </div>
+
+          <button
+            onClick={() => setReplyingMessage(null)}
+            className="absolute top-1 right-1 p-1 text-white hover:text-red-400"
+          >
+            <X size={16} />
+          </button>
+        </div>
+      )}
       {isLoading && (
-        <div className="w-full my-10 flex justify-center text-white">
-          Đang tải ảnh lên
+        <div className="w-full my-5 flex justify-center text-white">
+          <div className="my-3">
+            <Spin style={{ marginBottom: 0 }}></Spin>
+          </div>
+          <div>Đang tải ảnh lên...</div>
         </div>
       )}
 
@@ -177,11 +233,7 @@ const InputMessage = ({
             >
               <Send size={20} />
             </button>
-          ) : (
-            <button className="text-white hover:bg-white/20 p-2 rounded-full">
-              <Mic size={20} />
-            </button>
-          )}
+          ) : null}
         </div>
       </div>
     </div>

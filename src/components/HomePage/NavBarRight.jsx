@@ -27,9 +27,30 @@ const NavBarRight = () => {
     const [action, userId] = key.split("-");
 
     if (action === "chat") {
-      navigate(`/social/chat/${userId}`);
+      // navigate(`/social/chat/${userId}`);
+      fetchCheckConversations(userId);
     } else if (action === "profile") {
       navigate(`/social/personal-page/${userId}`);
+    }
+  };
+
+  //fetch select conversation
+  const fetchCheckConversations = async (userId) => {
+    try {
+      const res = await fetchWithAuth(
+        `http://localhost:8080/conversations/check-conversation?userId=${userId}`,
+        {
+          method: "GET",
+        }
+      );
+      const response = await res.json();
+
+      if (response.status === "success") {
+        const conversationId = response.data.id;
+        navigate(`/social/chat/${conversationId}`);
+      }
+    } catch (error) {
+      console.log("Có lỗi khi gọi api: ", error);
     }
   };
 
