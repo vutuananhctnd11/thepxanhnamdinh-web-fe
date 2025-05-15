@@ -4,7 +4,7 @@ import { message } from "antd";
 async function ApiCheckIsMember(userId, groupId) {
   try {
     const res = await fetchWithAuth(
-      `http://localhost:8080/group-members?userId=${userId}&groupId=${groupId}`,
+      `${import.meta.env.VITE_API_URL}/group-members?userId=${userId}&groupId=${groupId}`,
       {
         method: "GET",
       }

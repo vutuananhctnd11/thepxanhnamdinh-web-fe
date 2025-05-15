@@ -18,7 +18,7 @@ const UpdateGroupModal = ({ isModalOpen, setIsModalOpen, groupInfo }) => {
   //load old data
   useEffect(() => {
     if (groupInfo) {
-      console.log(groupInfo);
+      // console.log(groupInfo);
       form.setFieldsValue({
         groupName: groupInfo.groupName,
         description: groupInfo.description,
@@ -85,7 +85,7 @@ const UpdateGroupModal = ({ isModalOpen, setIsModalOpen, groupInfo }) => {
         formData.append("file", fileList[0].originFileObj);
 
         const fileRes = await fetchWithAuth(
-          "http://localhost:8080/cloudinary",
+          `${import.meta.env.VITE_API_URL}/cloudinary`,
           {
             method: "POST",
             body: formData,
@@ -106,7 +106,7 @@ const UpdateGroupModal = ({ isModalOpen, setIsModalOpen, groupInfo }) => {
       console.log("RESPONSE: ", JSON.stringify(combinedData));
 
       // call api update group
-      const updateRes = await fetchWithAuth("http://localhost:8080/groups", {
+      const updateRes = await fetchWithAuth(`${import.meta.env.VITE_API_URL}/groups`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

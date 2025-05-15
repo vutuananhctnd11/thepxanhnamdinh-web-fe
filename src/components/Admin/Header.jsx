@@ -40,7 +40,7 @@ const Header = () => {
           return;
         }
 
-        let res = await fetch("http://localhost:8080/users/admin/me", {
+        let res = await fetch(`${import.meta.env.VITE_API_URL}/users/admin/me`, {
           method: "GET",
           headers: { Authorization: "Bearer " + accessToken },
         });
@@ -61,7 +61,7 @@ const Header = () => {
             return;
           }
 
-          res = await fetch("http://localhost:8080/users/admin/me", {
+          res = await fetch(`${import.meta.env.VITE_API_URL}/users/admin/me`, {
             method: "GET",
             headers: { Authorization: "Bearer " + newToken },
           });

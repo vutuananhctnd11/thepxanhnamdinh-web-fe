@@ -12,7 +12,7 @@ const SearchGroups = ({ group }) => {
 
   const handleJoinGroup = () =>
     handleFriendAction({
-      url: "http://localhost:8080/group-members/join-group",
+      url: `${import.meta.env.VITE_API_URL}/group-members/join-group`,
       method: "POST",
       body: {
         userId: userLogin.userId,

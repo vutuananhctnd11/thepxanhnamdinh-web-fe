@@ -6,27 +6,15 @@ import NavBarLeft from "../../components/HomePage/NavBarLeft";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import NavBarRight from "@/components/HomePage/NavBarRight";
 import NewsFeed from "../../components/HomePage/NewsFeed";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { Image, Smile, VideoIcon } from "lucide-react";
-import CreatePostModal from "@/components/HomePage/CreatePostModal";
 import ModalNotification from "@/parts/ModalNotification";
-import { Spin } from "antd";
 import "./custom-scroll-bar.css";
 import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
 import InfiniteScroll from "react-infinite-scroll-component";
 import CreatePost from "@/components/Post/CreatePost";
 
 const HomePage = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalNotiProps, setModalNotiProps] = useState({});
   const [isModalNotiOpen, setIsModalNotiOpen] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
-
-  const userLogin = JSON.parse(localStorage.getItem("userLogin"));
-
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
 
   const [listPost, setListPost] = useState([]);
   const [page, setPage] = useState(1);
@@ -36,7 +24,7 @@ const HomePage = () => {
   const fetchNewsFeed = async () => {
     try {
       const res = await fetchWithAuth(
-        `http://localhost:8080/posts/news-feed?page=${page}&limit=${limit}`,
+        `${import.meta.env.VITE_API_URL}/posts/news-feed?page=${page}&limit=${limit}`,
         {
           method: "GET",
         }
@@ -90,8 +78,8 @@ const HomePage = () => {
             {/* tạo bài viết mới */}
             <div className="w-[80%]">
               <CreatePost />
+              <NewsFeed listPost={listPost} isReaction={true} />
             </div>
-            <NewsFeed listPost={listPost} isReaction={true} />
           </InfiniteScroll>
         </div>
 

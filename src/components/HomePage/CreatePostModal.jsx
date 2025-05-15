@@ -46,7 +46,7 @@ const CreateNewsFeed = ({
         formData.append("files", fileWrapper.originFileObj);
       });
       const fileRes = await fetchWithAuth(
-        "http://localhost:8080/cloudinary/list-file",
+        `${import.meta.env.VITE_API_URL}/cloudinary/list-file`,
         {
           method: "POST",
           body: formData,
@@ -68,7 +68,7 @@ const CreateNewsFeed = ({
 
       //call api create post
 
-      const createPostRes = await fetchWithAuth("http://localhost:8080/posts", {
+      const createPostRes = await fetchWithAuth(`${import.meta.env.VITE_API_URL}/posts`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

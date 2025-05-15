@@ -19,7 +19,7 @@ const SearchUsers = ({ user }) => {
 
   const handleAddFriendRequest = () =>
     handleFriendAction({
-      url: "http://localhost:8080/friends",
+      url: `${import.meta.env.VITE_API_URL}/friends`,
       method: "POST",
       body: {
         senderId: userLogin.userId,
@@ -36,7 +36,7 @@ const SearchUsers = ({ user }) => {
 
   const handleDeleteFriend = () =>
     handleFriendAction({
-      url: `http://localhost:8080/friends/${user.userId}`,
+      url: `${import.meta.env.VITE_API_URL}/friends/${user.userId}`,
       method: "DELETE",
       onSuccess: () => {
         setIsFriend(false);
@@ -49,7 +49,7 @@ const SearchUsers = ({ user }) => {
 
   const handleRejectAddFriend = () =>
     handleFriendAction({
-      url: `http://localhost:8080/friends/reject/${user.userId}`,
+      url: `${import.meta.env.VITE_API_URL}/friends/reject/${user.userId}`,
       method: "DELETE",
       onSuccess: () => {
         setIsFriend(false);
@@ -62,7 +62,7 @@ const SearchUsers = ({ user }) => {
 
   const handleAcceptAddFriend = () =>
     handleFriendAction({
-      url: `http://localhost:8080/friends/accept/${user.userId}`,
+      url: `${import.meta.env.VITE_API_URL}/friends/accept/${user.userId}`,
       method: "PATCH",
       onSuccess: () => {
         setIsFriend(false);
@@ -75,7 +75,7 @@ const SearchUsers = ({ user }) => {
 
   const handleDeleteAddFriendRequest = () =>
     handleFriendAction({
-      url: `http://localhost:8080/friends/add-request/${user.userId}`,
+      url: `${import.meta.env.VITE_API_URL}/friends/add-request/${user.userId}`,
       method: "DELETE",
       onSuccess: () => {
         setIsFriend(false);

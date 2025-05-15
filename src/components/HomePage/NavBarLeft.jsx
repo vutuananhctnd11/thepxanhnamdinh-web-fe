@@ -16,7 +16,7 @@ const NewsFeed = () => {
   const fetchListGroupJoined = async () => {
     try {
       const res = await fetchWithAuth(
-        `http://localhost:8080/groups/user-joined?page=1&limit=10&userId=${userLogin.userId}`,
+        `${import.meta.env.VITE_API_URL}/groups/user-joined?page=1&limit=10&userId=${userLogin.userId}`,
         {
           method: "GET",
         }

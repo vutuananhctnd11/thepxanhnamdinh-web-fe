@@ -15,7 +15,7 @@ const SideBarChat = ({
   const fetchConversations = async () => {
     try {
       const res = await fetchWithAuth(
-        "http://localhost:8080/conversations/list",
+        `${import.meta.env.VITE_API_URL}/conversations/list`,
         {
           method: "GET",
         }
@@ -56,7 +56,7 @@ const SideBarChat = ({
         </div>
       </div>
 
-      <div className="overflow-y-auto flex-1">
+      <div className="overflow-y-auto custom-scroll-bar flex-1">
         {listConversation.map((conversation) => (
           <div
             key={conversation.id}

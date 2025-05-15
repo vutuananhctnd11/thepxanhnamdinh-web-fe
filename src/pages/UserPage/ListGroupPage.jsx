@@ -42,7 +42,7 @@ const ListGroupPage = () => {
   const fetchListGroups = async () => {
     try {
       const res = await fetchWithAuth(
-        `http://localhost:8080/groups/all?page=${page}&limit=${limit}`,
+        `${import.meta.env.VITE_API_URL}/groups/all?page=${page}&limit=${limit}`,
         {
           method: "GET",
         }

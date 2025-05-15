@@ -10,7 +10,7 @@ const OrderTicket = () => {
     const fetchMatchInfo = async () => {
       try {
         const res = await fetch(
-          "http://localhost:8080/matches/top3-matches-nearest",
+          `${import.meta.env.VITE_API_URL}/matches/top3-matches-nearest`,
           {
             method: "GET",
           }

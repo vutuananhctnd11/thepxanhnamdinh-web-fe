@@ -70,7 +70,7 @@ const PostInfo = ({ postInput }) => {
   const handleDeletePost = async (postId) => {
     try {
       const res = await fetchWithAuth(
-        `http://localhost:8080/posts/${postId}/delete`,
+        `${import.meta.env.VITE_API_URL}/posts/${postId}/delete`,
         {
           method: "PATCH",
         }
@@ -89,7 +89,7 @@ const PostInfo = ({ postInput }) => {
   //fetch like post
   const handleLike = async (postId) => {
     try {
-      const res = await fetchWithAuth("http://localhost:8080/reactions", {
+      const res = await fetchWithAuth(`${import.meta.env.VITE_API_URL}/reactions`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -111,7 +111,7 @@ const PostInfo = ({ postInput }) => {
   const handleUnlike = async (postId) => {
     try {
       const res = await fetchWithAuth(
-        `http://localhost:8080/reactions/${postId}`,
+        `${import.meta.env.VITE_API_URL}/reactions/${postId}`,
         {
           method: "DELETE",
         }
@@ -140,7 +140,7 @@ const PostInfo = ({ postInput }) => {
   else
     return (
       <div
-        className="w-[80%] text-[14px] bg-white/10 rounded-lg my-3 py-1"
+        className="w-full text-[14px] bg-white/10 rounded-lg my-3 py-1"
         key={post?.postId}
       >
         <div className="w-full">

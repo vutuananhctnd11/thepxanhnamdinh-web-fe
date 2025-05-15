@@ -18,7 +18,7 @@ const ChooseTicketPopup = ({ isModalOpen, onOk, handleCancel, matchId }) => {
       try {
         const accessToken = localStorage.getItem("accessToken");
         const res = await fetchWithAuth(
-          "http://localhost:8080/tickets/ticket-of-match?matchId=" + matchId,
+          `${import.meta.env.VITE_API_URL}/tickets/ticket-of-match?matchId=` + matchId,
           {
             method: "GET",
           }
@@ -85,7 +85,7 @@ const ChooseTicketPopup = ({ isModalOpen, onOk, handleCancel, matchId }) => {
     const requestData = { listOrderTickets };
 
     try {
-      let res = await fetch("http://localhost:8080/order-ticket", {
+      let res = await fetch(`${import.meta.env.VITE_API_URL}/order-ticket`, {
         method: "POST",
         headers: {
           Authorization: "Bearer " + accessToken,

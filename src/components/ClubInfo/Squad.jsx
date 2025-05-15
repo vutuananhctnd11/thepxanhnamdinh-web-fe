@@ -32,7 +32,7 @@ const Squad = ({ setPlayerId }) => {
   useEffect(() => {
     const fetchSquadApi = async () => {
       try {
-        const res = await fetch("http://localhost:8080/players/squad", {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/players/squad`, {
           method: "GET",
         });
         const response = await res.json();

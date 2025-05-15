@@ -38,10 +38,14 @@ const Header = ({ isFixed }) => {
   const items = [
     {
       key: "1",
-      label: <span>Thông tin cá nhân</span>,
+      label: <span>Trang cá nhân</span>,
     },
     {
       key: "2",
+      label: <span>Đổi mật khẩu</span>,
+    },
+    {
+      key: "3",
       label: <span>Đăng xuất</span>,
     },
   ];
@@ -49,9 +53,12 @@ const Header = ({ isFixed }) => {
   useEffect(() => {
     const fetchUserLogin = async () => {
       try {
-        const res = await fetchWithAuth("http://localhost:8080/users/me", {
-          method: "GET",
-        });
+        const res = await fetchWithAuth(
+          `${import.meta.env.VITE_API_URL}/users/me`,
+          {
+            method: "GET",
+          }
+        );
 
         const response = await res.json();
 
@@ -102,7 +109,7 @@ const Header = ({ isFixed }) => {
       console.log("Thông tin cá nhân");
     }
 
-    if (key === "2") {
+    if (key === "3") {
       openModal({
         title: "Đăng xuất?",
         message: "Bạn có chắc chắn muốn đăng xuất không?",

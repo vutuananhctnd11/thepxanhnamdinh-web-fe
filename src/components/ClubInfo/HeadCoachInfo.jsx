@@ -7,7 +7,7 @@ const HeadCoachInfo = () => {
   useEffect(() => {
     const fetchPlayerInfo = async () => {
       try {
-        const res = await fetch("http://localhost:8080/coaches/head-coach", {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/coaches/head-coach`, {
           method: "GET",
         });
         const response = await res.json();

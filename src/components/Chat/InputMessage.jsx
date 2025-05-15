@@ -1,7 +1,7 @@
 import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
 import { message, Spin, Upload } from "antd";
 import { Image, Mic, ReplyIcon, Send, Smile, X } from "lucide-react";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 
 const InputMessage = ({
   messageText,
@@ -26,7 +26,7 @@ const InputMessage = ({
         formData.append("file", selectedImage);
 
         const fileRes = await fetchWithAuth(
-          "http://localhost:8080/cloudinary",
+          `${import.meta.env.VITE_API_URL}/cloudinary`,
           {
             method: "POST",
             body: formData,
@@ -49,7 +49,7 @@ const InputMessage = ({
         senderId: userLogin.userId,
         content: content,
         type: 1,
-        replyToId: replyingMessage.messageId,
+        replyToId: replyingMessage?.messageId || null,
       };
       console.log("layload: ", payload);
 
@@ -65,7 +65,9 @@ const InputMessage = ({
         body: JSON.stringify(payload),
       });
 
-      // Reset sau khi gửi
+      //send text message
+      handleSendMessage();
+
       setMessageText("");
       setSelectedImage(null);
       setPreviewImage(null);
@@ -173,9 +175,17 @@ const InputMessage = ({
             <span className=" text-white/70 px-1 rounded shrink-0 mt-1">
               Đang trả lời:
             </span>
-            <div className="text-white flex-1 break-words">
-              {replyingMessage.content}
-            </div>
+            {replyingMessage.type === 1 ? (
+              <img
+                src={replyingMessage.content}
+                alt="Ảnh reply"
+                className="max-w-full mb-1 max-h-35 rounded-lg opacity-100"
+              />
+            ) : (
+              <div className="text-white flex-1 break-words">
+                {replyingMessage.content}
+              </div>
+            )}
           </div>
 
           <button
@@ -187,11 +197,11 @@ const InputMessage = ({
         </div>
       )}
       {isLoading && (
-        <div className="w-full my-5 flex justify-center text-white">
+        <div className="w-full mb-5 flex space-x-3 justify-center text-white">
           <div className="my-3">
             <Spin style={{ marginBottom: 0 }}></Spin>
           </div>
-          <div>Đang tải ảnh lên...</div>
+          <div className="flex items-center">Đang tải ảnh lên...</div>
         </div>
       )}
 
@@ -210,9 +220,9 @@ const InputMessage = ({
           >
             <Image size={20} />
           </button>
-          <button className="text-white hover:bg-white/20 p-2 rounded-full">
+          {/* <button className="text-white hover:bg-white/20 p-2 rounded-full">
             <Smile size={20} />
-          </button>
+          </button> */}
         </div>
 
         <div className="flex-1 mx-4">

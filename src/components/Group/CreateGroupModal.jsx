@@ -53,7 +53,7 @@ const CreateGroupModal = ({ isModalOpen, setIsModalOpen }) => {
       fileList.forEach((fileWrapper) => {
         formData.append("file", fileWrapper.originFileObj);
       });
-      const fileRes = await fetchWithAuth("http://localhost:8080/cloudinary", {
+      const fileRes = await fetchWithAuth(`${import.meta.env.VITE_API_URL}/cloudinary`, {
         method: "POST",
         body: formData,
       });
@@ -69,7 +69,7 @@ const CreateGroupModal = ({ isModalOpen, setIsModalOpen }) => {
 
       //call api create group
       const createPostRes = await fetchWithAuth(
-        "http://localhost:8080/groups",
+        `${import.meta.env.VITE_API_URL}/groups`,
         {
           method: "POST",
           headers: {

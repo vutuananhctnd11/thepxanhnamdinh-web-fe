@@ -9,7 +9,7 @@ const PlayerInfo = ({ playerId }) => {
   useEffect(() => {
     const fetchPlayerInfo = async () => {
       try {
-        const res = await fetch("http://localhost:8080/players/" + playerId, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/players/` + playerId, {
           method: "GET",
         });
         const response = await res.json();

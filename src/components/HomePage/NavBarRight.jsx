@@ -38,7 +38,7 @@ const NavBarRight = () => {
   const fetchCheckConversations = async (userId) => {
     try {
       const res = await fetchWithAuth(
-        `http://localhost:8080/conversations/check-conversation?userId=${userId}`,
+        `${import.meta.env.VITE_API_URL}/conversations/check-conversation?userId=${userId}`,
         {
           method: "GET",
         }
@@ -70,7 +70,7 @@ const NavBarRight = () => {
 
     try {
       const res = await fetchWithAuth(
-        `http://localhost:8080/friends?userId=${userId}&page=1&limit=10`,
+        `${import.meta.env.VITE_API_URL}/friends?userId=${userId}&page=1&limit=10`,
         {
           method: "GET",
         }

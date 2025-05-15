@@ -43,7 +43,7 @@ const CommentModal = ({
   const fetchListComments = async () => {
     try {
       const res = await fetchWithAuth(
-        `http://localhost:8080/comments?postId=${postId}&page=${page}&limit=${limit}`,
+        `${import.meta.env.VITE_API_URL}/comments?postId=${postId}&page=${page}&limit=${limit}`,
         {
           method: "GET",
         }

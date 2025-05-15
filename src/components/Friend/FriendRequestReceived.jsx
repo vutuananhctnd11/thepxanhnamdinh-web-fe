@@ -32,7 +32,7 @@ const FriendRequestReceived = () => {
   const fetchAddFriendReceived = async () => {
     try {
       const res = await fetchWithAuth(
-        "http://localhost:8080/friends/receiver?page=1&limit=10",
+        `${import.meta.env.VITE_API_URL}/friends/receiver?page=1&limit=10`,
         {
           method: "GET",
         }
@@ -51,7 +51,7 @@ const FriendRequestReceived = () => {
 
   const handleRejectAddFriend = (friend) => {
     handleFriendAction({
-      url: `http://localhost:8080/friends/reject/${friend.senderId}`,
+      url: `${import.meta.env.VITE_API_URL}/friends/reject/${friend.senderId}`,
       method: "DELETE",
       onSuccess: () => {
         fetchAddFriendReceived();
@@ -60,12 +60,11 @@ const FriendRequestReceived = () => {
       errorMessage: "Từ chối thất bại",
       messageApi: messageApi,
     });
-    console.log("fullname: ", friend.fullName);
   };
 
   const handleAcceptAddFriend = (friend) => {
     handleFriendAction({
-      url: `http://localhost:8080/friends/accept/${friend.senderId}`,
+      url: `${import.meta.env.VITE_API_URL}/friends/accept/${friend.senderId}`,
       method: "PATCH",
       onSuccess: () => {
         setTimeout(() => {

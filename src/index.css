@@ -124,3 +124,71 @@
 .ant-input-textarea::placeholder {
   color: rgba(255, 255, 255, 0.6);
 }
+
+/* --- Giao diện chung cho panel popup --- */
+.dark-datepicker-popup .ant-picker-panel {
+  background-color: rgba(0, 0, 0, 0.85) !important;
+  color: white !important;
+}
+
+
+/* --- Mũi tên điều hướng tháng/năm --- */
+.dark-datepicker-popup .ant-picker-header button, 
+.dark-datepicker-popup .ant-picker-content th {
+  color: white !important;
+}
+
+/* --- Ngày thường --- */
+.dark-datepicker-popup .ant-picker-cell-inner {
+  color: white !important;
+}
+
+/* --- Hover ngày --- */
+.dark-datepicker-popup .ant-picker-cell:hover .ant-picker-cell-inner {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+}
+
+/* --- Ngày được chọn hoặc hôm nay --- */
+.dark-datepicker-popup .ant-picker-cell-selected .ant-picker-cell-inner,
+.dark-datepicker-popup .ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner {
+  background-color: #3986f2 !important;
+  color: white !important;
+}
+
+/* --- Header/Footer --- */
+.dark-datepicker-popup .ant-picker-header {
+  color: white !important;
+  border: none !important;
+}
+.dark-datepicker-popup .ant-picker-footer {
+  background-color: rgba(0, 0, 0, 0.85) !important;
+  color: white !important;
+  border: none !important;
+}
+
+
+/* --- Input chính --- */
+.custom-dark-datepicker {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border: none !important;
+  color: white !important;
+  border-radius: 1rem;
+  padding: 0.5rem 1rem;
+}
+
+/* --- Input text --- */
+.custom-dark-datepicker .ant-picker-input > input {
+  background-color: transparent !important;
+  color: white !important;
+}
+
+/* --- Placeholder --- */
+.custom-dark-datepicker .ant-picker-input > input::placeholder {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* --- Calendar icon --- */
+.custom-dark-datepicker .ant-picker-suffix {
+  color: white !important;
+}

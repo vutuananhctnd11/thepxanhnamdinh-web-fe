@@ -30,7 +30,7 @@ const FriendRequestSent = () => {
   const fetchAddFriendSent = async () => {
     try {
       const res = await fetchWithAuth(
-        "http://localhost:8080/friends/sender?page=1&limit=10",
+        `${import.meta.env.VITE_API_URL}/friends/sender?page=1&limit=10`,
         {
           method: "GET",
         }
@@ -49,7 +49,7 @@ const FriendRequestSent = () => {
 
   const handleDeleteAddFriendRequest = (addFriendRequest) =>
     handleFriendAction({
-      url: `http://localhost:8080/friends/add-request/${addFriendRequest.userId}`,
+      url: `${import.meta.env.VITE_API_URL}/friends/add-request/${addFriendRequest.userId}`,
       method: "DELETE",
       onSuccess: () => {
         fetchAddFriendSent();

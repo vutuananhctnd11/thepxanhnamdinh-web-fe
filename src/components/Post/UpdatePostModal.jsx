@@ -81,7 +81,7 @@ const UpdatePostModal = ({
           formData.append("files", fileWrapper.originFileObj);
         });
         const fileRes = await fetchWithAuth(
-          "http://localhost:8080/cloudinary/list-file",
+          `${import.meta.env.VITE_API_URL}/cloudinary/list-file`,
           {
             method: "POST",
             body: formData,
@@ -111,13 +111,16 @@ const UpdatePostModal = ({
       console.log("RESPONSE: ", JSON.stringify(combinedData));
 
       //call api update post
-      const updatePostRes = await fetchWithAuth("http://localhost:8080/posts", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(combinedData),
-      });
+      const updatePostRes = await fetchWithAuth(
+        `${import.meta.env.VITE_API_URL}/posts`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(combinedData),
+        }
+      );
       const updatePostResponse = await updatePostRes.json();
 
       if (updatePostResponse.status === "success") {
@@ -142,7 +145,7 @@ const UpdatePostModal = ({
   const fetchGetPost = async (postId) => {
     try {
       const res = await fetchWithAuth(
-        `http://localhost:8080/posts?postId=${postId}`,
+        `${import.meta.env.VITE_API_URL}/posts?postId=${postId}`,
         {
           method: "GET",
         }

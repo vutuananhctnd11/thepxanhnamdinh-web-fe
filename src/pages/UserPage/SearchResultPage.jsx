@@ -36,7 +36,7 @@ const SearchResultPage = () => {
   //fetch search user
   const fetchSearchUsers = async () => {
     try {
-      const res = await fetchWithAuth(`http://localhost:8080/users/search`, {
+      const res = await fetchWithAuth(`${import.meta.env.VITE_API_URL}/users/search`, {
         method: "post",
         headers: {
           "Content-Type": "application/json",
@@ -63,7 +63,7 @@ const SearchResultPage = () => {
   //fetch search group result
   const fetchSearchGroups = async () => {
     try {
-      const res = await fetchWithAuth(`http://localhost:8080/groups/search`, {
+      const res = await fetchWithAuth(`${import.meta.env.VITE_API_URL}/groups/search`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

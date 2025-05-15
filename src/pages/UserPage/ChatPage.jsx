@@ -19,6 +19,7 @@ import { message } from "antd";
 import SideBarChat from "@/components/Chat/SideBarChat";
 import MessageChat from "@/components/Chat/MessageChat";
 import InputMessage from "@/components/Chat/InputMessage";
+import VideoCall from "@/components/Chat/VideoCall";
 
 const ChatPage = () => {
   const { conversationId } = useParams();
@@ -28,6 +29,7 @@ const ChatPage = () => {
 
   const stompRef = useRef(null);
   const accessToken = localStorage.getItem("accessToken");
+  const userLogin = JSON.parse(localStorage.getItem("userLogin"));
   const [messageApi, contextHolder] = message.useMessage();
 
   const [selectConversation, setSelectConversation] = useState(null);
@@ -39,17 +41,23 @@ const ChatPage = () => {
   const limit = 10;
   const [hasMore, setHasMore] = useState(true);
 
-  const messagesRef = useRef(null);
   const messageEndRef = useRef(null);
   const navigate = useNavigate();
 
   const [replyingMessage, setReplyingMessage] = useState(null);
 
+  const [inCall, setInCall] = useState(false);
+  const [channelName, setChannelName] = useState(null);
+  const [callingUser, setCallingUser] = useState(null);
+  const [incomingCall, setIncomingCall] = useState(null);
+
   //fetch select conversation
   const fetchSelectConversations = async () => {
     try {
       const res = await fetchWithAuth(
-        `http://localhost:8080/conversations?conversationId=${conversationId}`,
+        `${
+          import.meta.env.VITE_API_URL
+        }/conversations?conversationId=${conversationId}`,
         {
           method: "GET",
         }
@@ -73,15 +81,14 @@ const ChatPage = () => {
   const fetchOldMessages = async (page, conversationId) => {
     try {
       const res = await fetchWithAuth(
-        `http://localhost:8080/conversations/old-message?page=${page}&limit=${limit}&conversationId=${conversationId}`,
+        `${
+          import.meta.env.VITE_API_URL
+        }/conversations/old-message?page=${page}&limit=${limit}&conversationId=${conversationId}`,
         { method: "GET" }
       );
       const response = await res.json();
 
       if (response.status === "success") {
-        const container = messagesRef.current;
-        const previousScrollHeight = container?.scrollHeight ?? 0;
-
         const messages = response.data.listResults;
         setChatMessages((prev) => [...messages, ...prev]);
         if (page === 1) setIsScrollBottom(true);
@@ -91,12 +98,6 @@ const ChatPage = () => {
         } else {
           setPage((prev) => prev + 1);
         }
-
-        setTimeout(() => {
-          if (container) {
-            container.scrollTop = container.scrollHeight - previousScrollHeight;
-          }
-        }, 0);
       }
     } catch (error) {
       messageApi.error({
@@ -111,7 +112,7 @@ const ChatPage = () => {
     const div = containerRef.current;
     if (!div) return;
 
-    if (div.scrollTop <= 10) {
+    if (div.scrollTop <= 20) {
       setIsTop(true);
     } else {
       setIsTop(false);
@@ -120,8 +121,19 @@ const ChatPage = () => {
 
   //loading more data
   const handleLoadMore = async () => {
-    console.log("has more: ", hasMore);
-    fetchOldMessages(page, conversationId);
+    const div = containerRef.current;
+    if (!div) return;
+
+    const previousScrollHeight = div.scrollHeight;
+
+    await fetchOldMessages(page, conversationId);
+
+    setTimeout(() => {
+      if (div) {
+        const newScrollHeight = div.scrollHeight;
+        div.scrollTop = newScrollHeight - previousScrollHeight;
+      }
+    }, 0);
   };
 
   // scroll bottom
@@ -134,15 +146,16 @@ const ChatPage = () => {
 
   useEffect(() => {
     fetchSelectConversations();
-  }, []);
+  }, [conversationId]);
 
   useLayoutEffect(() => {
+    if (!selectConversation?.id) return;
+
     setIsScrollBottom(true);
     setChatMessages([]);
     setPage(1);
     setHasMore(true);
-    selectConversation?.userId &&
-      navigate(`/social/chat/${selectConversation?.id}`);
+    navigate(`/social/chat/${selectConversation?.id}`);
     fetchOldMessages(1, selectConversation?.id);
   }, [selectConversation]);
 
@@ -151,7 +164,7 @@ const ChatPage = () => {
     if (!selectConversation) return;
 
     const client = new Client({
-      brokerURL: "ws://localhost:8080/ws",
+      brokerURL: `${import.meta.env.VITE_WS_URL}`,
       connectHeaders: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -159,10 +172,18 @@ const ChatPage = () => {
       onConnect: () => {
         console.log("WebSocket in chat connected");
 
+        // Subscribe tin nhắn chat
         client.subscribe("/user/queue/chat", (message) => {
           const msg = JSON.parse(message.body);
           handleIncomingMessage(msg);
           setIsScrollBottom(true);
+        });
+
+        // Subscribe sự kiện gọi video
+        client.subscribe("/user/queue/call", (message) => {
+          const callData = JSON.parse(message.body);
+          console.log("📞 Call event:", callData);
+          handleCallEvent(callData);
         });
       },
       onStompError: (frame) => {
@@ -202,9 +223,171 @@ const ChatPage = () => {
     });
   };
 
+  const handleCallEvent = (data) => {
+    switch (data.type) {
+      case "CALL_OFFER":
+        console.log("CALL_OFFER received:", data);
+        setIncomingCall(data);
+        break;
+      case "CALL_ACCEPT":
+        console.log("CALL_ACCEPT channel:", data.channel);
+        setChannelName(data.channel);
+        setInCall(true);
+        setCallingUser(data.fromUserId);
+        break;
+      case "CALL_REJECT":
+        messageApi.info({
+          content: `${data.fromName || "Người dùng"} đã từ chối cuộc gọi`,
+        });
+        setCallingUser(null);
+        break;
+      case "CALL_END":
+        handleLeaveCall();
+        break;
+      default:
+        console.warn("Unknown call event", data);
+        break;
+    }
+  };
+
+  const initiateCall = () => {
+    if (!selectConversation) return;
+
+    const stompClient = stompRef.current;
+    if (!stompClient) {
+      messageApi.error({ content: "Lỗi kết nối, vui lòng thử lại sau" });
+      return;
+    }
+
+    // Tạo tên kênh duy nhất
+    const channel = `call_${userLogin.userId}_${selectConversation.userId}`;
+    setChannelName(channel);
+    setCallingUser(selectConversation.userId);
+
+    stompClient.publish({
+      destination: "/app/call",
+      body: JSON.stringify({
+        type: "CALL_OFFER",
+        fromUserId: userLogin.userId,
+        fromName: userLogin.firstName + " " + userLogin.lastName,
+        toUserId: selectConversation.userId,
+        channel: channel,
+      }),
+    });
+
+    messageApi.info({ content: "Đang gọi..." });
+  };
+
+  const acceptCall = () => {
+    const stompClient = stompRef.current;
+    if (!stompClient || !incomingCall) {
+      messageApi.error({
+        content: "Lỗi kết nối, không thể chấp nhận cuộc gọi",
+      });
+      return;
+    }
+
+    stompClient.publish({
+      destination: "/app/call",
+      body: JSON.stringify({
+        type: "CALL_ACCEPT",
+        fromUserId: userLogin.userId,
+        fromName: userLogin.firstName + " " + userLogin.lastName,
+        toUserId: incomingCall.fromUserId,
+        channel: incomingCall.channel,
+      }),
+    });
+
+    setChannelName(incomingCall.channel);
+    setCallingUser(incomingCall.fromUserId);
+    setInCall(true);
+    setIncomingCall(null);
+  };
+
+  const rejectCall = () => {
+    const stompClient = stompRef.current;
+    if (!stompClient || !incomingCall) {
+      setIncomingCall(null);
+      return;
+    }
+
+    stompClient.publish({
+      destination: "/app/call",
+      body: JSON.stringify({
+        type: "CALL_REJECT",
+        fromUserId: userLogin.userId,
+        fromName: userLogin.firstName + " " + userLogin.lastName,
+        toUserId: incomingCall.fromUserId,
+      }),
+    });
+
+    setIncomingCall(null);
+  };
+
+  const handleLeaveCall = () => {
+    const stompClient = stompRef.current;
+    if (!stompRef.current || !callingUser) {
+      setInCall(false);
+      setChannelName(null);
+      setCallingUser(null);
+      return;
+    }
+
+    stompClient.publish({
+      destination: "/app/call",
+      body: JSON.stringify({
+        type: "CALL_END",
+        fromUserId: userLogin.userId,
+        fromName: userLogin.firstName + " " + userLogin.lastName,
+        toUserId: callingUser,
+      }),
+    });
+
+    setInCall(false);
+    setChannelName(null);
+    setCallingUser(null);
+  };
+
   return (
     <LayoutSocial>
       {contextHolder}
+
+      {inCall && channelName && (
+        <VideoCall
+          appId={import.meta.env.VITE_AGORA_APP_ID}
+          channel={channelName}
+          uid={userLogin.userId}
+          onLeave={handleLeaveCall}
+        />
+      )}
+
+      {incomingCall && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-50">
+          <div className="bg-white rounded-lg p-6 shadow-lg w-80">
+            <div className="text-center mb-4">
+              <h3 className="text-lg font-semibold mb-2">Cuộc gọi đến</h3>
+              <p className="text-gray-700">
+                {incomingCall.fromName || "Ai đó"} đang gọi cho bạn
+              </p>
+            </div>
+            <div className="flex justify-between space-x-4">
+              <button
+                onClick={rejectCall}
+                className="flex-1 bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition-colors"
+              >
+                Từ chối
+              </button>
+              <button
+                onClick={acceptCall}
+                className="flex-1 bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-colors"
+              >
+                Chấp nhận
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex h-screen pt-13">
         {/* Sidebar danh sách chat */}
         <SideBarChat
@@ -234,13 +417,14 @@ const ChatPage = () => {
             </div>
 
             <div className="flex space-x-4">
-              <button className="text-white hover:bg-gray-100 p-2 rounded-full">
-                <Phone size={20} />
-              </button>
-              <button className="text-white hover:bg-gray-100 p-2 rounded-full">
+              <button
+                className="text-white hover:bg-white/30 p-2 rounded-full transition-colors"
+                onClick={initiateCall}
+                disabled={!selectConversation}
+              >
                 <Video size={20} />
               </button>
-              <button className="text-white hover:bg-gray-100 p-2 rounded-full">
+              <button className="text-white hover:bg-white/30 p-2 rounded-full transition-colors">
                 <MoreHorizontal size={20} />
               </button>
             </div>
@@ -268,6 +452,7 @@ const ChatPage = () => {
               )}
               {chatMessages.map((message) => (
                 <MessageChat
+                  key={message.id || message.timestamp}
                   message={message}
                   selectConversation={selectConversation}
                   setReplyingMessage={setReplyingMessage}

@@ -29,7 +29,7 @@ const Coach = () => {
   useEffect(() => {
     const fetchListCoach = async () => {
       try {
-        const res = await fetch("http://localhost:8080/coaches", {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/coaches`, {
           method: "GET",
         });
         const response = await res.json();

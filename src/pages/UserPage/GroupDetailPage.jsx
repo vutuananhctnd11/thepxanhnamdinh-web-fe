@@ -15,6 +15,8 @@ import useNagivateLoading from "@/hooks/useNagivateLoading";
 import { handleFriendAction } from "@/parts/HandleApiAction";
 import NewsFeedInGroup from "@/components/GroupDetail/NewsFeedInGroup";
 import CensorMember from "@/components/GroupDetail/CensorMember";
+import CensorPost from "@/components/GroupDetail/CensorPost";
+import ListMember from "@/components/GroupDetail/ListMember";
 
 const GroupDetailPage = () => {
   const { groupId } = useParams();
@@ -36,7 +38,7 @@ const GroupDetailPage = () => {
   const fetchGroupInfo = async () => {
     try {
       const res = await fetchWithAuth(
-        `http://localhost:8080/groups/${groupId}`,
+        `${import.meta.env.VITE_API_URL}/groups/${groupId}`,
         {
           method: "GET",
         }
@@ -48,11 +50,10 @@ const GroupDetailPage = () => {
         setGroupInfo(groupResponse);
       }
     } catch (error) {
+      if (error.message === "TokenExpiredError") {
+        handleAuthError(error, setModalNotiProps, setIsModalNotiOpen);
+      }
       console.log("Có lỗi khi gọi api: ", error);
-      messageApi.error({
-        content: "Lỗi khi lấy danh sách bài viết: " + error,
-        duration: 3,
-      });
     }
   };
 
@@ -71,7 +72,7 @@ const GroupDetailPage = () => {
   const fetchDeleteGroup = async () => {
     try {
       const res = await fetchWithAuth(
-        `http://localhost:8080/groups/${groupId}`,
+        `${import.meta.env.VITE_API_URL}/groups/${groupId}`,
         {
           method: "PATCH",
         }
@@ -104,7 +105,7 @@ const GroupDetailPage = () => {
 
   const handleJoinGroup = () =>
     handleFriendAction({
-      url: "http://localhost:8080/group-members/join-group",
+      url: `${import.meta.env.VITE_API_URL}/group-members/join-group`,
       method: "POST",
       body: {
         userId: userLogin.userId,
@@ -124,7 +125,7 @@ const GroupDetailPage = () => {
 
   const handleLeavedGroup = () =>
     handleFriendAction({
-      url: `http://localhost:8080/group-members?groupId=${groupId}&userId=${userLogin.userId}`,
+      url: `${import.meta.env.VITE_API_URL}/group-members?groupId=${groupId}&userId=${userLogin.userId}`,
       method: "DELETE",
       onSuccess: () => {
         setStatusMember(0);
@@ -136,7 +137,7 @@ const GroupDetailPage = () => {
 
   const handleDeleteRequestGroup = () =>
     handleFriendAction({
-      url: `http://localhost:8080/group-members/join-request?groupId=${groupId}&userId=${userLogin.userId}`,
+      url: `${import.meta.env.VITE_API_URL}/group-members/join-request?groupId=${groupId}&userId=${userLogin.userId}`,
       method: "DELETE",
       onSuccess: () => {
         setStatusMember(0);
@@ -189,7 +190,7 @@ const GroupDetailPage = () => {
                   {groupInfo.groupName}
                 </div>
 
-                <div className="flex items-center mt-1">
+                <div className="flex items-center mt-2">
                   <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
                     {groupInfo.type == 2 ? "Hội cổ động viên" : "Nhóm trao đổi"}
                   </span>
@@ -199,7 +200,7 @@ const GroupDetailPage = () => {
                   </span>
                 </div>
               </div>
-              <div className="w-full flex justify-end">
+              <div className="w-[20%] flex justify-end">
                 {statusMember == 2 ? (
                   <button
                     className="px-3 py-1.5 bg-black/30 text-white rounded-md text-sm font-medium hover:bg-white/40 hover:cursor-pointer"
@@ -233,7 +234,7 @@ const GroupDetailPage = () => {
             <div className="flex overflow-x-auto scrollbar-hide">
               <button
                 onClick={() => setActiveTab("discussion")}
-                className={`px-4 py-3 font-medium text-sm whitespace-nowrap ${
+                className={`px-4 py-3 font-medium text-sm whitespace-nowrap hover:cursor-pointer ${
                   activeTab === "discussion"
                     ? "text-white border-b-2 border-white bg-white/10"
                     : "text-white/70"
@@ -243,7 +244,7 @@ const GroupDetailPage = () => {
               </button>
               <button
                 onClick={() => setActiveTab("members")}
-                className={`px-4 py-3 font-medium text-sm whitespace-nowrap ${
+                className={`px-4 py-3 font-medium text-sm whitespace-nowrap hover:cursor-pointer ${
                   activeTab === "members"
                     ? "text-white border-b-2 border-white bg-white/10"
                     : "text-white/70"
@@ -251,26 +252,30 @@ const GroupDetailPage = () => {
               >
                 Thành viên
               </button>
-              <button
-                onClick={() => setActiveTab("moderationMember")}
-                className={`px-4 py-3 font-medium text-sm whitespace-nowrap ${
-                  activeTab === "moderationMember"
-                    ? "text-white border-b-2 border-white bg-white/10"
-                    : "text-white/70"
-                }`}
-              >
-                Kiểm duyệt thành viên
-              </button>
-              <button
-                onClick={() => setActiveTab("moderationPost")}
-                className={`px-4 py-3 font-medium text-sm whitespace-nowrap ${
-                  activeTab === "moderationPost"
-                    ? "text-white border-b-2 border-white bg-white/10"
-                    : "text-white/70"
-                }`}
-              >
-                Kiểm duyệt bài viết
-              </button>
+              {checkMember?.isMember && checkMember?.memberRole != 0 && (
+                <div>
+                  <button
+                    onClick={() => setActiveTab("moderationMember")}
+                    className={`px-4 py-3 font-medium text-sm whitespace-nowrap hover:cursor-pointer ${
+                      activeTab === "moderationMember"
+                        ? "text-white border-b-2 border-white bg-white/10"
+                        : "text-white/70"
+                    }`}
+                  >
+                    Kiểm duyệt thành viên
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("moderationPost")}
+                    className={`px-4 py-3 font-medium text-sm whitespace-nowrap hover:cursor-pointer ${
+                      activeTab === "moderationPost"
+                        ? "text-white border-b-2 border-white bg-white/10"
+                        : "text-white/70"
+                    }`}
+                  >
+                    Kiểm duyệt bài viết
+                  </button>
+                </div>
+              )}
             </div>
           </div>
           {checkMember?.memberRole == 2 && (
@@ -341,8 +346,10 @@ const GroupDetailPage = () => {
                   groupInfo={groupInfo}
                 />
               )}
-              {activeTab === "moderationMember" && (
-                <CensorMember/>
+              {activeTab === "moderationMember" && <CensorMember />}
+              {activeTab === "moderationPost" && <CensorPost />}
+              {activeTab === "members" && (
+                <ListMember checkMember={checkMember} />
               )}
             </div>
           </div>

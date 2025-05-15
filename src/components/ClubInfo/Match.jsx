@@ -13,11 +13,11 @@ const Match = ({ title, played }) => {
       try {
         let res;
         if (played) {
-          res = await fetch("http://localhost:8080/matches/latest-result", {
+          res = await fetch(`${import.meta.env.VITE_API_URL}/matches/latest-result`, {
             method: "GET",
           });
         } else {
-          res = await fetch("http://localhost:8080/matches/next-match", {
+          res = await fetch(`${import.meta.env.VITE_API_URL}/matches/next-match`, {
             method: "GET",
           });
         }

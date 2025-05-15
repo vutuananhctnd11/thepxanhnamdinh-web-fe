@@ -3,7 +3,7 @@ import { refreshAccessToken } from "./ApiRefreshToken";
 export const fetchWithAuth = async (url, options = {}) => {
   let accessToken = localStorage.getItem("accessToken");
 
-  if (!accessToken) throw new Error("No access token");
+  if (!accessToken) throw new Error("TokenExpiredError");
 
   let res = await fetch(url, {
     ...options,
@@ -17,7 +17,7 @@ export const fetchWithAuth = async (url, options = {}) => {
     console.log("Token hết hạn, đang gọi refresh...");
     const newToken = await refreshAccessToken();
     if (!newToken) {
-      throw new Error("Phiên đăng nhập hết hạn");
+      throw new Error("TokenExpiredError");
     } else {
       accessToken = localStorage.setItem("accessToken", newToken);
     }

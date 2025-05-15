@@ -17,7 +17,7 @@ const NewsFeedInGroup = ({ checkMember, groupInfo }) => {
   const fetchGroupPost = async () => {
     try {
       const res = await fetchWithAuth(
-        `http://localhost:8080/posts/group?page=${page}&limit=${limit}&groupId=${groupId}`,
+        `${import.meta.env.VITE_API_URL}/posts/group?page=${page}&limit=${limit}&groupId=${groupId}`,
         {
           method: "GET",
         }
