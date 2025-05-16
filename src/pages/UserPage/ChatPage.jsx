@@ -1,16 +1,6 @@
 import React, { useLayoutEffect } from "react";
 import { useState, useEffect, useRef } from "react";
-import {
-  Send,
-  Phone,
-  Video,
-  Image,
-  Paperclip,
-  Smile,
-  MoreHorizontal,
-  Search,
-  Mic,
-} from "lucide-react";
+import { Video, MoreHorizontal } from "lucide-react";
 import LayoutSocial from "../../components/LayoutSocial";
 import { Client } from "@stomp/stompjs";
 import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
@@ -45,11 +35,6 @@ const ChatPage = () => {
   const navigate = useNavigate();
 
   const [replyingMessage, setReplyingMessage] = useState(null);
-
-  const [inCall, setInCall] = useState(false);
-  const [channelName, setChannelName] = useState(null);
-  const [callingUser, setCallingUser] = useState(null);
-  const [incomingCall, setIncomingCall] = useState(null);
 
   //fetch select conversation
   const fetchSelectConversations = async () => {
@@ -159,10 +144,7 @@ const ChatPage = () => {
     fetchOldMessages(1, selectConversation?.id);
   }, [selectConversation]);
 
-  //web socket
   useEffect(() => {
-    if (!selectConversation) return;
-
     const client = new Client({
       brokerURL: `${import.meta.env.VITE_WS_URL}`,
       connectHeaders: {
@@ -170,20 +152,13 @@ const ChatPage = () => {
       },
       reconnectDelay: 5000,
       onConnect: () => {
-        console.log("WebSocket in chat connected");
+        console.log("WebSocket in chat connected ✅");
 
         // Subscribe tin nhắn chat
         client.subscribe("/user/queue/chat", (message) => {
           const msg = JSON.parse(message.body);
           handleIncomingMessage(msg);
           setIsScrollBottom(true);
-        });
-
-        // Subscribe sự kiện gọi video
-        client.subscribe("/user/queue/call", (message) => {
-          const callData = JSON.parse(message.body);
-          console.log("📞 Call event:", callData);
-          handleCallEvent(callData);
         });
       },
       onStompError: (frame) => {
@@ -207,7 +182,7 @@ const ChatPage = () => {
 
   const handleIncomingMessage = (message) => {
     if (message.conversationId !== selectConversation.id) {
-      showNotification(message, selectConversation);
+      showNotification(message);
     } else {
       setChatMessages((prev) => [...prev, message]);
     }
@@ -215,38 +190,15 @@ const ChatPage = () => {
   };
 
   //show notification when chat another conversation
-  const showNotification = (message, selectConversation) => {
-    messageApi.info({
-      content: `Tin nhắn mới từ ${
-        selectConversation.firstName + " " + selectConversation.lastName
-      }: ${message.content}`,
-    });
-  };
-
-  const handleCallEvent = (data) => {
-    switch (data.type) {
-      case "CALL_OFFER":
-        console.log("CALL_OFFER received:", data);
-        setIncomingCall(data);
-        break;
-      case "CALL_ACCEPT":
-        console.log("CALL_ACCEPT channel:", data.channel);
-        setChannelName(data.channel);
-        setInCall(true);
-        setCallingUser(data.fromUserId);
-        break;
-      case "CALL_REJECT":
-        messageApi.info({
-          content: `${data.fromName || "Người dùng"} đã từ chối cuộc gọi`,
-        });
-        setCallingUser(null);
-        break;
-      case "CALL_END":
-        handleLeaveCall();
-        break;
-      default:
-        console.warn("Unknown call event", data);
-        break;
+  const showNotification = (message) => {
+    if (message.type === 0) {
+      messageApi.info({
+        content: `${message.senderFullName} đã gửi một tin nhắn: ${message.content}`,
+      });
+    } else {
+      messageApi.info({
+        content: `${message.senderFullName} đã gửi một ảnh/video`,
+      });
     }
   };
 
@@ -259,10 +211,7 @@ const ChatPage = () => {
       return;
     }
 
-    // Tạo tên kênh duy nhất
     const channel = `call_${userLogin.userId}_${selectConversation.userId}`;
-    setChannelName(channel);
-    setCallingUser(selectConversation.userId);
 
     stompClient.publish({
       destination: "/app/call",
@@ -275,118 +224,19 @@ const ChatPage = () => {
       }),
     });
 
-    messageApi.info({ content: "Đang gọi..." });
-  };
-
-  const acceptCall = () => {
-    const stompClient = stompRef.current;
-    if (!stompClient || !incomingCall) {
-      messageApi.error({
-        content: "Lỗi kết nối, không thể chấp nhận cuộc gọi",
-      });
-      return;
-    }
-
-    stompClient.publish({
-      destination: "/app/call",
-      body: JSON.stringify({
-        type: "CALL_ACCEPT",
-        fromUserId: userLogin.userId,
-        fromName: userLogin.firstName + " " + userLogin.lastName,
-        toUserId: incomingCall.fromUserId,
-        channel: incomingCall.channel,
-      }),
+    messageApi.info({
+      content:
+        "Đang gọi đến " +
+        selectConversation?.firstName +
+        " " +
+        selectConversation?.lastName,
+      duration: 4,
     });
-
-    setChannelName(incomingCall.channel);
-    setCallingUser(incomingCall.fromUserId);
-    setInCall(true);
-    setIncomingCall(null);
-  };
-
-  const rejectCall = () => {
-    const stompClient = stompRef.current;
-    if (!stompClient || !incomingCall) {
-      setIncomingCall(null);
-      return;
-    }
-
-    stompClient.publish({
-      destination: "/app/call",
-      body: JSON.stringify({
-        type: "CALL_REJECT",
-        fromUserId: userLogin.userId,
-        fromName: userLogin.firstName + " " + userLogin.lastName,
-        toUserId: incomingCall.fromUserId,
-      }),
-    });
-
-    setIncomingCall(null);
-  };
-
-  const handleLeaveCall = () => {
-    const stompClient = stompRef.current;
-    if (!stompRef.current || !callingUser) {
-      setInCall(false);
-      setChannelName(null);
-      setCallingUser(null);
-      return;
-    }
-
-    stompClient.publish({
-      destination: "/app/call",
-      body: JSON.stringify({
-        type: "CALL_END",
-        fromUserId: userLogin.userId,
-        fromName: userLogin.firstName + " " + userLogin.lastName,
-        toUserId: callingUser,
-      }),
-    });
-
-    setInCall(false);
-    setChannelName(null);
-    setCallingUser(null);
   };
 
   return (
     <LayoutSocial>
       {contextHolder}
-
-      {inCall && channelName && (
-        <VideoCall
-          appId={import.meta.env.VITE_AGORA_APP_ID}
-          channel={channelName}
-          uid={userLogin.userId}
-          onLeave={handleLeaveCall}
-        />
-      )}
-
-      {incomingCall && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-50">
-          <div className="bg-white rounded-lg p-6 shadow-lg w-80">
-            <div className="text-center mb-4">
-              <h3 className="text-lg font-semibold mb-2">Cuộc gọi đến</h3>
-              <p className="text-gray-700">
-                {incomingCall.fromName || "Ai đó"} đang gọi cho bạn
-              </p>
-            </div>
-            <div className="flex justify-between space-x-4">
-              <button
-                onClick={rejectCall}
-                className="flex-1 bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition-colors"
-              >
-                Từ chối
-              </button>
-              <button
-                onClick={acceptCall}
-                className="flex-1 bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-colors"
-              >
-                Chấp nhận
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       <div className="flex h-screen pt-13">
         {/* Sidebar danh sách chat */}

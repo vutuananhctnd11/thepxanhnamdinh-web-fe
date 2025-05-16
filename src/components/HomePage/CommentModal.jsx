@@ -43,7 +43,9 @@ const CommentModal = ({
   const fetchListComments = async () => {
     try {
       const res = await fetchWithAuth(
-        `${import.meta.env.VITE_API_URL}/comments?postId=${postId}&page=${page}&limit=${limit}`,
+        `${
+          import.meta.env.VITE_API_URL
+        }/comments?postId=${postId}&page=${page}&limit=${limit}`,
         {
           method: "GET",
         }
@@ -94,7 +96,7 @@ const CommentModal = ({
   //web socket
   useEffect(() => {
     const client = new Client({
-      brokerURL: "ws://localhost:8080/ws",
+      brokerURL: `${import.meta.env.VITE_WS_URL}`,
       connectHeaders: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -107,6 +109,7 @@ const CommentModal = ({
             const exists = prev.some(
               (c) => c.commentId === newComment.commentId
             );
+            console.log("Received comment:", newComment);
             if (exists) {
               return prev.map((c) =>
                 c.commentId === newComment.commentId ? newComment : c
@@ -147,11 +150,11 @@ const CommentModal = ({
       return;
     }
 
+    console.log("Gửi comment: ", payload);
     stompClient.publish({
       destination: "/app/comment.send",
       body: JSON.stringify(payload),
     });
-
     form.resetFields();
   };
 

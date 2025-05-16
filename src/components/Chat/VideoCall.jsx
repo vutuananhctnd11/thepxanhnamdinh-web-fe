@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import AgoraRTC from "agora-rtc-sdk-ng";
 import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
+import { PhoneMissedIcon } from "lucide-react";
 
 const VideoCall = ({ appId, channel, uid, onLeave }) => {
   const clientRef = useRef(null);
@@ -16,24 +17,21 @@ const VideoCall = ({ appId, channel, uid, onLeave }) => {
   const [isConnecting, setIsConnecting] = useState(true);
 
   useEffect(() => {
-    console.log("👉 Agora App ID:" + appId);
-    // Khởi tạo client Agora và tham gia kênh
     const init = async () => {
       try {
         setIsConnecting(true);
-        console.log("Initializing Agora client...");
-        console.log("appId:", appId);
-        console.log("channel:", channel);
-        console.log("uid:", uid);
+        // console.log("Initializing Agora client...");
+        // console.log("appId:", appId);
+        // console.log("channel:", channel);
+        // console.log("uid:", uid);
 
-        // Tạo client Agora
         const client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
-        let token =
-          "007eJxTYBA8rCnW/zDG1eT+kjt9HXfeXWc//ETuQYdd6gl9XVupM1kKDEZmxompFokWRqYmBiaWyamJ5inmKabGBqZAnomxodnsPaoZDYGMDEzr+RgYoRDE52BITszJiTeON2RgAAC4CB9J";
-
+        let token = "";
         try {
           const res = await fetchWithAuth(
-            `${import.meta.env.VITE_API_URL}/call/token?channel=${channel}&uid=${uid}`,
+            `${
+              import.meta.env.VITE_API_URL
+            }/call/token?channel=${channel}&uid=${uid}`,
             {
               method: "GET",
             }
@@ -41,8 +39,7 @@ const VideoCall = ({ appId, channel, uid, onLeave }) => {
           const response = await res.json();
 
           if (response.status === "success") {
-            // console.log("API response======:", response.data);
-            // token = response.data;
+            token = response.data;
           }
         } catch (error) {
           console.log("Có lỗi khi gọi api: ", error);
@@ -50,14 +47,10 @@ const VideoCall = ({ appId, channel, uid, onLeave }) => {
 
         clientRef.current = client;
 
-        // Đăng ký sự kiện trước khi tham gia kênh
         setupEventListeners(client);
 
-        // Tham gia kênh
         await client.join(appId, channel, token, uid);
-        console.log("Joined channel successfully");
 
-        // Tạo và xuất bản tracks âm thanh và video
         const [microphoneTrack, cameraTrack] =
           await AgoraRTC.createMicrophoneAndCameraTracks(
             {
@@ -72,18 +65,15 @@ const VideoCall = ({ appId, channel, uid, onLeave }) => {
             }
           );
 
-        // Lưu tracks cục bộ
         setLocalTracks({
           audioTrack: microphoneTrack,
           videoTrack: cameraTrack,
         });
 
-        // Hiển thị video cục bộ
         if (localVideoRef.current) {
           cameraTrack.play(localVideoRef.current);
         }
 
-        // Xuất bản tracks
         await client.publish([microphoneTrack, cameraTrack]);
         console.log("Published local tracks successfully");
 
@@ -96,18 +86,14 @@ const VideoCall = ({ appId, channel, uid, onLeave }) => {
       }
     };
 
-    // Thiết lập trình nghe sự kiện
     const setupEventListeners = (client) => {
-      // Sự kiện khi người dùng khác xuất bản media
       client.on("user-published", async (user, mediaType) => {
         console.log("Remote user published:", user.uid, mediaType);
 
         try {
-          // Đăng ký với người dùng từ xa
           await client.subscribe(user, mediaType);
           console.log("Subscribed to remote user:", user.uid, mediaType);
 
-          // Xử lý track video
           if (mediaType === "video") {
             setRemoteUser(user);
             if (remoteVideoRef.current) {
@@ -115,7 +101,6 @@ const VideoCall = ({ appId, channel, uid, onLeave }) => {
             }
           }
 
-          // Xử lý track âm thanh
           if (mediaType === "audio") {
             user.audioTrack.play();
           }
@@ -124,9 +109,8 @@ const VideoCall = ({ appId, channel, uid, onLeave }) => {
         }
       });
 
-      // Sự kiện khi người dùng khác hủy xuất bản media
       client.on("user-unpublished", (user, mediaType) => {
-        console.log("Remote user unpublished:", user.uid, mediaType);
+        // console.log("Remote user unpublished:", user.uid, mediaType);
 
         if (mediaType === "video" && remoteVideoRef.current) {
           // Xóa hiển thị video từ xa khi người dùng hủy xuất bản
@@ -136,9 +120,8 @@ const VideoCall = ({ appId, channel, uid, onLeave }) => {
         }
       });
 
-      // Sự kiện khi người dùng khác rời đi
       client.on("user-left", (user) => {
-        console.log("Remote user left:", user.uid);
+        // console.log("Remote user left:", user.uid);
 
         if (remoteUser?.uid === user.uid) {
           setRemoteUser(null);
@@ -148,41 +131,34 @@ const VideoCall = ({ appId, channel, uid, onLeave }) => {
         }
       });
 
-      // Sự kiện khi xảy ra lỗi
-      client.on("exception", (event) => {
-        console.warn("Agora exception:", event);
-      });
+      // client.on("exception", (event) => {
+      //   console.warn("Agora exception:", event);
+      // });
     };
 
     if (appId && channel && uid) {
       init();
     } else {
-      console.error("Missing required props for VideoCall");
+      // console.error("Missing required props for VideoCall");
       onLeave();
     }
 
-    // Cleanup khi component bị hủy
     return () => {
       leaveCall();
     };
   }, [appId, channel, uid]);
 
-  // Rời khỏi cuộc gọi và dọn dẹp tài nguyên
   const leaveCall = async () => {
     try {
-      // Dừng và đóng tracks video cục bộ
       if (localTracks.videoTrack) {
         localTracks.videoTrack.stop();
         localTracks.videoTrack.close();
       }
-
-      // Dừng và đóng tracks âm thanh cục bộ
       if (localTracks.audioTrack) {
         localTracks.audioTrack.stop();
         localTracks.audioTrack.close();
       }
 
-      // Rời khỏi kênh
       if (clientRef.current) {
         await clientRef.current.leave();
         console.log("Left channel successfully");
@@ -190,12 +166,10 @@ const VideoCall = ({ appId, channel, uid, onLeave }) => {
     } catch (error) {
       console.error("Error during leave:", error);
     } finally {
-      // Gọi hàm callback rời đi
       onLeave();
     }
   };
 
-  // Bật/tắt âm thanh
   const toggleAudio = async () => {
     if (localTracks.audioTrack) {
       if (isMuted) {
@@ -207,7 +181,6 @@ const VideoCall = ({ appId, channel, uid, onLeave }) => {
     }
   };
 
-  // Bật/tắt video
   const toggleVideo = async () => {
     if (localTracks.videoTrack) {
       if (isVideoOff) {
@@ -228,7 +201,7 @@ const VideoCall = ({ appId, channel, uid, onLeave }) => {
       )}
 
       <div className="flex-1 flex flex-col md:flex-row items-center justify-center p-4">
-        {/* Video từ xa - chiếm nhiều không gian hơn */}
+        {/* Another user*/}
         <div
           ref={remoteVideoRef}
           className="w-full md:w-3/4 h-96 md:h-3/4 bg-black/50 rounded-xl mb-4 md:mb-0 md:mr-4 relative flex items-center justify-center overflow-hidden"
@@ -240,7 +213,7 @@ const VideoCall = ({ appId, channel, uid, onLeave }) => {
           )}
         </div>
 
-        {/* Video cục bộ - hiển thị nhỏ hơn */}
+        {/* Me */}
         <div className="relative">
           <div
             ref={localVideoRef}
@@ -254,7 +227,6 @@ const VideoCall = ({ appId, channel, uid, onLeave }) => {
         </div>
       </div>
 
-      {/* Thanh điều khiển */}
       <div className="p-4 flex justify-center items-center space-x-4">
         <button
           onClick={toggleAudio}
@@ -350,7 +322,7 @@ const VideoCall = ({ appId, channel, uid, onLeave }) => {
           onClick={leaveCall}
           className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-full transition-colors"
         >
-          Kết thúc cuộc gọi
+          <PhoneMissedIcon className="text-white" />
         </button>
       </div>
     </div>

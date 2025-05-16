@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import ModalNotification from "@/parts/ModalNotification";
 import { Dropdown, Menu } from "antd";
 import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
+import ChatNotification from "@/parts/ChatNotification";
 
 const Header = ({ isFixed }) => {
   const navigate = useNagivateLoading();
@@ -131,6 +132,7 @@ const Header = ({ isFixed }) => {
         isFixed ? "fixed z-50" : ""
       }`}
     >
+      <ChatNotification />
       <div className="flex h-full">
         <div className="flex items-center w-[20%] h-full">
           <img src="/public/logo.png" className="h-[50px] pl-6" />
