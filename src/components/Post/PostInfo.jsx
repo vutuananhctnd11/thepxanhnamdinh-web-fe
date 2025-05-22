@@ -1,7 +1,7 @@
 import useNagivateLoading from "@/hooks/useNagivateLoading";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import React, { useState } from "react";
-import { Carousel, Dropdown, Image, Spin } from "antd";
+import { Carousel, Dropdown, Image, message, Spin } from "antd";
 import {
   ExternalLink,
   Globe2Icon,
@@ -23,6 +23,7 @@ const PostInfo = ({ postInput }) => {
   const [isCmtModalOpen, setIsCmtModalOpen] = useState(false);
   const [userPostFullName, setUserPostFullName] = useState(null);
   const [isLiked, setIsLiked] = useState(post?.liked);
+  const [countLike, setCountLike] = useState(post?.reactCount);
 
   const [modalNotiProps, setModalNotiProps] = useState({});
   const [isModalNotiOpen, setIsModalNotiOpen] = useState(false);
@@ -31,6 +32,14 @@ const PostInfo = ({ postInput }) => {
   const [isUpdating, setIsUpdating] = useState(false);
 
   const [isDeleted, setIsDeleted] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const [expanded, setExpanded] = useState(false);
+  const MAX_LENGTH = 100;
+  const isLongContent = post.content.length > MAX_LENGTH;
+  const displayedContent = expanded
+    ? post.content
+    : post.content.slice(0, MAX_LENGTH);
 
   const userLogin = JSON.parse(localStorage.getItem("userLogin"));
 
@@ -59,10 +68,20 @@ const PostInfo = ({ postInput }) => {
   ];
 
   const handleMenuClick = ({ key }) => {
+    console.log("KEY: ", key);
     if (key === "1") {
       setIsModalUpdateOpen(true);
     } else if (key === "2") {
-      handleDeletePost(post?.postId);
+      setModalNotiProps({
+        modalTitle: "Xóa bài viết",
+        modalMessage: "Bạn có chắc chắn muốn xóa bài viết này?",
+        type: "warning",
+        buttonText: "Xác nhận",
+        cancelButtonText: "Hủy",
+        onConfirm: () => handleDeletePost(post?.postId),
+        // onConfirm: () => console.log("Xóa thành công: "),
+      });
+      setIsModalNotiOpen(true);
     }
   };
 
@@ -78,7 +97,13 @@ const PostInfo = ({ postInput }) => {
       const response = await res.json();
 
       if (response.status === "success") {
-        setIsDeleted(true);
+        messageApi.success({
+          content: "Xóa bài viết thành công!",
+          duration: 2,
+        });
+        setTimeout(() => {
+          setIsDeleted(true);
+        }, 2000);
       }
     } catch (error) {
       console.log("Có lỗi khi gọi api: ", error);
@@ -89,17 +114,21 @@ const PostInfo = ({ postInput }) => {
   //fetch like post
   const handleLike = async (postId) => {
     try {
-      const res = await fetchWithAuth(`${import.meta.env.VITE_API_URL}/reactions`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ postId: postId, userId: userLogin.userId }),
-      });
+      const res = await fetchWithAuth(
+        `${import.meta.env.VITE_API_URL}/reactions`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ postId: postId, userId: userLogin.userId }),
+        }
+      );
       const response = await res.json();
 
       if (response.status === "success") {
         setIsLiked(true);
+        setCountLike(countLike + 1);
       }
     } catch (error) {
       console.log("Có lỗi khi gọi api: ", error);
@@ -120,6 +149,7 @@ const PostInfo = ({ postInput }) => {
 
       if (response.status === "success") {
         setIsLiked(false);
+        setCountLike(countLike - 1);
       }
     } catch (error) {
       console.log("Có lỗi khi gọi api: ", error);
@@ -136,15 +166,16 @@ const PostInfo = ({ postInput }) => {
         <div>Đang chỉnh sửa lại bài viết của bạn...</div>
       </div>
     );
-  } else if (isDeleted) return null;
+  } else if (isDeleted) return <>{contextHolder}</>;
   else
     return (
       <div
         className="w-full text-[14px] bg-white/10 rounded-lg my-3 py-1"
         key={post?.postId}
       >
+        {contextHolder}
         <div className="w-full">
-          <div className="flex justify-between px-4 pt-4 pb-2">
+          <div className="flex justify-between px-4 pt-4 pb-3">
             <div className="flex items-center">
               <Avatar
                 className={"scale-120 hover:cursor-pointer"}
@@ -200,7 +231,25 @@ const PostInfo = ({ postInput }) => {
               </Dropdown>
             </div>
           </div>
-          <div className="px-4 pb-3">{post?.content}</div>
+          <div className="px-4 pb-3 whitespace-pre-wrap">
+            {displayedContent}
+            {isLongContent && !expanded && (
+              <span
+                className="ml-3 text-white/70 cursor-pointer"
+                onClick={() => setExpanded(true)}
+              >
+                ... Xem thêm
+              </span>
+            )}
+            {expanded && (
+              <span
+                className="ml-3 text-white/70 cursor-pointer"
+                onClick={() => setExpanded(false)}
+              >
+                Ẩn bớt
+              </span>
+            )}
+          </div>
 
           <Carousel arrows={true} arrowOffset={20} style={{ display: "block" }}>
             {post?.medias.map((media) => (
@@ -230,7 +279,7 @@ const PostInfo = ({ postInput }) => {
                 <i className="fa-solid fa-thumbs-up scale-85" />
               </div>
               <div className="text-[13px] hover:underline hover:cursor-default">
-                {post?.reactCount} lượt thích
+                {countLike} lượt thích
               </div>
             </div>
             <div className="text-[13px] hover:underline hover:cursor-default mr-3">
@@ -258,13 +307,13 @@ const PostInfo = ({ postInput }) => {
               </div>
             )}
             <div
-              className="w-[30%] py-1 flex justify-center items-center hover:bg-white/10 rounded-lg"
+              className="w-[30%] py-1 flex justify-center items-center hover:bg-white/10 rounded-lg hover:cursor-pointer"
               onClick={() => handleCmt(post?.postId, post?.userFullName)}
             >
               <MessageCircleIcon className="scale-90 mr-2" />
               <div>Bình luận</div>
             </div>
-            <div className="w-[30%] py-1 flex justify-center items-center hover:bg-white/10 rounded-lg">
+            <div className="w-[30%] py-1 flex justify-center items-center hover:bg-white/10 rounded-lg hover:cursor-pointer">
               <ExternalLink className="scale-90 mr-2" />
               <div>Đăng lại</div>
             </div>

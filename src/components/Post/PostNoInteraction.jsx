@@ -1,11 +1,19 @@
 import useNagivateLoading from "@/hooks/useNagivateLoading";
 import { Avatar, AvatarImage } from "../ui/avatar";
-import React from "react";
+import React, { useState } from "react";
 import { Carousel, Image } from "antd";
 import { ExternalLink, MessageCircleIcon, ThumbsUp } from "lucide-react";
 
-const PostInfo = ({ post }) => {
+const PostNoInteraction = ({ post }) => {
   const navigate = useNagivateLoading();
+  const [expanded, setExpanded] = useState(false);
+
+  const MAX_LENGTH = 200; // Số ký tự muốn hiển thị khi thu gọn
+
+  const isLongContent = post.content.length > MAX_LENGTH;
+  const displayedContent = expanded
+    ? post.content
+    : post.content.slice(0, MAX_LENGTH);
 
   return (
     <div
@@ -30,7 +38,25 @@ const PostInfo = ({ post }) => {
             <div className="text-white/50 text-[13px]">{post?.seenAt}</div>
           </div>
         </div>
-        <div className="px-4 pb-3">{post?.content}</div>
+        <div className="px-4 pb-3 whitespace-pre-wrap">
+          {displayedContent}
+          {isLongContent && !expanded && (
+            <span
+              className="ml-3 text-white/70 cursor-pointer"
+              onClick={() => setExpanded(true)}
+            >
+              ... Xem thêm
+            </span>
+          )}
+          {expanded && (
+            <span
+              className="ml-3 text-white/70 cursor-pointer"
+              onClick={() => setExpanded(false)}
+            >
+              Ẩn bớt
+            </span>
+          )}
+        </div>
 
         <Carousel arrows={true} arrowOffset={20} style={{ display: "block" }}>
           {post?.medias.map((media) => (
@@ -88,4 +114,4 @@ const PostInfo = ({ post }) => {
   );
 };
 
-export default PostInfo;
+export default PostNoInteraction;

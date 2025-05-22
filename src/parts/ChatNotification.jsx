@@ -41,10 +41,10 @@ const ChatNotification = () => {
       onStompError: (frame) => {
         console.error("Broker error: " + frame.headers["message"]);
         console.error("Details: " + frame.body);
-        messageApi.error({
-          content: "Kết nối thất bại: " + frame.headers["message"],
-          duration: 2,
-        });
+        // messageApi.error({
+        //   content: "Kết nối thất bại: " + frame.headers["message"],
+        //   duration: 2,
+        // });
       },
     });
 

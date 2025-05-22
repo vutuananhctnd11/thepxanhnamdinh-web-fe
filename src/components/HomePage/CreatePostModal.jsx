@@ -14,6 +14,7 @@ const CreateNewsFeed = ({
   setIsUploading,
   setModalNotiProps,
   setIsModalNotiOpen,
+  setNewPost,
 }) => {
   const [form] = Form.useForm();
   const fileList = Form.useWatch("medias", form) || [];
@@ -67,17 +68,20 @@ const CreateNewsFeed = ({
       console.log("RESPONSE: ", JSON.stringify(combinedData));
 
       //call api create post
-
-      const createPostRes = await fetchWithAuth(`${import.meta.env.VITE_API_URL}/posts`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(combinedData),
-      });
+      const createPostRes = await fetchWithAuth(
+        `${import.meta.env.VITE_API_URL}/posts`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(combinedData),
+        }
+      );
       const createPostResponse = await createPostRes.json();
 
       if (createPostResponse.status === "success") {
+        setNewPost(createPostResponse.data);
         setModalNotiProps({
           modalTitle: "Thành công!",
           modalMessage: "Đã đăng bài thành công!",

@@ -8,7 +8,7 @@ const SideBar = () => {
   const navigate = useNavigate();
   const [isClubMenuOpen, setIsClubMenuOpen] = useState(false);
   return (
-    <div className="flex flex-col w-64 mt-13 pr-1 bg-black/20 text-white shadow-amber-50 shadow-lg">
+    <div className="flex flex-col w-64 mt-13 pr-1 bg-black/80 text-white shadow-amber-50 shadow-lg">
       <div className="p-4 font-bold text-xl">Quản lý CLB</div>
       <nav className="flex flex-col space-y-2">
         <Link
@@ -21,13 +21,13 @@ const SideBar = () => {
           to="/admin/users"
           className="flex space-x-2 items-center p-2 pl-4 hover:bg-white/10 rounded-lg hover:cursor-pointer"
         >
-          Người dùng
+          Quản lý trận đấu
         </Link>
         <div
           className="flex space-x-2 items-center p-2 pl-4 hover:bg-white/10 rounded-lg hover:cursor-pointer"
           onClick={() => setIsClubMenuOpen((prev) => !prev)}
         >
-          <div className="w-full">Quản lý cầu thủ</div>
+          <div className="w-full">Quản lý thông tin CLB</div>
           <div className="flex justify-end">
             {isClubMenuOpen ? (
               <ChevronUp size={20} />
@@ -51,8 +51,11 @@ const SideBar = () => {
               >
                 Danh sách cầu thủ
               </div>
-              <div className="p-2 hover:bg-white/10 rounded-lg cursor-pointer">
-                Trận đấu
+              <div
+                className="p-2 hover:bg-white/10 rounded-lg cursor-pointer"
+                onClick={() => navigate("/admin/list-coach")}
+              >
+                Danh sách Ban huấn luyện
               </div>
             </motion.div>
           )}
@@ -61,7 +64,7 @@ const SideBar = () => {
           to="/admin/users"
           className="flex space-x-2 items-center p-2 pl-4 hover:bg-white/10 rounded-lg hover:cursor-pointer"
         >
-          Người dùng
+          Quản lý người dùng
         </Link>
       </nav>
       <div className="text-[10px] mt-auto">

@@ -106,13 +106,16 @@ const UpdateGroupModal = ({ isModalOpen, setIsModalOpen, groupInfo }) => {
       console.log("RESPONSE: ", JSON.stringify(combinedData));
 
       // call api update group
-      const updateRes = await fetchWithAuth(`${import.meta.env.VITE_API_URL}/groups`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(combinedData),
-      });
+      const updateRes = await fetchWithAuth(
+        `${import.meta.env.VITE_API_URL}/groups`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(combinedData),
+        }
+      );
 
       const updateResponse = await updateRes.json();
 

@@ -9,9 +9,12 @@ const PlayerInfo = ({ playerId }) => {
   useEffect(() => {
     const fetchPlayerInfo = async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/players/` + playerId, {
-          method: "GET",
-        });
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/players/` + playerId,
+          {
+            method: "GET",
+          }
+        );
         const response = await res.json();
         if (response.status === "success") {
           setPlayerInfo(response.data);
@@ -60,19 +63,18 @@ const PlayerInfo = ({ playerId }) => {
                 <p>Tuổi: {playerInfo?.age}</p>
                 <p>Ngày sinh: {playerInfo?.dateOfBirth}</p>
                 <p>Quốc tịch: {playerInfo?.nationality}</p>
-                <p>Quê quán: {playerInfo?.address}</p>
                 <p>Chiều cao: {playerInfo?.height} m</p>
                 <p>Cân nặng: {playerInfo?.weight} kg</p>
                 <p>Tổng số bàn thắng: {playerInfo?.goal}</p>
                 <p>Tổng số kiến tạo: {playerInfo?.assist}</p>
-                <p>Sự nghiệp cầu thủ:</p>
+                <p>Giới thiệu cầu thủ:</p>
                 <div className="flex text-justify ml-1 mr-4">
                   {playerInfo?.description}
                 </div>
               </div>
             </div>
           </div>
-          <div className="w-[65%] h-[80%] absolute bottom-0 right-[-8%]">
+          <div className="w-[55%] h-[80%] absolute bottom-0 right-[-8%]">
             <img
               src={playerInfo?.fullBodyImage}
               className=" h-full object-cover opacity-90 drop-shadow-[0px_00px_10px_rgba(0,0,0,0.5)]"

@@ -192,3 +192,12 @@
 .custom-dark-datepicker .ant-picker-suffix {
   color: white !important;
 }
+
+/* table */
+.ant-table-container, .ant-table-thead{
+  background-color: rgba(88, 134, 220, 0.2) !important;
+}
+
+.ant-table-container:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}

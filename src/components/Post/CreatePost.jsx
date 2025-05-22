@@ -4,6 +4,7 @@ import { Avatar, AvatarImage } from "../ui/avatar";
 import CreatePostModal from "@/components/HomePage/CreatePostModal";
 import ModalNotification from "@/parts/ModalNotification";
 import { Spin } from "antd";
+import PostInfo from "./PostInfo";
 
 const CreatePost = () => {
   const userLogin = JSON.parse(localStorage.getItem("userLogin"));
@@ -11,6 +12,7 @@ const CreatePost = () => {
   const [modalNotiProps, setModalNotiProps] = useState({});
   const [isModalNotiOpen, setIsModalNotiOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [newPost, setNewPost] = useState(null);
 
   const handelCreatePost = () => {
     setIsModalOpen(true);
@@ -57,6 +59,7 @@ const CreatePost = () => {
           setIsUploading={setIsUploading}
           setModalNotiProps={setModalNotiProps}
           setIsModalNotiOpen={setIsModalNotiOpen}
+          setNewPost={setNewPost}
         />
       </div>
       {/* loading create post */}
@@ -68,6 +71,11 @@ const CreatePost = () => {
           <div>Đang tải lên bài viết của bạn...</div>
         </div>
       ) : null}
+      {newPost && (
+        <div className="w-full mt-3">
+          <PostInfo postInput={newPost} />
+        </div>
+      )}
       <ModalNotification
         isModalOpen={isModalNotiOpen}
         setIsModalOpen={setIsModalNotiOpen}

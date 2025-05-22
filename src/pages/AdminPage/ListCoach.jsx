@@ -19,28 +19,29 @@ import { message, Pagination } from "antd";
 import { useNavigate } from "react-router-dom";
 import PlayerInfoModal from "@/components/Admin/PlayerManagement/PlayerInfoModal";
 import ModalNotification from "@/parts/ModalNotification";
+import dayjs from "dayjs";
+import CoachInfoModal from "@/components/Admin/CoachManagement/CoachInfoModal";
 
-const ListPlayer = () => {
-  const [listPlayers, setListPlayers] = useState([]);
-  const [page, setPage] = useState(1);
-  const [totalPage, setTotalPage] = useState(0);
-  const limit = 5;
+const ListCoach = () => {
+  const [listCoaches, setListCoaches] = useState([]);
 
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
 
   const [openInfoModal, setOpenInfoModal] = useState(false);
-  const [selectPlayerId, setSelectPlayerId] = useState(null);
+  const [selectCoachId, setSelectCoachId] = useState(null);
 
   const [modalNotiProps, setModalNotiProps] = useState({});
   const [isModalNotiOpen, setIsModalNotiOpen] = useState(false);
 
-  const fetchListPlayer = async () => {
+  const calculateAge = (dob) => {
+    return dayjs().diff(dayjs(dob), "year");
+  };
+
+  const fetchListCoach = async () => {
     try {
       const res = await fetchWithAuth(
-        `${
-          import.meta.env.VITE_API_URL
-        }/players/list?page=${page}&limit=${limit}`,
+        `${import.meta.env.VITE_API_URL}/coaches`,
         {
           method: "GET",
         }
@@ -48,18 +49,12 @@ const ListPlayer = () => {
       const response = await res.json();
 
       if (response.status === "success") {
-        const players = response.data.listResults;
-        setTotalPage(response.data.totalPage);
-        setListPlayers(players);
+        const players = response.data;
+        setListCoaches(players);
       }
     } catch (error) {
       console.log("Lỗi khi lấy danh sách nhóm: ", error);
     }
-  };
-
-  const handlePageChange = async (pageNumber) => {
-    console.log("page: ", pageNumber);
-    setPage(pageNumber);
   };
 
   const fetchDeletePlayer = async (playerId) => {
@@ -73,7 +68,7 @@ const ListPlayer = () => {
       const response = await res.json();
 
       if (response.status === "success") {
-        setListPlayers((prevList) =>
+        setListCoaches((prevList) =>
           prevList.filter((player) => player.playerId !== playerId)
         );
         messageApi.success({
@@ -86,7 +81,7 @@ const ListPlayer = () => {
     }
   };
 
-  const handleDeletePlayer = (playerId) => {
+  const handleDeleteCoach = (playerId) => {
     setModalNotiProps({
       modalTitle: "Xóa cầu thủ",
       modalMessage: "Bạn có chắc chắn muốn xóa cầu thủ này?",
@@ -97,16 +92,17 @@ const ListPlayer = () => {
     });
     setIsModalNotiOpen(true);
   };
+
   useEffect(() => {
-    fetchListPlayer();
-  }, [page]);
+    fetchListCoach();
+  }, []);
 
   return (
     <div className="px-10 py-3">
       {contextHolder}
       <div className="flex justify-between mb-2">
         <div className=" text-2xl m-2 w-[70%]">
-          Danh sách cầu thủ thuộc biên chế CLB
+          Danh sách ban huấn luyện CLB
         </div>
         <div
           className=" px-6 flex items-center rounded-xl hover:cursor-pointer hover:scale-105 transition"
@@ -120,81 +116,66 @@ const ListPlayer = () => {
           <TableRow>
             <TableHead className="w-[60px] text-center">STT</TableHead>
             <TableHead className="w-[15%] text-center">Ảnh đại diện</TableHead>
-            <TableHead className="w-[25%]">Họ và tên</TableHead>
+            <TableHead className="w-[20%]">Họ và tên</TableHead>
             <TableHead className="w-[5%] text-center">Tuổi</TableHead>
             <TableHead className="w-[15%] text-center">Quốc tịch</TableHead>
-            <TableHead className="w-[5%] text-center">Số áo</TableHead>
-            <TableHead className="w-[15%] text-center">Vị trí</TableHead>
+            <TableHead className="w-[20%] text-center">Vị trí</TableHead>
             <TableHead className="w-[15%] text-center">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
-          {listPlayers.map((player, index) => (
+          {listCoaches?.map((coach, index) => (
             <TableRow
-              key={player.playerId}
+              key={coach.coachId}
               className="hover:bg-black/5 transition-all duration-200"
             >
-              <TableCell className="text-center">
-                {(page - 1) * limit + index + 1}
-              </TableCell>
+              <TableCell className="text-center">{index + 1}</TableCell>
               <TableCell className="text-center">
                 <img
-                  src={player.avatarImage}
-                  className="h-[80px] w-[80px] object-cover rounded-[50%] mx-auto bg-blue-300"
+                  src={coach.image}
+                  className="h-[150px] w-[70%] object-cover rounded-lg mx-auto bg-blue-300"
                   alt="avatar"
                 />
               </TableCell>
               <TableCell className="font-medium text-[16px]">
-                {player.firstName} {player.lastName}
+                {coach.firstName} {coach.lastName}
               </TableCell>
-              <TableCell className="text-center">{player.age}</TableCell>
               <TableCell className="text-center">
-                {player.nationality}
+                {calculateAge(coach.dateOfBirth)}
               </TableCell>
-              <TableCell className="text-center text-[16px] font-medium">
-                {player.shirtNumber}
-              </TableCell>
-              <TableCell className="text-center">{player.position}</TableCell>
+              <TableCell className="text-center">{coach.nationality}</TableCell>
+              <TableCell className="text-center">{coach.position}</TableCell>
 
               <TableCell className="text-center space-x-5">
                 <EyeOutlined
                   className="text-xl cursor-pointer hover:scale-110 transition-transform duration-300"
                   onClick={() => {
                     setOpenInfoModal(true);
-                    setSelectPlayerId(player.playerId);
-                    console.log("Player id select: ", player.playerId);
+                    setSelectCoachId(coach.coachId);
+                    console.log("Player id select: ", coach.playerId);
                   }}
                 />
                 <EditOutlined
                   className="text-xl cursor-pointer hover:scale-110 transition-transform duration-300"
-                  onClick={() =>
-                    navigate(`/admin/update-player/${player.playerId}`)
-                  }
+                  //   onClick={() =>
+                  //     navigate(`/admin/update-player/${coach.playerId}`)
+                  //   }
                 />
                 <DeleteOutlined
                   className="text-xl cursor-pointer hover:scale-110 transition-transform duration-300"
-                  onClick={() => handleDeletePlayer(player.playerId)}
+                  //   onClick={() => handleDeletePlayer(coach.playerId)}
                 />
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-      <div className="mt-6">
-        <Pagination
-          defaultCurrent={1}
-          total={totalPage * limit}
-          pageSize={limit}
-          align="end"
-          onChange={handlePageChange}
-        />
-      </div>
-      {selectPlayerId && (
-        <PlayerInfoModal
+      {selectCoachId && (
+        <CoachInfoModal
           openInfoModal={openInfoModal}
           setOpenInfoModal={setOpenInfoModal}
-          playerId={selectPlayerId}
+          coachId={selectCoachId}
         />
       )}
       <ModalNotification
@@ -206,4 +187,4 @@ const ListPlayer = () => {
   );
 };
 
-export default ListPlayer;
+export default ListCoach;

@@ -40,10 +40,13 @@ const Header = () => {
           return;
         }
 
-        let res = await fetch(`${import.meta.env.VITE_API_URL}/users/admin/me`, {
-          method: "GET",
-          headers: { Authorization: "Bearer " + accessToken },
-        });
+        let res = await fetch(
+          `${import.meta.env.VITE_API_URL}/users/admin/me`,
+          {
+            method: "GET",
+            headers: { Authorization: "Bearer " + accessToken },
+          }
+        );
 
         if (res.status === 403) {
           const newToken = await refreshAccessToken();
@@ -103,11 +106,6 @@ const Header = () => {
             </motion.p>
           </div>
           <div className="flex items-center justify-end gap-4 p-5 w-[30%]">
-            <div className=" bg-white/20 border-white/20 border-2 rounded-2xl">
-              <Avatar className="flex justify-center items-center scale-80">
-                <BellRing />
-              </Avatar>
-            </div>
             <div>
               <Avatar className="scale-105">
                 <AvatarImage

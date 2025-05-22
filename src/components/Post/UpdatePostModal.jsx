@@ -238,7 +238,7 @@ const UpdatePostModal = ({
             </div>
             <div className="flex w-full mt-5">
               <Button type="primary" className="w-full " htmlType="submit">
-                Tạo bài viết
+                Lưu chỉnh sửa
               </Button>
             </div>
           </div>

@@ -6,8 +6,8 @@ import { Outlet } from "react-router-dom";
 
 const LayoutAdmin = () => {
   return (
-    <div className=" bg-black/80">
-      <div className="flex h-screen overflow-hidden">
+    <div className="">
+      <div className="flex h-screen bg-blue-300/25 overflow-hidden">
         <Header />
         <SideBar />
         <main className="flex-1 overflow-y-auto mt-13">

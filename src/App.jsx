@@ -27,6 +27,9 @@ import GroupDetailPage from "./pages/UserPage/GroupDetailPage";
 import CreateGroupForm from "./components/Group/CreateGroupModal";
 import SearchResultPage from "./pages/UserPage/SearchResultPage";
 import ChatPage from "./pages/UserPage/ChatPage";
+import CreatePlayer from "./components/Admin/PlayerManagement/CreatePlayer";
+import UpdatePlayer from "./components/Admin/PlayerManagement/UpdatePlayer";
+import ListCoach from "./pages/AdminPage/ListCoach";
 
 const AppContext = createContext();
 
@@ -53,6 +56,12 @@ function App() {
               <Route path="/admin" element={<LayoutAdmin />}>
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="list-player" element={<ListPlayer />} />
+                <Route path="create-player" element={<CreatePlayer />} />
+                <Route
+                  path="update-player/:playerId"
+                  element={<UpdatePlayer />}
+                />
+                <Route path="list-coach" element={<ListCoach />} />
               </Route>
               <Route path="/access-denied" element={<AccessDeniedPage />} />
               <Route path="/payment-status" element={<PaymentStatus />} />
