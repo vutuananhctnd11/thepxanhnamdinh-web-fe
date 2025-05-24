@@ -15,6 +15,7 @@
 .light-mode .ant-select-item-option,
 .light-mode .ant-picker-cell-inner,
 .light-mode .ant-picker-header,
+.light-mode .ant-checkbox-label,
 .light-mode .ant-picker-footer {
   background-color: #fff !important;
   color: #000 !important;
@@ -70,5 +71,9 @@
 .light-mode-dropdown .ant-select-item-option-selected {
   background-color: #e6f7ff !important;
   color: #000000 !important;
+}
+
+.light-mode .ant-input {
+  border-radius: 8px;
 }
 

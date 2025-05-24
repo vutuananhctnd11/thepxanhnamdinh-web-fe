@@ -19,9 +19,10 @@ import { message, Pagination } from "antd";
 import { useNavigate } from "react-router-dom";
 import PlayerInfoModal from "@/components/Admin/PlayerManagement/PlayerInfoModal";
 import ModalNotification from "@/parts/ModalNotification";
+import dayjs from "dayjs";
 
-const ListPlayer = () => {
-  const [listPlayers, setListPlayers] = useState([]);
+const ListMatchResult = () => {
+  const [listMatches, setListMatches] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(0);
   const limit = 5;
@@ -35,12 +36,12 @@ const ListPlayer = () => {
   const [modalNotiProps, setModalNotiProps] = useState({});
   const [isModalNotiOpen, setIsModalNotiOpen] = useState(false);
 
-  const fetchListPlayer = async () => {
+  const fetchListMatch = async () => {
     try {
       const res = await fetchWithAuth(
         `${
           import.meta.env.VITE_API_URL
-        }/players/list?page=${page}&limit=${limit}`,
+        }/matches/list-result?page=${page}&limit=${limit}`,
         {
           method: "GET",
         }
@@ -48,12 +49,12 @@ const ListPlayer = () => {
       const response = await res.json();
 
       if (response.status === "success") {
-        const players = response.data.listResults;
+        const matches = response.data.listResults;
         setTotalPage(response.data.totalPage);
-        setListPlayers(players);
+        setListMatches(matches);
       }
     } catch (error) {
-      console.log("Lỗi khi lấy danh sách nhóm: ", error);
+      console.log("ERROR: ", error);
     }
   };
 
@@ -73,7 +74,7 @@ const ListPlayer = () => {
       const response = await res.json();
 
       if (response.status === "success") {
-        setListPlayers((prevList) =>
+        setListMatches((prevList) =>
           prevList.filter((player) => player.playerId !== playerId)
         );
         messageApi.success({
@@ -98,87 +99,83 @@ const ListPlayer = () => {
     setIsModalNotiOpen(true);
   };
   useEffect(() => {
-    fetchListPlayer();
+    fetchListMatch();
   }, [page]);
 
   return (
     <div className="px-10 py-3">
       {contextHolder}
       <div className="flex justify-between mb-2">
-        <div className=" text-2xl m-2 w-[70%]">
-          Danh sách cầu thủ thuộc biên chế CLB
-        </div>
-        <div
-          className=" px-6 flex items-center rounded-xl hover:cursor-pointer hover:scale-105 transition"
-          onClick={() => navigate("/admin/create-player")}
-        >
-          <PlusOutlined className="scale-130" />
-        </div>
+        <div className=" text-2xl m-2 w-[70%]">Kết quả thi đấu</div>
       </div>
       <Table className="rounded-xl shadow-xl overflow-hidden bg-white/30">
         <TableHeader className="bg-black/10 backdrop-blur-md">
           <TableRow>
-            <TableHead className="w-[60px] text-center">STT</TableHead>
-            <TableHead className="w-[15%] text-center">Ảnh đại diện</TableHead>
-            <TableHead className="w-[25%]">Họ và tên</TableHead>
-            <TableHead className="w-[5%] text-center">Tuổi</TableHead>
-            <TableHead className="w-[15%] text-center">Quốc tịch</TableHead>
-            <TableHead className="w-[5%] text-center">Số áo</TableHead>
-            <TableHead className="w-[15%] text-center">Vị trí</TableHead>
+            <TableHead className="w-[3%] text-center">STT</TableHead>
+            <TableHead className="w-[15%] text-center">Đội nhà</TableHead>
+            <TableHead className="w-[2%] text-center"></TableHead>
+            <TableHead className="w-[15%] text-center">Đội khách</TableHead>
+            <TableHead className="w-[5%] text-center">Vòng</TableHead>
+            <TableHead className="w-[15%] text-center">Thời gian</TableHead>
+            <TableHead className="w-[5%] text-center">Sân vận động</TableHead>
             <TableHead className="w-[15%] text-center">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
-          {listPlayers.map((player, index) => (
-            <TableRow
-              key={player.playerId}
-              className="hover:bg-black/5 transition-all duration-200"
-            >
-              <TableCell className="text-center">
-                {(page - 1) * limit + index + 1}
-              </TableCell>
-              <TableCell className="text-center">
-                <img
-                  src={player.avatarImage}
-                  className="h-[80px] w-[80px] object-cover rounded-[50%] mx-auto bg-blue-300"
-                  alt="avatar"
-                />
-              </TableCell>
-              <TableCell className="font-medium text-[16px]">
-                {player.firstName} {player.lastName}
-              </TableCell>
-              <TableCell className="text-center">{player.age}</TableCell>
-              <TableCell className="text-center">
-                {player.nationality}
-              </TableCell>
-              <TableCell className="text-center text-[16px] font-medium">
-                {player.shirtNumber}
-              </TableCell>
-              <TableCell className="text-center">{player.position}</TableCell>
+          {listMatches.map((match, index) => {
+            const date = dayjs(match.matchDate);
+            const timeFormatted = date.format("HH[:]mm");
+            const dateFormatted = date.format("DD/MM/YYYY");
+            return (
+              <TableRow
+                key={match.matchId}
+                className="hover:bg-black/5 transition-all duration-200"
+              >
+                <TableCell className="text-center">
+                  {(page - 1) * limit + index + 1}
+                </TableCell>
+                <TableCell className="font-medium text-center">
+                  <div className="flex flex-col items-center">
+                    <img src={match.homeLogo} className="h-15 object-cover" />
+                    <div>{match.homeName}</div>
+                  </div>
+                </TableCell>
+                <TableCell className="text-center">
+                  <div className="text-2xl font-medium">
+                    {match.homeScore + " - " + match.awayScore}
+                  </div>
+                </TableCell>
+                <TableCell className="font-medium text-center">
+                  <div className="flex flex-col items-center">
+                    <img src={match.awayLogo} className="h-15 object-cover" />
+                    <div>{match.awayName}</div>
+                  </div>
+                </TableCell>
+                <TableCell className="text-center">
+                  {match.tournament} <br />
+                  Vòng {match.round}
+                </TableCell>
+                <TableCell className="text-center">
+                  {timeFormatted} <br /> {dateFormatted}{" "}
+                </TableCell>
+                <TableCell className="text-center">{match.stadium}</TableCell>
 
-              <TableCell className="text-center space-x-5">
-                <EyeOutlined
-                  className="text-xl cursor-pointer hover:scale-110 transition-transform duration-300"
-                  onClick={() => {
-                    setOpenInfoModal(true);
-                    setSelectPlayerId(player.playerId);
-                    console.log("Player id select: ", player.playerId);
-                  }}
-                />
-                <EditOutlined
-                  className="text-xl cursor-pointer hover:scale-110 transition-transform duration-300"
-                  onClick={() =>
-                    navigate(`/admin/update-player/${player.playerId}`)
-                  }
-                />
-                <DeleteOutlined
-                  className="text-xl cursor-pointer hover:scale-110 transition-transform duration-300"
-                  onClick={() => handleDeletePlayer(player.playerId)}
-                />
-              </TableCell>
-            </TableRow>
-          ))}
+                <TableCell className="text-center space-x-5">
+                  <EditOutlined
+                    className="text-xl cursor-pointer hover:scale-110 transition-transform duration-300"
+                    onClick={() =>
+                      navigate(`/admin/update-player/${match.playerId}`)
+                    }
+                  />
+                  <DeleteOutlined
+                    className="text-xl cursor-pointer hover:scale-110 transition-transform duration-300"
+                    onClick={() => handleDeletePlayer(match.playerId)}
+                  />
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
       <div className="mt-6">
@@ -206,4 +203,4 @@ const ListPlayer = () => {
   );
 };
 
-export default ListPlayer;
+export default ListMatchResult;

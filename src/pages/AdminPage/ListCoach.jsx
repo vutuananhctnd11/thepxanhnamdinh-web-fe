@@ -57,10 +57,10 @@ const ListCoach = () => {
     }
   };
 
-  const fetchDeletePlayer = async (playerId) => {
+  const fetchDeleteCoach = async (coachId) => {
     try {
       const res = await fetchWithAuth(
-        `${import.meta.env.VITE_API_URL}/players/${playerId}`,
+        `${import.meta.env.VITE_API_URL}/coaches/${coachId}`,
         {
           method: "PATCH",
         }
@@ -69,10 +69,10 @@ const ListCoach = () => {
 
       if (response.status === "success") {
         setListCoaches((prevList) =>
-          prevList.filter((player) => player.playerId !== playerId)
+          prevList.filter((coach) => coach.coachId !== coachId)
         );
         messageApi.success({
-          content: "Xóa cầu thủ thành công!",
+          content: "Xóa HLV thành công!",
           duration: 3,
         });
       }
@@ -81,14 +81,14 @@ const ListCoach = () => {
     }
   };
 
-  const handleDeleteCoach = (playerId) => {
+  const handleDeleteCoach = (coachId) => {
     setModalNotiProps({
-      modalTitle: "Xóa cầu thủ",
-      modalMessage: "Bạn có chắc chắn muốn xóa cầu thủ này?",
+      modalTitle: "Xóa HLV",
+      modalMessage: "Bạn có chắc chắn muốn xóa HLV này?",
       type: "warning",
       buttonText: "Xác nhận",
       cancelButtonText: "Hủy",
-      onConfirm: () => fetchDeletePlayer(playerId),
+      onConfirm: () => fetchDeleteCoach(coachId),
     });
     setIsModalNotiOpen(true);
   };
@@ -106,12 +106,12 @@ const ListCoach = () => {
         </div>
         <div
           className=" px-6 flex items-center rounded-xl hover:cursor-pointer hover:scale-105 transition"
-          onClick={() => navigate("/admin/create-player")}
+          onClick={() => navigate("/admin/create-coach")}
         >
           <PlusOutlined className="scale-130" />
         </div>
       </div>
-      <Table className="rounded-xl shadow-xl overflow-hidden bg-blue-200/20">
+      <Table className="rounded-xl shadow-xl overflow-hidden bg-white/30">
         <TableHeader className="bg-black/10 backdrop-blur-md">
           <TableRow>
             <TableHead className="w-[60px] text-center">STT</TableHead>
@@ -158,13 +158,13 @@ const ListCoach = () => {
                 />
                 <EditOutlined
                   className="text-xl cursor-pointer hover:scale-110 transition-transform duration-300"
-                  //   onClick={() =>
-                  //     navigate(`/admin/update-player/${coach.playerId}`)
-                  //   }
+                  onClick={() =>
+                    navigate(`/admin/update-coach/${coach.coachId}`)
+                  }
                 />
                 <DeleteOutlined
                   className="text-xl cursor-pointer hover:scale-110 transition-transform duration-300"
-                  //   onClick={() => handleDeletePlayer(coach.playerId)}
+                  onClick={() => handleDeleteCoach(coach.coachId)}
                 />
               </TableCell>
             </TableRow>

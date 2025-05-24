@@ -17,34 +17,24 @@ import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
 import { PlusIcon } from "lucide-react";
 import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
 import { useNavigate } from "react-router-dom";
-
-const { TextArea } = Input;
-const { Option } = Select;
+import TextArea from "antd/es/input/TextArea";
 
 const positions = [
-  "Thủ môn (GK)",
-  "Hậu vệ trái (LB)",
-  "Hậu vệ phải (RB)",
-  "Hậu vệ trung tâm (CB)",
-  "Tiền vệ phòng ngự (CDM)",
-  "Tiền vệ trung tâm (CM)",
-  "Tiền vệ công (CAM)",
-  "Tiền vệ cánh trái (LM)",
-  "Tiền vệ cánh phải (RM)",
-  "Tiền đạo cánh trái (LW)",
-  "Tiền đạo cánh phải (RW)",
-  "Tiền đạo (ST)",
+  "Huấn luyện viên trưởng",
+  "Trợ lý huấn luyện viên",
+  "Chủ tịch",
+  "Giám đốc điều hành",
+  "Giám đốc kỹ thuật",
+  "Huấn luyện viên thủ môn",
+  "Huấn luyện viên thể lực",
+  "Giám đốc truyền thông",
 ];
 
-const CreatePlayerForm = () => {
+const CreateCoach = () => {
   const [form] = Form.useForm();
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [avatarFileList, setAvatarFileList] = useState([]);
-
-  const [fullBodyFile, setFullBodyFile] = useState(null);
-  const [fullBodyPreview, setFullBodyPreview] = useState(null);
-  const [fullBodyFileList, setFullBodyFileList] = useState([]);
 
   const [messageApi, contextHolder] = message.useMessage();
   const navigate = useNavigate();
@@ -68,24 +58,6 @@ const CreatePlayerForm = () => {
     }
   };
 
-  const handleFullBodyChange = ({ fileList }) => {
-    const file = fileList[0]?.originFileObj;
-    setFullBodyFileList(fileList);
-
-    if (file) {
-      setFullBodyFile(file);
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const base64 = e.target.result;
-        setFullBodyPreview(base64);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setFullBodyFile(null);
-      setFullBodyPreview(null);
-    }
-  };
-
   const handleRemoveAvatar = (e) => {
     e.stopPropagation();
     setAvatarFile(null);
@@ -94,48 +66,34 @@ const CreatePlayerForm = () => {
     form.setFieldsValue({ avatar: null });
   };
 
-  const handleRemoveFullBody = (e) => {
-    e.stopPropagation();
-    setFullBodyFile(null);
-    setFullBodyPreview(null);
-    setFullBodyFileList([]);
-    form.setFieldsValue({ fullBody: null });
-  };
-
   const handleSubmit = async (values) => {
     setIsLoading(true);
-    const formattedValues = {
-      ...values,
-      dateOfBirth: values.dateOfBirth?.format("YYYY-MM-DD"),
-    };
-    console.log("DATA: ", formattedValues);
 
     //upload file
     try {
       const formData = new FormData();
-      formData.append("files", avatarFile);
-      formData.append("files", fullBodyFile);
+      formData.append("file", avatarFile);
       const fileRes = await fetchWithAuth(
-        `${import.meta.env.VITE_API_URL}/cloudinary/list-file`,
+        `${import.meta.env.VITE_API_URL}/cloudinary`,
         {
           method: "POST",
           body: formData,
         }
       );
       const fileResponse = await fileRes.json();
-      const listUploadMedias = fileResponse.data;
+      const image = fileResponse.data;
 
       //format to api request
       const combinedData = {
         ...values,
-        avatarImage: listUploadMedias[0].linkCloud || null,
-        fullBodyImage: listUploadMedias[1].linkCloud || null,
+        dateOfBirth: values.dateOfBirth?.format("YYYY-MM-DD"),
+        image: image,
       };
       console.log("RESPONSE: ", combinedData);
 
-      //call api create player
-      const createPostRes = await fetchWithAuth(
-        `${import.meta.env.VITE_API_URL}/players`,
+      //call api create coach
+      const coachRes = await fetchWithAuth(
+        `${import.meta.env.VITE_API_URL}/coaches`,
         {
           method: "POST",
           headers: {
@@ -144,17 +102,22 @@ const CreatePlayerForm = () => {
           body: JSON.stringify(combinedData),
         }
       );
-      const createPostResponse = await createPostRes.json();
+      const coachResponse = await coachRes.json();
 
-      if (createPostResponse.status === "success") {
+      if (coachResponse.status === "success") {
         messageApi.success({
           content:
-            "Tạo cầu thủ thành công! Bạn sẽ được chuyển hướng đến danh sách cầu thủ!",
+            "Tạo HLV thành công! Bạn sẽ được chuyển hướng đến danh sách HLV!",
           duration: 3,
         });
         setTimeout(() => {
-          navigate("/admin/list-player");
+          navigate("/admin/list-coach");
         }, 3000);
+      } else {
+        messageApi.error({
+          content: coachResponse.message,
+          duration: 3,
+        });
       }
     } catch (error) {
       console.error("ERORR: ", error);
@@ -166,7 +129,7 @@ const CreatePlayerForm = () => {
     <div className="light-mode">
       {contextHolder}
       <Card
-        title="Thêm mới cầu thủ trong CLB"
+        title="Thêm thành viên ban huấn luyện CLB"
         style={{
           maxWidth: 900,
           margin: "2rem auto",
@@ -202,27 +165,6 @@ const CreatePlayerForm = () => {
               >
                 <Input />
               </Form.Item>
-
-              <Form.Item
-                name="nameInShirt"
-                label="Tên trên áo đấu"
-                rules={[
-                  { required: true, message: "Vui lòng nhập tên trên áo đấu" },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-
-              <Form.Item
-                name="shirtNumber"
-                label="Số áo thi đấu"
-                rules={[
-                  { required: true, message: "Vui lòng nhập số áo thi đấu" },
-                ]}
-              >
-                <InputNumber min={1} max={99} style={{ width: "100%" }} />
-              </Form.Item>
-
               <Form.Item
                 name="dateOfBirth"
                 label="Ngày sinh"
@@ -230,16 +172,18 @@ const CreatePlayerForm = () => {
               >
                 <DatePicker style={{ width: "100%" }} />
               </Form.Item>
-
               <Form.Item
                 name="position"
-                label="Vị trí thi đấu"
+                label="Vị trí làm việc"
                 rules={[
-                  { required: true, message: "Vui lòng chọn vị trí thi đấu" },
+                  {
+                    required: true,
+                    message: "Vui lòng nhập vị trí làm việc của HLV",
+                  },
                 ]}
               >
                 <Select
-                  placeholder="Chọn vị trí thi đấu"
+                  placeholder="Chọn vị trí làm việc"
                   popupClassName="light-mode-dropdown"
                   className="light-mode"
                 >
@@ -249,6 +193,18 @@ const CreatePlayerForm = () => {
                     </Option>
                   ))}
                 </Select>
+              </Form.Item>
+              <Form.Item
+                name="address"
+                label="Địa chỉ"
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập địac chỉ của HLV",
+                  },
+                ]}
+              >
+                <Input />
               </Form.Item>
               <Form.Item
                 name="nationality"
@@ -262,88 +218,16 @@ const CreatePlayerForm = () => {
               >
                 <Input />
               </Form.Item>
-
-              <div className="flex justify-between">
-                <Form.Item name="height" label="Chiều cao (m)">
-                  <InputNumber min={0} max={2.5} style={{ width: "100%" }} />
-                </Form.Item>
-
-                <Form.Item name="weight" label="Cân nặng (kg)">
-                  <InputNumber min={0} max={120} style={{ width: "100%" }} />
-                </Form.Item>
-              </div>
-
-              <div className="flex justify-between">
-                <Form.Item name="goal" label="Số bàn thắng">
-                  <InputNumber min={0} style={{ width: "100%" }} />
-                </Form.Item>
-
-                <Form.Item name="assist" label="Số kiến tạo">
-                  <InputNumber min={0} style={{ width: "100%" }} />
-                </Form.Item>
-              </div>
             </Col>
 
             <Col span={12}>
               <Form.Item
-                label="Ảnh đại diện"
-                name={"avatarImage"}
-                rules={[
-                  {
-                    required: true,
-                    message: "Vui lòng chọn ảnh đại diện của cầu thủ",
-                  },
-                ]}
-              >
-                <div className="flex justify-center gap-4">
-                  <Upload
-                    accept="image/*"
-                    showUploadList={false}
-                    beforeUpload={() => false}
-                    onChange={handleAvatarChange}
-                    fileList={avatarFileList}
-                  >
-                    <div
-                      className={`w-40 h-40 relative ${
-                        avatarPreview ? "bg-blue-300" : "bg-gray-100"
-                      } rounded-[50%] flex items-center justify-center cursor-pointer`}
-                    >
-                      {avatarPreview ? (
-                        <>
-                          <img
-                            src={avatarPreview}
-                            alt="avatar"
-                            className="w-full h-full object-cover rounded-[50%]"
-                          />
-                          <button
-                            type="button"
-                            onClick={handleRemoveAvatar}
-                            className="absolute top-1 right-1 bg-red-500 hover:bg-red-600 rounded-full w-6 h-6 flex items-center justify-center text-xs"
-                            title="Xoá ảnh"
-                          >
-                            <CloseOutlined style={{ color: "white" }} />
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          <PlusOutlined
-                            style={{ fontSize: 24, color: "#1890ff" }}
-                          />
-                          <div className="text-sm mt-1">Chọn ảnh</div>
-                        </>
-                      )}
-                    </div>
-                  </Upload>
-                </div>
-              </Form.Item>
-
-              <Form.Item
                 label="Ảnh toàn thân"
-                name={"fullBodyImage"}
+                name={"image"}
                 rules={[
                   {
                     required: true,
-                    message: "Vui lòng chọn ảnh toàn thân của cầu thủ",
+                    message: "Vui lòng chọn ảnh toàn thân của HLV",
                   },
                 ]}
               >
@@ -351,20 +235,20 @@ const CreatePlayerForm = () => {
                   accept="image/.png"
                   showUploadList={false}
                   beforeUpload={() => false}
-                  onChange={handleFullBodyChange}
-                  fileList={fullBodyFileList}
+                  onChange={handleAvatarChange}
+                  fileList={avatarFileList}
                   className="flex justify-center"
                 >
-                  {fullBodyPreview ? (
+                  {avatarPreview ? (
                     <div className="relative w-60 h-100 flex justify-center bg-blue-200 rounded-lg overflow-hidden">
                       <img
-                        src={fullBodyPreview}
+                        src={avatarPreview}
                         alt="full body"
                         className="w-full h-full object-cover"
                       />
                       <button
                         type="button"
-                        onClick={handleRemoveFullBody}
+                        onClick={handleRemoveAvatar}
                         className="absolute top-1 right-1 bg-red-500 hover:bg-red-600 rounded-full w-6 h-6 flex items-center justify-center text-xs"
                         title="Xoá ảnh"
                       >
@@ -390,7 +274,7 @@ const CreatePlayerForm = () => {
             <TextArea
               rows={4}
               maxLength={320}
-              placeholder="Nhập giới thiệu ngắn về cầu thủ"
+              placeholder="Nhập giới thiệu ngắn về HLV"
             />
           </Form.Item>
 
@@ -408,7 +292,7 @@ const CreatePlayerForm = () => {
                   Đang xử lý...
                 </div>
               ) : (
-                "Thêm cầu thủ"
+                "Thêm HLV"
               )}
             </Button>
           </Form.Item>
@@ -418,4 +302,4 @@ const CreatePlayerForm = () => {
   );
 };
 
-export default CreatePlayerForm;
+export default CreateCoach;

@@ -30,6 +30,18 @@ import ChatPage from "./pages/UserPage/ChatPage";
 import CreatePlayer from "./components/Admin/PlayerManagement/CreatePlayer";
 import UpdatePlayer from "./components/Admin/PlayerManagement/UpdatePlayer";
 import ListCoach from "./pages/AdminPage/ListCoach";
+import CreateCoach from "./components/Admin/CoachManagement/CreateCoach";
+import UpdateCoach from "./components/Admin/CoachManagement/UpdateCoach";
+import ListUser from "./pages/AdminPage/ListUser";
+import CreateUser from "./components/Admin/UserManagement/CreateUser";
+import ListMatch from "./pages/AdminPage/ListMatch";
+import ListMatchResult from "./pages/AdminPage/ListMatchResult";
+import CreateMatch from "./components/Admin/MatchManagement/CreateMatch";
+import ListClub from "./pages/AdminPage/ListClub";
+import CreateOtherClub from "./components/Admin/OtherClubManagement/CreateOtherClub";
+import UpdateMatch from "./components/Admin/MatchManagement/UpdateMatch";
+import UpdateOtherClub from "./components/Admin/OtherClubManagement/UpdateOtherClub";
+import RequestUpdateMatch from "./pages/AdminPage/RequestUpdateMatch";
 
 const AppContext = createContext();
 
@@ -53,6 +65,7 @@ function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/sign-up" element={<SignUpPage />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
+
               <Route path="/admin" element={<LayoutAdmin />}>
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="list-player" element={<ListPlayer />} />
@@ -61,7 +74,30 @@ function App() {
                   path="update-player/:playerId"
                   element={<UpdatePlayer />}
                 />
+
                 <Route path="list-coach" element={<ListCoach />} />
+                <Route path="create-coach" element={<CreateCoach />} />
+                <Route path="update-coach/:coachId" element={<UpdateCoach />} />
+
+                <Route path="list-user" element={<ListUser />} />
+                <Route path="create-user" element={<CreateUser />} />
+
+                <Route path="list-match" element={<ListMatch />} />
+                <Route path="list-result" element={<ListMatchResult />} />
+                <Route path="create-match" element={<CreateMatch />} />
+                <Route path="update-match/:matchId" element={<UpdateMatch />} />
+
+                <Route
+                  path="request-update-match"
+                  element={<RequestUpdateMatch />}
+                />
+
+                <Route path="list-other-club" element={<ListClub />} />
+                <Route path="create-other-club" element={<CreateOtherClub />} />
+                <Route
+                  path="update-other-club/:clubId"
+                  element={<UpdateOtherClub />}
+                />
               </Route>
               <Route path="/access-denied" element={<AccessDeniedPage />} />
               <Route path="/payment-status" element={<PaymentStatus />} />

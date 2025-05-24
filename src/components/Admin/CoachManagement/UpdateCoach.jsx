@@ -18,37 +18,27 @@ import { PlusIcon } from "lucide-react";
 import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
 import dayjs from "dayjs";
 import { useParams } from "react-router-dom";
-
-const { TextArea } = Input;
-const { Option } = Select;
+import TextArea from "antd/es/input/TextArea";
 
 const positions = [
-  "Thủ môn (GK)",
-  "Hậu vệ trái (LB)",
-  "Hậu vệ phải (RB)",
-  "Hậu vệ trung tâm (CB)",
-  "Tiền vệ phòng ngự (CDM)",
-  "Tiền vệ trung tâm (CM)",
-  "Tiền vệ công (CAM)",
-  "Tiền vệ cánh trái (LM)",
-  "Tiền vệ cánh phải (RM)",
-  "Tiền đạo cánh trái (LW)",
-  "Tiền đạo cánh phải (RW)",
-  "Tiền đạo (ST)",
+  "Huấn luyện viên trưởng",
+  "Trợ lý huấn luyện viên",
+  "Chủ tịch",
+  "Giám đốc điều hành",
+  "Giám đốc kỹ thuật",
+  "Huấn luyện viên thủ môn",
+  "Huấn luyện viên thể lực",
+  "Giám đốc truyền thông",
 ];
 
-const UpdatePlayer = () => {
-  const { playerId } = useParams();
-  const [player, setPlayer] = useState(null);
+const UpdateCoach = () => {
+  const { coachId } = useParams();
+  const [coach, setCoach] = useState(null);
 
   const [form] = Form.useForm();
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [avatarFileList, setAvatarFileList] = useState([]);
-
-  const [fullBodyFile, setFullBodyFile] = useState(null);
-  const [fullBodyPreview, setFullBodyPreview] = useState(null);
-  const [fullBodyFileList, setFullBodyFileList] = useState([]);
 
   const [messageApi, contextHolder] = message.useMessage();
   const [isLoading, setIsLoading] = useState(false);
@@ -57,7 +47,7 @@ const UpdatePlayer = () => {
   const fetchOldInfo = async () => {
     try {
       const res = await fetchWithAuth(
-        `${import.meta.env.VITE_API_URL}/players/${playerId}`,
+        `${import.meta.env.VITE_API_URL}/coaches/${coachId}`,
         {
           method: "GET",
         }
@@ -65,10 +55,10 @@ const UpdatePlayer = () => {
       const response = await res.json();
 
       if (response.status === "success") {
-        setPlayer(response.data);
+        setCoach(response.data);
       }
     } catch (error) {
-      console.log("Lỗi khi lấy thông tin cầu thủ: ", error);
+      console.log("ERROR: ", error);
     }
   };
 
@@ -77,28 +67,21 @@ const UpdatePlayer = () => {
   }, []);
 
   useEffect(() => {
-    if (player) {
+    if (coach) {
       form.setFieldsValue({
-        firstName: player.firstName,
-        lastName: player.lastName,
-        nameInShirt: player.nameInShirt,
-        shirtNumber: player.shirtNumber,
-        dateOfBirth: dayjs(player.dateOfBirth, "YYYY-MM-DD"),
-        position: player.position,
-        nationality: player.nationality,
-        height: player.height,
-        weight: player.weight,
-        goal: player.goal,
-        assist: player.assist,
-        description: player.description,
-        avatarImage: player.avatarImage,
-        fullBodyImage: player.fullBodyImage,
+        firstName: coach.firstName,
+        lastName: coach.lastName,
+        dateOfBirth: dayjs(coach.dateOfBirth, "YYYY-MM-DD"),
+        position: coach.position,
+        address: coach.address,
+        nationality: coach.nationality,
+        description: coach.description,
+        image: coach.image,
       });
-      setAvatarPreview(player.avatarImage);
-      setFullBodyPreview(player.fullBodyImage);
+      setAvatarPreview(coach.image);
     }
-    console.log(player);
-  }, [player]);
+    // console.log(coach);
+  }, [coach]);
 
   const handleAvatarChange = ({ fileList }) => {
     const file = fileList[0]?.originFileObj;
@@ -118,24 +101,6 @@ const UpdatePlayer = () => {
     }
   };
 
-  const handleFullBodyChange = ({ fileList }) => {
-    const file = fileList[0]?.originFileObj;
-    setFullBodyFileList(fileList);
-
-    if (file) {
-      setFullBodyFile(file);
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const base64 = e.target.result;
-        setFullBodyPreview(base64);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setFullBodyFile(null);
-      setFullBodyPreview(null);
-    }
-  };
-
   const handleRemoveAvatar = (e) => {
     e.stopPropagation();
     setAvatarFile(null);
@@ -144,34 +109,24 @@ const UpdatePlayer = () => {
     form.setFieldsValue({ avatarImage: null });
   };
 
-  const handleRemoveFullBody = (e) => {
-    e.stopPropagation();
-    setFullBodyFile(null);
-    setFullBodyPreview(null);
-    setFullBodyFileList([]);
-    form.setFieldsValue({ fullBodyImage: null });
-  };
-
   const handleSubmit = async (values) => {
     setIsLoading(true);
 
     try {
       const formattedValues = {
         ...values,
-        playerId,
+        coachId: coachId,
         dateOfBirth: values.dateOfBirth?.format("YYYY-MM-DD"),
       };
 
-      let avatarImage = player.avatarImage;
-      let fullBodyImage = player.fullBodyImage;
+      let image = coach.image;
 
-      if (avatarFile && fullBodyFile) {
+      if (avatarFile) {
         const formData = new FormData();
-        formData.append("files", avatarFile);
-        formData.append("files", fullBodyFile);
+        formData.append("file", avatarFile);
 
         const fileRes = await fetchWithAuth(
-          `${import.meta.env.VITE_API_URL}/cloudinary/list-file`,
+          `${import.meta.env.VITE_API_URL}/cloudinary`,
           {
             method: "POST",
             body: formData,
@@ -179,23 +134,21 @@ const UpdatePlayer = () => {
         );
 
         const fileResponse = await fileRes.json();
-        const listUploadMedias = fileResponse.data || [];
+        const linkCloud = fileResponse.data || null;
 
-        avatarImage = listUploadMedias[0]?.linkCloud || null;
-        fullBodyImage = listUploadMedias[1]?.linkCloud || null;
+        image = linkCloud;
       }
 
       const requestBody = {
         ...formattedValues,
-        avatarImage,
-        fullBodyImage,
+        image,
       };
 
       console.log("FINAL DATA TO UPDATE: ", requestBody);
 
-      // update player
+      // update coach
       const updatePlayerRes = await fetchWithAuth(
-        `${import.meta.env.VITE_API_URL}/players`,
+        `${import.meta.env.VITE_API_URL}/coaches`,
         {
           method: "PUT",
           headers: {
@@ -205,16 +158,16 @@ const UpdatePlayer = () => {
         }
       );
 
-      const playerResponse = await updatePlayerRes.json();
+      const coachResponse = await updatePlayerRes.json();
 
-      if (playerResponse.status === "success") {
+      if (coachResponse.status === "success") {
         messageApi.success({
-          content: `Cập nhật thông tin cầu thủ ${
-            player?.firstName + " " + player?.lastName
+          content: `Cập nhật thông tin HLV ${
+            coach?.firstName + " " + coach?.lastName
           } thành công!`,
           duration: 3,
         });
-        setPlayer(playerResponse.data);
+        setCoach(coachResponse.data);
       }
     } catch (error) {
       console.error("ERROR: ", error);
@@ -227,7 +180,7 @@ const UpdatePlayer = () => {
     <div className="light-mode">
       {contextHolder}
       <Card
-        title="Cập nhật thông tin cầu thủ"
+        title="Thêm thành viên ban huấn luyện CLB"
         style={{
           maxWidth: 900,
           margin: "2rem auto",
@@ -263,27 +216,6 @@ const UpdatePlayer = () => {
               >
                 <Input />
               </Form.Item>
-
-              <Form.Item
-                name="nameInShirt"
-                label="Tên trên áo đấu"
-                rules={[
-                  { required: true, message: "Vui lòng nhập tên trên áo đấu" },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-
-              <Form.Item
-                name="shirtNumber"
-                label="Số áo thi đấu"
-                rules={[
-                  { required: true, message: "Vui lòng nhập số áo thi đấu" },
-                ]}
-              >
-                <InputNumber min={1} max={99} style={{ width: "100%" }} />
-              </Form.Item>
-
               <Form.Item
                 name="dateOfBirth"
                 label="Ngày sinh"
@@ -291,16 +223,18 @@ const UpdatePlayer = () => {
               >
                 <DatePicker style={{ width: "100%" }} />
               </Form.Item>
-
               <Form.Item
                 name="position"
-                label="Vị trí thi đấu"
+                label="Vị trí làm việc"
                 rules={[
-                  { required: true, message: "Vui lòng chọn vị trí thi đấu" },
+                  {
+                    required: true,
+                    message: "Vui lòng nhập vị trí làm việc của HLV",
+                  },
                 ]}
               >
                 <Select
-                  placeholder="Chọn vị trí thi đấu"
+                  placeholder="Chọn vị trí làm việc"
                   popupClassName="light-mode-dropdown"
                   className="light-mode"
                 >
@@ -312,99 +246,39 @@ const UpdatePlayer = () => {
                 </Select>
               </Form.Item>
               <Form.Item
-                name="nationality"
-                label="Nationality"
+                name="address"
+                label="Địa chỉ"
                 rules={[
                   {
                     required: true,
-                    message: "Vui lòng nhập quốc tịch của cầu thủ",
+                    message: "Vui lòng nhập địac chỉ của HLV",
                   },
                 ]}
               >
                 <Input />
               </Form.Item>
-
-              <div className="flex justify-between">
-                <Form.Item name="height" label="Chiều cao (m)">
-                  <InputNumber min={0} max={2.5} style={{ width: "100%" }} />
-                </Form.Item>
-
-                <Form.Item name="weight" label="Cân nặng (kg)">
-                  <InputNumber min={0} max={120} style={{ width: "100%" }} />
-                </Form.Item>
-              </div>
-
-              <div className="flex justify-between">
-                <Form.Item name="goal" label="Số bàn thắng">
-                  <InputNumber min={0} style={{ width: "100%" }} />
-                </Form.Item>
-
-                <Form.Item name="assist" label="Số kiến tạo">
-                  <InputNumber min={0} style={{ width: "100%" }} />
-                </Form.Item>
-              </div>
+              <Form.Item
+                name="nationality"
+                label="Quốc tịch"
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập quốc tịch của HLV",
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
             </Col>
 
             <Col span={12}>
               <Form.Item
-                label="Ảnh đại diện"
-                name={"avatarImage"}
-                rules={[
-                  {
-                    required: true,
-                    message: "Vui lòng chọn ảnh đại diện của cầu thủ",
-                  },
-                ]}
-              >
-                <div className="flex justify-center gap-4">
-                  <Upload
-                    accept="image/*"
-                    showUploadList={false}
-                    beforeUpload={() => false}
-                    onChange={handleAvatarChange}
-                    fileList={avatarFileList}
-                  >
-                    <div
-                      className={`w-40 h-40 relative ${
-                        avatarPreview ? "bg-blue-300" : "bg-gray-100"
-                      } rounded-[50%] flex items-center justify-center cursor-pointer`}
-                    >
-                      {avatarPreview ? (
-                        <>
-                          <img
-                            src={avatarPreview}
-                            alt="avatar"
-                            className="w-full h-full object-cover rounded-[50%]"
-                          />
-                          <button
-                            type="button"
-                            onClick={handleRemoveAvatar}
-                            className="absolute top-1 right-1 bg-red-500 hover:bg-red-600 rounded-full w-6 h-6 flex items-center justify-center text-xs"
-                            title="Xoá ảnh"
-                          >
-                            <CloseOutlined style={{ color: "white" }} />
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          <PlusOutlined
-                            style={{ fontSize: 24, color: "#1890ff" }}
-                          />
-                          <div className="text-sm mt-1">Chọn ảnh</div>
-                        </>
-                      )}
-                    </div>
-                  </Upload>
-                </div>
-              </Form.Item>
-
-              <Form.Item
                 label="Ảnh toàn thân"
-                name={"fullBodyImage"}
+                name={"image"}
                 rules={[
                   {
                     required: true,
-                    message: "Vui lòng chọn ảnh toàn thân của cầu thủ",
+                    message: "Vui lòng chọn ảnh toàn thân của HLV",
                   },
                 ]}
               >
@@ -412,20 +286,20 @@ const UpdatePlayer = () => {
                   accept="image/.png"
                   showUploadList={false}
                   beforeUpload={() => false}
-                  onChange={handleFullBodyChange}
-                  fileList={fullBodyFileList}
+                  onChange={handleAvatarChange}
+                  fileList={avatarFileList}
                   className="flex justify-center"
                 >
-                  {fullBodyPreview ? (
-                    <div className="relative w-60 h-100 flex justify-center bg-blue-300 rounded-lg overflow-hidden">
+                  {avatarPreview ? (
+                    <div className="relative w-60 h-100 flex justify-center bg-blue-200 rounded-lg overflow-hidden">
                       <img
-                        src={fullBodyPreview}
+                        src={avatarPreview}
                         alt="full body"
                         className="w-full h-full object-cover"
                       />
                       <button
                         type="button"
-                        onClick={handleRemoveFullBody}
+                        onClick={handleRemoveAvatar}
                         className="absolute top-1 right-1 bg-red-500 hover:bg-red-600 rounded-full w-6 h-6 flex items-center justify-center text-xs"
                         title="Xoá ảnh"
                       >
@@ -451,7 +325,7 @@ const UpdatePlayer = () => {
             <TextArea
               rows={4}
               maxLength={320}
-              placeholder="Nhập giới thiệu ngắn về cầu thủ"
+              placeholder="Nhập giới thiệu ngắn về HLV"
             />
           </Form.Item>
 
@@ -459,7 +333,7 @@ const UpdatePlayer = () => {
             <Button
               type="default"
               htmlType="reset"
-              style={{ marginRight: "20px" }}
+              onClick={handleRemoveAvatar}
             >
               Hủy
             </Button>
@@ -476,7 +350,7 @@ const UpdatePlayer = () => {
                   Đang xử lý...
                 </div>
               ) : (
-                "Cập nhật thông tin"
+                "Cập nhật"
               )}
             </Button>
           </Form.Item>
@@ -486,4 +360,4 @@ const UpdatePlayer = () => {
   );
 };
 
-export default UpdatePlayer;
+export default UpdateCoach;
