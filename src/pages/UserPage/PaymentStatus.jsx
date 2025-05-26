@@ -1,17 +1,41 @@
 import useNagivateLoading from "@/hooks/useNagivateLoading";
-import React from "react";
-import { useLocation } from "react-router-dom";
+import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
+import React, { useEffect, useState } from "react";
 
 const PaymentStatus = () => {
   const navigate = useNagivateLoading();
-  const location = useLocation();
-  const query = new URLSearchParams(location.search);
-  const success = query.get("success");
+  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    const checkPayment = async () => {
+      const query = window.location.search;
+      try {
+        const res = await fetchWithAuth(
+          `${import.meta.env.VITE_API_URL}/vnpay/payment-info${query}`,
+          {
+            method: "GET",
+            header: {
+              Accept: "application/json",
+            },
+          }
+        );
+        const response = await res.json();
+        if (response.status == "success") {
+          setSuccess(true);
+        }
+        console.log("Kết quả thanh toán: ", response);
+      } catch (error) {
+        console.log("ERROR: ", error);
+      }
+    };
+
+    checkPayment();
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-blue-50 text-center relative">
       <img src="/logo.png" className="absolute opacity-8 h-[90%]" />
-      {success == "true" ? (
+      {success ? (
         <h1 className="text-4xl font-extrabold text-green-500 uppercase mb-4">
           Thanh toán thành công!
         </h1>
@@ -20,16 +44,22 @@ const PaymentStatus = () => {
           Thanh toán thất bại!
         </h1>
       )}
-      <div className="text-xl text-gray-700 space-y-3">
-        <div>
-          Vé đã được gửi về email của bạn! Cảm ơn bạn đã sử dụng dịch vụ.
-        </div>
-        <div>Đội ngũ TXND FanZone</div>
+      <div className="text-xl text-gray-700 space-y-5">
+        {success ? (
+          <div>
+            Vé đã được gửi về email của bạn! Cảm ơn bạn đã sử dụng dịch vụ.{" "}
+            <br />
+            Vui lòng xuất trình vé điện tử khi đến sân!
+          </div>
+        ) : (
+          <div>Vui lòng kiểm tra lại thông tin thanh toán của bạn!</div>
+        )}
+        <div className="text-[15px]">Đội ngũ TXND FanZone</div>
       </div>
-      <div className="mt-15 z-10 space-x-20">
+      <div className="mt-10 z-10 space-x-20">
         <button
           className="px-6 py-2 rounded-xl text-white shadow-lg transition-all bg-blue-500 hover:bg-blue-700"
-          onClick={() => navigate("/home-cub")}
+          onClick={() => navigate("/home-club")}
         >
           Trang chủ CLB
         </button>

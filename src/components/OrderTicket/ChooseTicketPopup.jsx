@@ -7,18 +7,23 @@ import { useEffect, useState } from "react";
 import { ScrollArea } from "../ui/scroll-area";
 import ModalNotification from "@/parts/ModalNotification";
 import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
+import { useNavigate } from "react-router-dom";
 
 const ChooseTicketPopup = ({ isModalOpen, onOk, handleCancel, matchId }) => {
   const [listStands, setListStands] = useState([]);
   const [isModalNotiOpen, setIsModalNotiOpen] = useState(false);
   const [modalProps, setModalProps] = useState({});
 
+  const [totalPrice, setTotalPrice] = useState(0);
+
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchTicketType = async () => {
       try {
-        const accessToken = localStorage.getItem("accessToken");
         const res = await fetchWithAuth(
-          `${import.meta.env.VITE_API_URL}/tickets/ticket-of-match?matchId=` + matchId,
+          `${import.meta.env.VITE_API_URL}/tickets/ticket-of-match?matchId=` +
+            matchId,
           {
             method: "GET",
           }
@@ -85,15 +90,17 @@ const ChooseTicketPopup = ({ isModalOpen, onOk, handleCancel, matchId }) => {
     const requestData = { listOrderTickets };
 
     try {
-      let res = await fetch(`${import.meta.env.VITE_API_URL}/order-ticket`, {
-        method: "POST",
-        headers: {
-          Authorization: "Bearer " + accessToken,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestData),
-      });
-      //refresh token here
+      let res = await fetchWithAuth(
+        `${import.meta.env.VITE_API_URL}/order-ticket`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + accessToken,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestData),
+        }
+      );
 
       const response = await res.json();
       if (response.status === "success") {
@@ -104,8 +111,22 @@ const ChooseTicketPopup = ({ isModalOpen, onOk, handleCancel, matchId }) => {
         console.log("Thất bại: " + response.message);
       }
     } catch (error) {
-      console.log("Có lỗi khi gọi api get match info: ", error);
+      console.log("ERROR: ", error);
     }
+  };
+
+  const handleChange = (changedValues, allValues) => {
+    let sum = 0;
+
+    listStands.forEach((stand) => {
+      stand.type.forEach((positionTicket) => {
+        const ticketId = positionTicket.ticketId;
+        const quantity = allValues[ticketId] || 0;
+        sum += quantity * positionTicket.price;
+      });
+    });
+
+    setTotalPrice(sum);
   };
 
   const renderItemsStand = listStands.map((stand, index) => {
@@ -126,6 +147,7 @@ const ChooseTicketPopup = ({ isModalOpen, onOk, handleCancel, matchId }) => {
                 defaultValue={0}
                 size="large"
                 style={{ width: "70px" }}
+                disabled={positionTicket.note == "Đã bán hết vé" ? true : false}
               />
             </Form.Item>
           </div>
@@ -156,7 +178,7 @@ const ChooseTicketPopup = ({ isModalOpen, onOk, handleCancel, matchId }) => {
           <div className="w-full h-[500px]">
             <div className="h-full w-full ">
               <ScrollArea className="ml-3 h-[480px]">
-                <Form form={form}>
+                <Form form={form} onValuesChange={handleChange}>
                   <Collapse
                     items={renderItemsStand}
                     style={{ backgroundColor: "#f0f2f5" }}
@@ -164,7 +186,7 @@ const ChooseTicketPopup = ({ isModalOpen, onOk, handleCancel, matchId }) => {
                 </Form>
               </ScrollArea>
               <div className="mt-10 text-lg font-bold flex justify-center">
-                Tổng số tiền: 1.000.000 VNĐ
+                Tổng số tiền: {totalPrice.toLocaleString()} VNĐ
               </div>
             </div>
           </div>

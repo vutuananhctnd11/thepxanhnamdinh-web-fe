@@ -201,3 +201,18 @@
 .ant-table-container:hover {
   background-color: rgba(255, 255, 255, 0.2);
 }
+
+
+.custom-carousel .react-multiple-carousel__arrow {
+  z-index: 10;
+}
+
+.custom-carousel .react-multiple-carousel__arrow--left {
+  left: 2px !important;
+  scale: 0.8;
+}
+
+.custom-carousel .react-multiple-carousel__arrow--right {
+  right: 2px !important;
+  scale: 0.8 !important;
+}

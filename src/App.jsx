@@ -42,6 +42,9 @@ import CreateOtherClub from "./components/Admin/OtherClubManagement/CreateOtherC
 import UpdateMatch from "./components/Admin/MatchManagement/UpdateMatch";
 import UpdateOtherClub from "./components/Admin/OtherClubManagement/UpdateOtherClub";
 import RequestUpdateMatch from "./pages/AdminPage/RequestUpdateMatch";
+import ListReport from "./pages/AdminPage/ListReport";
+import ListFanGroup from "./pages/AdminPage/ListFanGroup";
+import CreateGroupRequest from "./components/Admin/FanGroupManagement/CreateGroupRequest";
 
 const AppContext = createContext();
 
@@ -97,6 +100,13 @@ function App() {
                 <Route
                   path="update-other-club/:clubId"
                   element={<UpdateOtherClub />}
+                />
+
+                <Route path="list-report" element={<ListReport />} />
+                <Route path="list-fan-group" element={<ListFanGroup />} />
+                <Route
+                  path="list-create-fan-group-request"
+                  element={<CreateGroupRequest />}
                 />
               </Route>
               <Route path="/access-denied" element={<AccessDeniedPage />} />

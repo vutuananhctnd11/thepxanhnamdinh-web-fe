@@ -55,13 +55,13 @@ const TicketOfMatch = ({ data }) => {
   }, [matchDate]);
 
   let button;
-  if (status.toLowerCase() === "đã đá") {
+  if (status.toLowerCase() === "played") {
     button = (
       <button className="px-6 my-3 h-10 w-[80%] bg-gray-400 text-white font-semibold text-lg rounded-2xl">
         Dừng bán vé
       </button>
     );
-  } else if (status.toLowerCase() === "chưa đá" && sellTicket == true) {
+  } else if (status.toLowerCase() === "created" && sellTicket == true) {
     button = (
       <button
         className="px-6 my-3 h-10 w-[80%] bg-gradient-to-r from-cyan-500 to-cyan-300 text-white font-semibold 
@@ -78,7 +78,7 @@ const TicketOfMatch = ({ data }) => {
         Đặt vé ngay
       </button>
     );
-  } else if (status.toLowerCase() === "chưa đá" && sellTicket == false) {
+  } else if (status.toLowerCase() === "created" && sellTicket == false) {
     button = (
       <button className="px-6 my-3 h-10 w-[80%] bg-gray-400 text-white font-semibold text-lg rounded-2xl">
         Sắp mở bán

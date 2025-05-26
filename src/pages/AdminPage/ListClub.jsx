@@ -39,7 +39,6 @@ const ListClub = () => {
 
       if (response.status === "success") {
         const clubs = response.data.listResults;
-        console.log("CLUBS: ", clubs);
         setTotalPage(response.data.totalPage);
         setListClubs(clubs);
       }

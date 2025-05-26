@@ -152,17 +152,17 @@ const SideBar = () => {
           to=""
           className="flex space-x-2 items-center p-2 pl-4 hover:bg-white/10 rounded-lg hover:cursor-pointer"
         >
-          Quản lý bán vé
+          Mở bán vé
         </Link>
       </nav>
 
       <div className="p-2 font-bold text-lg">Quản lý Mạng xã hội</div>
       <nav className="flex flex-col space-y-2">
         <Link
-          to=""
+          to="/admin/list-report"
           className="flex space-x-2 items-center p-2 pl-4 hover:bg-white/10 rounded-lg hover:cursor-pointer"
         >
-          Quản lý vi phạm
+          Bài viết bị báo cáo
         </Link>
         <div
           className="flex space-x-2 items-center p-2 pl-4 hover:bg-white/10 rounded-lg hover:cursor-pointer"
@@ -188,14 +188,14 @@ const SideBar = () => {
             >
               <div
                 className="p-2 hover:bg-white/10 rounded-lg cursor-pointer"
-                onClick={() => navigate("/admin/list-player")}
+                onClick={() => navigate("/admin/list-fan-group")}
               >
                 Danh sách Hội cổ động viên
               </div>
               <hr className="border-white/30 mx-2" />
               <div
                 className="p-2 hover:bg-white/10 rounded-lg cursor-pointer"
-                onClick={() => navigate("/admin/list-coach")}
+                onClick={() => navigate("/admin/list-create-fan-group-request")}
               >
                 Yêu cầu tạo hội cổ động viên
               </div>

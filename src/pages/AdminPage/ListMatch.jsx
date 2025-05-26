@@ -126,6 +126,13 @@ const ListMatch = () => {
         </TableHeader>
 
         <TableBody>
+          {listMatches.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={5} className="text-center py-10">
+                Không có dữ liệu!
+              </TableCell>
+            </TableRow>
+          )}
           {listMatches.map((match, index) => {
             const date = dayjs(match.matchDate);
             const timeFormatted = date.format("HH[:]mm");
