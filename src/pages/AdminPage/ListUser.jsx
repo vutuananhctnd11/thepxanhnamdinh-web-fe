@@ -116,10 +116,11 @@ const ListUser = () => {
           Danh sách người dùng hệ thống
         </div>
         <div
-          className=" px-6 flex items-center rounded-xl hover:cursor-pointer hover:scale-110 transition"
-          onClick={() => navigate("/admin/create-user")}
+          className=" px-4 my-2 bg-blue-500 flex items-center rounded-lg hover:cursor-pointer hover:scale-105 transition"
+          onClick={() => navigate("/admin/users/create")}
         >
-          <PlusCircleOutlined className="scale-130" />
+          <PlusOutlined className="scale-100" style={{ color: "white" }} />
+          <div className="text-white text-sm ml-2">Thêm tài khoản</div>
         </div>
       </div>
       <Table className="rounded-xl shadow-xl overflow-hidden bg-white/30">

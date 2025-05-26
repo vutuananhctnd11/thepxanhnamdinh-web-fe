@@ -72,7 +72,7 @@ const CreateMatch = () => {
         });
       } else {
         messageApi.error({
-          content: "Tạo lịch thi đấu thành công!",
+          content: "Thao tác thất bại!",
           duration: 3,
         });
       }

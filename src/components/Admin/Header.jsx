@@ -5,8 +5,9 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { refreshAccessToken } from "@/parts/ApiRefreshToken";
-import ModalNotification from "@/parts/ModalNotification";
 import { BellRing, LogOutIcon } from "lucide-react";
+import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
+import ModalNotification from "@/parts/ModalNotification";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -40,35 +41,14 @@ const Header = () => {
           return;
         }
 
-        let res = await fetch(
+        let res = await fetchWithAuth(
           `${import.meta.env.VITE_API_URL}/users/admin/me`,
           {
             method: "GET",
-            headers: { Authorization: "Bearer " + accessToken },
           }
         );
 
-        if (res.status === 403) {
-          const newToken = await refreshAccessToken();
-          console.log("New access token: " + newToken);
-
-          if (!newToken) {
-            localStorage.clear();
-            openModal({
-              title: "Phiên đăng nhập đã hết hạn",
-              message: "Vui lòng đăng nhập lại!",
-              type: "error",
-              buttonText: "Đăng nhập",
-              redirectPath: "/login",
-            });
-            return;
-          }
-
-          res = await fetch(`${import.meta.env.VITE_API_URL}/users/admin/me`, {
-            method: "GET",
-            headers: { Authorization: "Bearer " + newToken },
-          });
-        } else if (res.status == 401) {
+        if (res.status == 401) {
           navigate("/access-denied");
           return;
         }
@@ -77,6 +57,7 @@ const Header = () => {
 
         if (response.status == "success") {
           setUserLogin(response.data);
+          localStorage.setItem("userLogin", JSON.stringify(response.data));
         } else console.log("có lỗi" + response.message);
       } catch (error) {
         console.log("có lỗi" + error);
@@ -84,6 +65,26 @@ const Header = () => {
     };
     fetchUserLogin();
   }, []);
+
+  const handleLogout = () => {
+    setModalProps({
+      modalTitle: "Đăng xuất?",
+      modalMessage: "Bạn có chắc chắn muốn đăng xuất không?",
+      type: "warning",
+      buttonText: "Đăng xuất",
+      cancelButtonText: "Hủy",
+      onConfirm: () => {
+        localStorage.removeItem("accessToken");
+        deleteCookie("refreshToken");
+        location.reload();
+      },
+    });
+    setIsModalOpen(true);
+  };
+
+  const deleteCookie = (name) => {
+    document.cookie = `${name}=; Max-Age=-99999999; path=/;`;
+  };
 
   return (
     <div>
@@ -114,11 +115,8 @@ const Header = () => {
                 />
               </Avatar>
             </div>
-            <div>
-              <LogOutIcon
-                className="scale-110"
-                onClick={() => navigate("/login")}
-              />
+            <div className="cursor-pointer">
+              <LogOutIcon className="scale-100" onClick={handleLogout} />
             </div>
           </div>
         </div>

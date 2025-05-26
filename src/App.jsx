@@ -45,6 +45,8 @@ import RequestUpdateMatch from "./pages/AdminPage/RequestUpdateMatch";
 import ListReport from "./pages/AdminPage/ListReport";
 import ListFanGroup from "./pages/AdminPage/ListFanGroup";
 import CreateGroupRequest from "./components/Admin/FanGroupManagement/CreateGroupRequest";
+import ListHomeMatch from "./pages/AdminPage/ListHomeMatch";
+import StartSellingTicket from "./components/Admin/MatchManagement/OpenSellTicket";
 
 const AppContext = createContext();
 
@@ -71,42 +73,57 @@ function App() {
 
               <Route path="/admin" element={<LayoutAdmin />}>
                 <Route path="dashboard" element={<Dashboard />} />
-                <Route path="list-player" element={<ListPlayer />} />
-                <Route path="create-player" element={<CreatePlayer />} />
+                {/* player */}
+                <Route path="players" element={<ListPlayer />} />
+                <Route path="players/create" element={<CreatePlayer />} />
                 <Route
                   path="update-player/:playerId"
                   element={<UpdatePlayer />}
                 />
-
-                <Route path="list-coach" element={<ListCoach />} />
-                <Route path="create-coach" element={<CreateCoach />} />
-                <Route path="update-coach/:coachId" element={<UpdateCoach />} />
-
-                <Route path="list-user" element={<ListUser />} />
-                <Route path="create-user" element={<CreateUser />} />
-
-                <Route path="list-match" element={<ListMatch />} />
-                <Route path="list-result" element={<ListMatchResult />} />
-                <Route path="create-match" element={<CreateMatch />} />
-                <Route path="update-match/:matchId" element={<UpdateMatch />} />
+                {/* coaches */}
+                <Route path="coaches" element={<ListCoach />} />
+                <Route path="coaches/create" element={<CreateCoach />} />
+                <Route
+                  path="coaches/update/:coachId"
+                  element={<UpdateCoach />}
+                />
+                {/* users */}
+                <Route path="users" element={<ListUser />} />
+                <Route path="users/create" element={<CreateUser />} />
+                {/* matches */}
+                <Route path="matches" element={<ListMatch />} />
+                <Route path="matches/result" element={<ListMatchResult />} />
+                <Route path="matches/create" element={<CreateMatch />} />
+                <Route
+                  path="matches/update/:matchId"
+                  element={<UpdateMatch />}
+                />
 
                 <Route
-                  path="request-update-match"
+                  path="matches/request-update"
                   element={<RequestUpdateMatch />}
                 />
-
-                <Route path="list-other-club" element={<ListClub />} />
-                <Route path="create-other-club" element={<CreateOtherClub />} />
+                {/* clubs */}
+                <Route path="other-clubs" element={<ListClub />} />
                 <Route
-                  path="update-other-club/:clubId"
+                  path="other-clubs/create"
+                  element={<CreateOtherClub />}
+                />
+                <Route
+                  path="other-clubs/update/:clubId"
                   element={<UpdateOtherClub />}
                 />
-
-                <Route path="list-report" element={<ListReport />} />
-                <Route path="list-fan-group" element={<ListFanGroup />} />
+                {/* reports */}
+                <Route path="reports" element={<ListReport />} />
+                <Route path="fan-groups" element={<ListFanGroup />} />
                 <Route
-                  path="list-create-fan-group-request"
+                  path="fan-groups/create-request"
                   element={<CreateGroupRequest />}
+                />
+                <Route path="matches/home" element={<ListHomeMatch />} />
+                <Route
+                  path="matches/:matchId/start-selling-ticket"
+                  element={<StartSellingTicket />}
                 />
               </Route>
               <Route path="/access-denied" element={<AccessDeniedPage />} />

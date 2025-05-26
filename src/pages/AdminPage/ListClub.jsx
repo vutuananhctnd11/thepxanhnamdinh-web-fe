@@ -100,10 +100,11 @@ const ListClub = () => {
       <div className="flex justify-between mb-2">
         <div className=" text-2xl m-2 w-[70%]">Các CLB đối thủ</div>
         <div
-          className=" px-6 my-2 flex items-center rounded-lg bg-blue-400 hover:cursor-pointer hover:scale-105 transition"
-          onClick={() => navigate("/admin/create-other-club")}
+          className=" px-4 my-2 bg-blue-500 flex items-center rounded-lg hover:cursor-pointer hover:scale-105 transition"
+          onClick={() => navigate("/admin/other-clubs/create")}
         >
-          <PlusOutlined className="scale-130" style={{ color: "white" }} />
+          <PlusOutlined className="scale-100" style={{ color: "white" }} />
+          <div className="text-white text-sm ml-2">Thêm CLB</div>
         </div>
       </div>
       <Table className="rounded-xl shadow-xl overflow-hidden bg-white/30">
@@ -138,7 +139,7 @@ const ListClub = () => {
                 <EditOutlined
                   className="text-xl cursor-pointer hover:scale-110 transition-transform duration-300"
                   onClick={() =>
-                    navigate(`/admin/update-other-club/${club.clubId}`)
+                    navigate(`/admin/other-clubs/update/${club.clubId}`)
                   }
                 />
                 <DeleteOutlined

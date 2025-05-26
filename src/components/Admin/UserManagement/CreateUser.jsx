@@ -109,7 +109,7 @@ const CreateUser = () => {
           duration: 3,
         });
         setTimeout(() => {
-          navigate("/admin/list-user");
+          navigate("/admin/users");
         }, 3000);
       } else {
         messageApi.error({

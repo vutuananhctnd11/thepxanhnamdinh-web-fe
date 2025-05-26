@@ -109,10 +109,11 @@ const ListPlayer = () => {
           Danh sách cầu thủ thuộc biên chế CLB
         </div>
         <div
-          className=" px-6 flex items-center rounded-xl hover:cursor-pointer hover:scale-105 transition"
-          onClick={() => navigate("/admin/create-player")}
+          className=" px-4 my-2 bg-blue-500 flex items-center rounded-lg hover:cursor-pointer hover:scale-105 transition"
+          onClick={() => navigate("/admin/players/create")}
         >
-          <PlusOutlined className="scale-130" />
+          <PlusOutlined className="scale-100" style={{ color: "white" }} />
+          <div className="text-white text-sm ml-2">Thêm cầu thủ</div>
         </div>
       </div>
       <Table className="rounded-xl shadow-xl overflow-hidden bg-white/30">
@@ -169,7 +170,7 @@ const ListPlayer = () => {
                 <EditOutlined
                   className="text-xl cursor-pointer hover:scale-110 transition-transform duration-300"
                   onClick={() =>
-                    navigate(`/admin/update-player/${player.playerId}`)
+                    navigate(`/admin/players/update/${player.playerId}`)
                   }
                 />
                 <DeleteOutlined

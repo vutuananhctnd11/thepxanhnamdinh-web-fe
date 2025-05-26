@@ -7,31 +7,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
-import { message, Pagination } from "antd";
+import { Pagination } from "antd";
 import { useNavigate } from "react-router-dom";
-import ModalNotification from "@/parts/ModalNotification";
 import dayjs from "dayjs";
 
-const ListMatch = () => {
+const ListHomeMatch = () => {
   const [listMatches, setListMatches] = useState([]);
-  const [page, setPage] = useState(1);
-  const [totalPage, setTotalPage] = useState(0);
-  const limit = 5;
 
   const navigate = useNavigate();
-  const [messageApi, contextHolder] = message.useMessage();
-
-  const [modalNotiProps, setModalNotiProps] = useState({});
-  const [isModalNotiOpen, setIsModalNotiOpen] = useState(false);
 
   const fetchListMatch = async () => {
     try {
       const res = await fetchWithAuth(
-        `${
-          import.meta.env.VITE_API_URL
-        }/matches/list-match?page=${page}&limit=${limit}`,
+        `${import.meta.env.VITE_API_URL}/matches/list-home-match`,
         {
           method: "GET",
         }
@@ -40,7 +29,6 @@ const ListMatch = () => {
 
       if (response.status === "success") {
         const matches = response.data.listResults;
-        setTotalPage(response.data.totalPage);
         setListMatches(matches);
       }
     } catch (error) {
@@ -48,62 +36,14 @@ const ListMatch = () => {
     }
   };
 
-  const handlePageChange = async (pageNumber) => {
-    console.log("page: ", pageNumber);
-    setPage(pageNumber);
-  };
-
-  const fetchDeleteMatch = async (matchId) => {
-    try {
-      const res = await fetchWithAuth(
-        `${import.meta.env.VITE_API_URL}/matches/${matchId}`,
-        {
-          method: "PATCH",
-        }
-      );
-      const response = await res.json();
-
-      if (response.status === "success") {
-        setListMatches((prevList) =>
-          prevList.filter((match) => match.matchId !== matchId)
-        );
-        messageApi.success({
-          content: "Xóa trận đấu thành công!",
-          duration: 3,
-        });
-      }
-    } catch (error) {
-      console.log("ERROR: ", error);
-    }
-  };
-
-  const handleDeleteMatch = (matchId) => {
-    setModalNotiProps({
-      modalTitle: "Xóa trận đấu",
-      modalMessage: "Bạn có chắc chắn muốn xóa trận đấu này?",
-      type: "warning",
-      buttonText: "Xác nhận",
-      cancelButtonText: "Hủy",
-      onConfirm: () => fetchDeleteMatch(matchId),
-    });
-    setIsModalNotiOpen(true);
-  };
   useEffect(() => {
     fetchListMatch();
-  }, [page]);
+  }, []);
 
   return (
     <div className="px-10 py-3">
-      {contextHolder}
       <div className="flex justify-between mb-2">
         <div className=" text-2xl m-2 w-[70%]">Trận đấu sắp tới</div>
-        <div
-          className=" px-4 my-2 bg-blue-500 flex items-center rounded-lg hover:cursor-pointer hover:scale-105 transition"
-          onClick={() => navigate("/admin/matches/create")}
-        >
-          <PlusOutlined className="scale-100" style={{ color: "white" }} />
-          <div className="text-white text-sm ml-2">Thêm trận đấu</div>
-        </div>
       </div>
       <Table className="rounded-xl shadow-xl overflow-hidden bg-white/30">
         <TableHeader className="bg-black/10 backdrop-blur-md">
@@ -123,7 +63,7 @@ const ListMatch = () => {
           {listMatches.length === 0 && (
             <TableRow>
               <TableCell colSpan={8} className="text-center py-10">
-                Không có trận đấu nào sắp tới!
+                Không có trận đấu sân nhà nào sắp tới!
               </TableCell>
             </TableRow>
           )}
@@ -136,9 +76,7 @@ const ListMatch = () => {
                 key={match.matchId}
                 className="hover:bg-black/5 transition-all duration-200"
               >
-                <TableCell className="text-center">
-                  {(page - 1) * limit + index + 1}
-                </TableCell>
+                <TableCell className="text-center">{index + 1}</TableCell>
                 <TableCell className="font-medium text-center">
                   <div className="flex flex-col items-center">
                     <img src={match.homeLogo} className="h-15 object-cover" />
@@ -162,38 +100,26 @@ const ListMatch = () => {
                 <TableCell className="text-center">{match.stadium}</TableCell>
 
                 <TableCell className="text-center space-x-5">
-                  <EditOutlined
-                    className="text-xl cursor-pointer hover:scale-110 transition-transform duration-300"
-                    onClick={() =>
-                      navigate(`/admin/matches/update/${match.matchId}`)
-                    }
-                  />
-                  <DeleteOutlined
-                    className="text-xl cursor-pointer hover:scale-110 transition-transform duration-300"
-                    onClick={() => handleDeleteMatch(match.matchId)}
-                  />
+                  <div className="flex justify-center">
+                    <div
+                      className="px-3 py-1 bg-green-500 text-white rounded-md cursor-pointer hover:scale-110 transition-transform duration-300"
+                      onClick={() =>
+                        navigate(
+                          `/admin/matches/${match.matchId}/start-selling-ticket`
+                        )
+                      }
+                    >
+                      Mở bán
+                    </div>
+                  </div>
                 </TableCell>
               </TableRow>
             );
           })}
         </TableBody>
       </Table>
-      <div className="mt-6">
-        <Pagination
-          defaultCurrent={1}
-          total={totalPage * limit}
-          pageSize={limit}
-          align="end"
-          onChange={handlePageChange}
-        />
-      </div>
-      <ModalNotification
-        isModalOpen={isModalNotiOpen}
-        setIsModalOpen={setIsModalNotiOpen}
-        {...modalNotiProps}
-      />
     </div>
   );
 };
 
-export default ListMatch;
+export default ListHomeMatch;

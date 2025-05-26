@@ -109,6 +109,14 @@ const ChooseTicketPopup = ({ isModalOpen, onOk, handleCancel, matchId }) => {
         window.location.href = returnURL;
       } else {
         console.log("Thất bại: " + response.message);
+        setModalProps({
+          modalTitle: "Lỗi thanh toán",
+          modalMessage: response.message,
+          type: "error",
+          buttonText: "Chọn lại",
+        });
+        setIsModalNotiOpen(true);
+        return;
       }
     } catch (error) {
       console.log("ERROR: ", error);

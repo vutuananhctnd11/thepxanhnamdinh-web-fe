@@ -1,7 +1,16 @@
 import useNagivateLoading from "@/hooks/useNagivateLoading";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import React, { useState } from "react";
-import { Carousel, Dropdown, Image, message, Spin } from "antd";
+import {
+  Button,
+  Carousel,
+  Dropdown,
+  Image,
+  Input,
+  message,
+  Modal,
+  Spin,
+} from "antd";
 import {
   ExternalLink,
   Globe2Icon,
@@ -16,6 +25,7 @@ import ModalNotification from "@/parts/ModalNotification";
 import CommentModal from "../HomePage/CommentModal";
 import { CaretRightOutlined } from "@ant-design/icons";
 import UpdatePostModal from "./UpdatePostModal";
+import TextArea from "antd/es/input/TextArea";
 
 const PostInfo = ({ postInput }) => {
   const [post, setPost] = useState(postInput);
@@ -30,6 +40,9 @@ const PostInfo = ({ postInput }) => {
 
   const [isModalUpdateOpen, setIsModalUpdateOpen] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+
+  const [reason, setReason] = useState("");
+  const [openReasonModal, setOpenReasonModal] = useState(false);
 
   const [isDeleted, setIsDeleted] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
@@ -79,9 +92,10 @@ const PostInfo = ({ postInput }) => {
         buttonText: "Xác nhận",
         cancelButtonText: "Hủy",
         onConfirm: () => handleDeletePost(post?.postId),
-        // onConfirm: () => console.log("Xóa thành công: "),
       });
       setIsModalNotiOpen(true);
+    } else if (key === "3") {
+      setOpenReasonModal(true);
     }
   };
 
@@ -150,6 +164,34 @@ const PostInfo = ({ postInput }) => {
       if (response.status === "success") {
         setIsLiked(false);
         setCountLike(countLike - 1);
+      }
+    } catch (error) {
+      console.log("Có lỗi khi gọi api: ", error);
+      handleAuthError(error, setModalNotiProps, setIsModalNotiOpen);
+    }
+  };
+
+  //fetch report post
+  const handleReport = async (post) => {
+    try {
+      const res = await fetchWithAuth(
+        `${import.meta.env.VITE_API_URL}/reports`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ reason, postId: post?.postId }),
+        }
+      );
+      const response = await res.json();
+
+      if (response.status === "success") {
+        messageApi.success({
+          content: `Bạn đã gửi báo cáo bài viết của ${post.userFullName} đến quản trị viên, báo cáo của bạn sẽ được xem xét và xử lý!`,
+        });
+        setOpenReasonModal(false);
+        setReason("");
       }
     } catch (error) {
       console.log("Có lỗi khi gọi api: ", error);
@@ -340,6 +382,30 @@ const PostInfo = ({ postInput }) => {
           post={post}
           setPost={setPost}
         />
+        <Modal
+          className="custom-dark-modal"
+          open={openReasonModal}
+          onCancel={() => {
+            setOpenReasonModal(false);
+            setReason("");
+          }}
+          width={"40%"}
+          footer={null}
+        >
+          <div>
+            <div className="text-white">Lý do bạn báo cáo bài viết này?</div>
+            <TextArea
+              label="Lý do bạn báo cáo bài viết này?"
+              onChange={(e) => setReason(e.target.value)}
+              style={{ marginTop: "20px" }}
+            />
+            <div className="mt-5 flex justify-center">
+              <Button type="primary" onClick={() => handleReport(post)}>
+                Báo cáo
+              </Button>
+            </div>
+          </div>
+        </Modal>
       </div>
     );
 };

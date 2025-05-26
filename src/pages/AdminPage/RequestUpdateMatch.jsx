@@ -7,11 +7,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
-import { Button, Form, Input, InputNumber, message, Pagination } from "antd";
-import { useNavigate } from "react-router-dom";
-import ModalNotification from "@/parts/ModalNotification";
+import { Form, InputNumber, message } from "antd";
 import dayjs from "dayjs";
 import { Check } from "lucide-react";
 
@@ -20,7 +17,6 @@ const RequestUpdateMatch = () => {
   const [isUpdate, setIsUpdate] = useState(false);
   const [form] = Form.useForm();
 
-  const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
 
   const fetchListMatch = async () => {
@@ -90,12 +86,6 @@ const RequestUpdateMatch = () => {
         <div className=" text-2xl font-medium m-2 w-[70%]">
           Các trận đấu cần cập nhật kết quả
         </div>
-        <div
-          className=" px-6 flex items-center rounded-xl hover:cursor-pointer hover:scale-105 transition"
-          onClick={() => navigate("/admin/create-match")}
-        >
-          <PlusOutlined className="scale-130" />
-        </div>
       </div>
       <Table className="rounded-xl shadow-xl overflow-hidden bg-white/30">
         <TableHeader className="bg-black/10 backdrop-blur-md">
@@ -116,7 +106,7 @@ const RequestUpdateMatch = () => {
         <TableBody>
           {listMatches.length === 0 && (
             <TableRow>
-              <TableCell colSpan={5} className="text-center py-10">
+              <TableCell colSpan={8} className="text-center py-10">
                 Không có dữ liệu!
               </TableCell>
             </TableRow>

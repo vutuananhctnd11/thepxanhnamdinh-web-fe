@@ -125,7 +125,7 @@ const ListMatchResult = () => {
         <TableBody>
           {listMatches.length === 0 && (
             <TableRow>
-              <TableCell colSpan={5} className="text-center py-10">
+              <TableCell colSpan={8} className="text-center py-10">
                 Không có dữ liệu!
               </TableCell>
             </TableRow>
@@ -172,7 +172,7 @@ const ListMatchResult = () => {
                   <EditOutlined
                     className="text-xl cursor-pointer hover:scale-110 transition-transform duration-300"
                     onClick={() =>
-                      navigate(`/admin/update-player/${match.playerId}`)
+                      navigate(`/admin/players/update/${match.playerId}`)
                     }
                   />
                   <DeleteOutlined
