@@ -77,7 +77,7 @@ function App() {
                 <Route path="players" element={<ListPlayer />} />
                 <Route path="players/create" element={<CreatePlayer />} />
                 <Route
-                  path="update-player/:playerId"
+                  path="players/update/:playerId"
                   element={<UpdatePlayer />}
                 />
                 {/* coaches */}

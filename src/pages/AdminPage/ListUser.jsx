@@ -123,8 +123,8 @@ const ListUser = () => {
           <div className="text-white text-sm ml-2">Thêm tài khoản</div>
         </div>
       </div>
-      <Table className="rounded-xl shadow-xl overflow-hidden bg-white/30">
-        <TableHeader className="bg-black/10 backdrop-blur-md">
+      <Table className="rounded-xl shadow-xl overflow-hidden bg-white/80 border-1">
+        <TableHeader className="bg-white backdrop-blur-md">
           <TableRow>
             <TableHead className="w-[5%] text-center">STT</TableHead>
             <TableHead className="w-[25%]">Họ và tên</TableHead>
@@ -148,19 +148,19 @@ const ListUser = () => {
               </TableCell>
               <TableCell className="">{user.emailAddress}</TableCell>
               <TableCell className="text-center">
-                <div className="flex justify-center">
+                <div className="flex justify-center text-[12px]">
                   {user.roleId == 3 && (
-                    <div className="py-1 px-4 bg-blue-200 rounded-2xl">
+                    <div className="py-0.5 px-4 bg-blue-100 rounded-2xl border-1 border-blue-400">
                       Người dùng
                     </div>
                   )}
                   {user.roleId == 2 && (
-                    <div className="py-1 px-4 bg-green-200 rounded-2xl">
+                    <div className="py-0.5 px-4 bg-green-100 rounded-2xl border-1 border-green-400">
                       Người quản lý
                     </div>
                   )}
                   {user.roleId == 1 && (
-                    <div className="py-1 px-4 bg-red-200 rounded-2xl">
+                    <div className="py-0.5 px-4 bg-red-200 rounded-2xl border-1 border-red-400">
                       Admin hệ thống
                     </div>
                   )}

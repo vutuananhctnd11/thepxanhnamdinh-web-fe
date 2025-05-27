@@ -107,7 +107,7 @@ const Header = ({ isFixed }) => {
 
   const handleMenuClick = async ({ key }) => {
     if (key === "1") {
-      console.log("Thông tin cá nhân");
+      navigate(`/social/personal-page/${userLogin.userId}`);
     }
 
     if (key === "3") {

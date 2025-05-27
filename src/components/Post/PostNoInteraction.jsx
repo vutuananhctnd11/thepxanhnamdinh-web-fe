@@ -10,10 +10,10 @@ const PostNoInteraction = ({ post }) => {
 
   const MAX_LENGTH = 200; // Số ký tự muốn hiển thị khi thu gọn
 
-  const isLongContent = post.content.length > MAX_LENGTH;
+  const isLongContent = post?.content.length > MAX_LENGTH;
   const displayedContent = expanded
-    ? post.content
-    : post.content.slice(0, MAX_LENGTH);
+    ? post?.content
+    : post?.content.slice(0, MAX_LENGTH);
 
   return (
     <div

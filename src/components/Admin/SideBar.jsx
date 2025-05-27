@@ -1,7 +1,8 @@
 /* eslint-disable no-unused-vars */
+import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const SideBar = () => {
@@ -11,7 +12,30 @@ const SideBar = () => {
   const [isMatchMenuOpen, setIsMatchMenuOpen] = useState(false);
   const [isClubOtherMenuOpen, setIsClubOtherMenuOpen] = useState(false);
 
-  const userLogin = JSON.parse(localStorage.getItem("userLogin"));
+  const [userLogin, setUserLogin] = useState(null);
+
+  const fetchAdminInfo = async (post) => {
+    try {
+      const res = await fetchWithAuth(
+        `${import.meta.env.VITE_API_URL}/users/admin/me`,
+        {
+          method: "GET",
+        }
+      );
+      const response = await res.json();
+
+      if (response.status === "success") {
+        setUserLogin(response.data);
+      }
+    } catch (error) {
+      console.log("Có lỗi khi gọi api: ", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAdminInfo();
+  }, []);
+
   return (
     <div className="flex flex-col w-64 mt-13 pr-1 bg-black/80 text-white shadow-black shadow-lg ">
       <div className="p-2 font-bold text-lg">Quản lý CLB</div>

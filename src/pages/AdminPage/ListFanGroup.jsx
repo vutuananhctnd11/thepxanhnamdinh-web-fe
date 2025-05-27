@@ -55,8 +55,8 @@ const ListFanGroup = () => {
       <div className="flex justify-between mb-2">
         <div className=" text-2xl m-2 w-[70%]">Hội cổ động viên chính thức</div>
       </div>
-      <Table className="rounded-xl shadow-xl overflow-hidden bg-white/30">
-        <TableHeader className="bg-black/10 backdrop-blur-md">
+      <Table className="rounded-xl shadow-xl overflow-hidden bg-white/80 border-1">
+        <TableHeader className="bg-white backdrop-blur-md">
           <TableRow>
             <TableHead className="w-[5%] text-center">STT</TableHead>
             <TableHead className="w-[30%] text-center">

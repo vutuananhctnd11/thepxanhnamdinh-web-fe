@@ -7,8 +7,7 @@ const NewsFeed = ({ listPost, isReaction }) => {
     <>
       {/* Thông tin bài viết */}
       {isReaction && listPost.map((post) => <PostInfo postInput={post} />)}
-      {!isReaction &&
-        listPost.map((post) => <PostNoInteraction postInput={post} />)}
+      {!isReaction && listPost.map((post) => <PostNoInteraction post={post} />)}
     </>
   );
 };

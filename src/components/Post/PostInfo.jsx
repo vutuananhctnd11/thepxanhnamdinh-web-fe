@@ -73,11 +73,12 @@ const PostInfo = ({ postInput }) => {
             label: <span>Xóa bài viết</span>,
           },
         ]
-      : []),
-    {
-      key: "3",
-      label: <span>Báo cáo</span>,
-    },
+      : [
+          {
+            key: "3",
+            label: <span>Báo cáo</span>,
+          },
+        ]),
   ];
 
   const handleMenuClick = ({ key }) => {
@@ -201,7 +202,7 @@ const PostInfo = ({ postInput }) => {
 
   if (isUpdating) {
     return (
-      <div className="w-[80%] h-15 py-10 my-3 text-md flex flex-col items-center justify-center bg-white/10 rounded-lg">
+      <div className="w-full h-15 py-10 my-3 text-md flex flex-col items-center justify-center bg-white/10 rounded-lg">
         <div className="my-3">
           <Spin style={{ marginBottom: 0 }}></Spin>
         </div>
@@ -300,16 +301,29 @@ const PostInfo = ({ postInput }) => {
                 style={{ display: "flex" }}
                 className="h-[400px] items-center justify-center bg-black/50 !flex"
               >
-                <Image
-                  src={media.linkCloud}
-                  preview={true}
-                  style={{
-                    maxHeight: "100%",
-                    maxWidth: "100%",
-                    objectFit: "contain",
-                    display: "block",
-                  }}
-                />
+                {media.type == 0 ? (
+                  <Image
+                    src={media.linkCloud}
+                    preview={true}
+                    style={{
+                      maxHeight: "100%",
+                      maxWidth: "100%",
+                      objectFit: "contain",
+                      display: "block",
+                    }}
+                  />
+                ) : (
+                  <video
+                    src={media.linkCloud}
+                    controls
+                    style={{
+                      maxHeight: "100%",
+                      maxWidth: "100%",
+                      objectFit: "contain",
+                      display: "block",
+                    }}
+                  />
+                )}
               </div>
             ))}
           </Carousel>

@@ -105,8 +105,8 @@ const ListMatch = () => {
           <div className="text-white text-sm ml-2">Thêm trận đấu</div>
         </div>
       </div>
-      <Table className="rounded-xl shadow-xl overflow-hidden bg-white/30">
-        <TableHeader className="bg-black/10 backdrop-blur-md">
+      <Table className="rounded-xl shadow-xl overflow-hidden bg-white/80 border-1">
+        <TableHeader className="bg-white backdrop-blur-md">
           <TableRow>
             <TableHead className="w-[3%] text-center">STT</TableHead>
             <TableHead className="w-[15%] text-center">Đội nhà</TableHead>

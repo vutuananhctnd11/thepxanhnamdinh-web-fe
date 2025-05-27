@@ -22,7 +22,6 @@ const GroupDetailPage = () => {
   const { groupId } = useParams();
   const [activeTab, setActiveTab] = useState("discussion");
   const [groupInfo, setGroupInfo] = useState("discussion");
-  const [listPosts, setListPosts] = useState([]);
   const [checkMember, setCheckMember] = useState(null);
   const [statusMember, setStatusMember] = useState(null);
 

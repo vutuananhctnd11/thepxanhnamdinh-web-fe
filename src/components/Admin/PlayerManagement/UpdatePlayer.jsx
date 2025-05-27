@@ -17,7 +17,7 @@ import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
 import { PlusIcon } from "lucide-react";
 import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
 import dayjs from "dayjs";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -52,6 +52,8 @@ const UpdatePlayer = () => {
 
   const [messageApi, contextHolder] = message.useMessage();
   const [isLoading, setIsLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   //get old info
   const fetchOldInfo = async () => {
@@ -165,13 +167,12 @@ const UpdatePlayer = () => {
       let avatarImage = player.avatarImage;
       let fullBodyImage = player.fullBodyImage;
 
-      if (avatarFile && fullBodyFile) {
+      if (avatarFile) {
         const formData = new FormData();
-        formData.append("files", avatarFile);
-        formData.append("files", fullBodyFile);
+        formData.append("file", avatarFile);
 
         const fileRes = await fetchWithAuth(
-          `${import.meta.env.VITE_API_URL}/cloudinary/list-file`,
+          `${import.meta.env.VITE_API_URL}/cloudinary`,
           {
             method: "POST",
             body: formData,
@@ -179,10 +180,23 @@ const UpdatePlayer = () => {
         );
 
         const fileResponse = await fileRes.json();
-        const listUploadMedias = fileResponse.data || [];
+        avatarImage = fileResponse.data;
+      }
 
-        avatarImage = listUploadMedias[0]?.linkCloud || null;
-        fullBodyImage = listUploadMedias[1]?.linkCloud || null;
+      if (fullBodyFile) {
+        const formData = new FormData();
+        formData.append("file", fullBodyFile);
+
+        const fileRes = await fetchWithAuth(
+          `${import.meta.env.VITE_API_URL}/cloudinary`,
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
+        const fileResponse = await fileRes.json();
+        fullBodyImage = fileResponse.data;
       }
 
       const requestBody = {
@@ -456,6 +470,13 @@ const UpdatePlayer = () => {
           </Form.Item>
 
           <Form.Item style={{ textAlign: "right" }}>
+            <Button
+              type="default"
+              style={{ marginRight: "20px" }}
+              onClick={() => navigate("/admin/players")}
+            >
+              Quay lại
+            </Button>
             <Button
               type="default"
               htmlType="reset"

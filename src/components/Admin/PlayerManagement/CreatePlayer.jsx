@@ -144,17 +144,22 @@ const CreatePlayerForm = () => {
           body: JSON.stringify(combinedData),
         }
       );
-      const createPostResponse = await createPostRes.json();
+      const response = await createPostRes.json();
 
-      if (createPostResponse.status === "success") {
+      if (response.status === "success") {
         messageApi.success({
           content:
             "Tạo cầu thủ thành công! Bạn sẽ được chuyển hướng đến danh sách cầu thủ!",
           duration: 3,
         });
         setTimeout(() => {
-          navigate("/admin/list-player");
+          navigate("/admin/players");
         }, 3000);
+      } else {
+        messageApi.error({
+          content: "Có lỗi xảy ra: " + response.message,
+          duration: 3,
+        });
       }
     } catch (error) {
       console.error("ERORR: ", error);
