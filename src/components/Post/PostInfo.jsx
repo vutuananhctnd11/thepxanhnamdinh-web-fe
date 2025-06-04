@@ -274,7 +274,7 @@ const PostInfo = ({ postInput }) => {
               </Dropdown>
             </div>
           </div>
-          <div className="px-4 pb-3 whitespace-pre-wrap">
+          <div className="px-4 pb-3 text-justify whitespace-pre-wrap">
             {displayedContent}
             {isLongContent && !expanded && (
               <span

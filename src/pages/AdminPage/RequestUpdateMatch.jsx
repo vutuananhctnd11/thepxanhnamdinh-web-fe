@@ -10,7 +10,7 @@ import {
 import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
 import { Form, InputNumber, message } from "antd";
 import dayjs from "dayjs";
-import { Check } from "lucide-react";
+import { Check, X } from "lucide-react";
 
 const RequestUpdateMatch = () => {
   const [listMatches, setListMatches] = useState([]);
@@ -87,8 +87,8 @@ const RequestUpdateMatch = () => {
           Các trận đấu cần cập nhật kết quả
         </div>
       </div>
-      <Table className="rounded-xl shadow-xl overflow-hidden bg-white/30">
-        <TableHeader className="bg-black/10 backdrop-blur-md">
+      <Table className="rounded-xl shadow-xl overflow-hidden bg-white/80 border-1">
+        <TableHeader className="bg-white backdrop-blur-md">
           <TableRow>
             <TableHead className="w-[3%] text-center">STT</TableHead>
             <TableHead className="w-[15%] text-center">Đội nhà</TableHead>
@@ -189,18 +189,26 @@ const RequestUpdateMatch = () => {
                 <TableCell className="text-center space-x-5">
                   <div className="w-full flex justify-center">
                     {isUpdate ? (
-                      <div
-                        className="py-1.5 px-3 bg-green-500 flex justify-center items-center rounded-lg cursor-pointer text-white font-medium hover:bg-green-600"
-                        onClick={() => handleExternalSubmit(match)}
-                      >
-                        <Check className="scale-80" /> Cập nhật
+                      <div className="flex space-x-3">
+                        <div
+                          className="py-1.5 px-3 bg-green-500 flex justify-center items-center rounded-lg cursor-pointer text-white font-medium hover:bg-green-600"
+                          onClick={() => handleExternalSubmit(match)}
+                        >
+                          <Check className="scale-80" /> Lưu
+                        </div>
+                        <div
+                          className="py-1.5 px-3 bg-red-400 flex justify-center items-center rounded-lg cursor-pointer text-white font-medium hover:bg-red-500"
+                          onClick={() => setIsUpdate(false)}
+                        >
+                          <X className="scale-80" /> Hủy
+                        </div>
                       </div>
                     ) : (
                       <div
                         className="py-2 px-3 bg-blue-500/80 rounded-lg cursor-pointer text-white font-medium hover:bg-blue-500"
                         onClick={() => setIsUpdate(true)}
                       >
-                        Cập nhật kết quả
+                        Cập nhật
                       </div>
                     )}
                   </div>

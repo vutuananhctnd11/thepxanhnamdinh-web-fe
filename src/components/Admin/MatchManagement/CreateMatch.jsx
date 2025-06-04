@@ -174,7 +174,7 @@ const CreateMatch = () => {
               type="default"
               htmlType="button"
               style={{ marginRight: "20px" }}
-              onClick={() => navigate("/admin/list-match")}
+              onClick={() => navigate("/admin/matches")}
             >
               Quay lại
             </Button>

@@ -37,8 +37,8 @@ const SideBar = () => {
   }, []);
 
   return (
-    <div className="flex flex-col w-64 mt-13 pr-1 bg-black/80 text-white shadow-black shadow-lg ">
-      <div className="p-2 font-bold text-lg">Quản lý CLB</div>
+    <div className="flex flex-col z-50 w-64 mt-13 pr-1 bg-black/80 text-white shadow-black shadow-lg overflow-y-auto custom-scroll-bar">
+      <div className="p-2 font-bold text-lg bg-white/8">Quản lý CLB</div>
       {userLogin?.roleId == 1 && (
         <nav className="flex flex-col space-y-2 ml-2">
           <Link
@@ -184,7 +184,9 @@ const SideBar = () => {
         </nav>
       )}
 
-      <div className="p-2 font-bold text-lg">Quản lý Mạng xã hội</div>
+      <div className="p-2 font-bold text-lg bg-white/8">
+        Quản lý Mạng xã hội
+      </div>
       <nav className="flex flex-col space-y-2">
         <Link
           to="/admin/reports"
@@ -231,7 +233,7 @@ const SideBar = () => {
           )}
         </AnimatePresence>
       </nav>
-      <div className="text-[10px] mt-auto">
+      <div className="text-[10px] mt-5">
         <div className="flex justify-center mb-1">
           Copyright © TXND FanZone 2025 - All right reserved.
         </div>

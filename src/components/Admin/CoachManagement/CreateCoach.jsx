@@ -111,7 +111,7 @@ const CreateCoach = () => {
           duration: 3,
         });
         setTimeout(() => {
-          navigate("/admin/list-coach");
+          navigate("/admin/coaches");
         }, 3000);
       } else {
         messageApi.error({

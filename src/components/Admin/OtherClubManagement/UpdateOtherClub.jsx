@@ -245,7 +245,7 @@ const UpdateOtherClub = () => {
               type="default"
               htmlType="button"
               style={{ marginRight: "20px" }}
-              onClick={() => navigate("/admin/list-other-club")}
+              onClick={() => navigate("/admin/other-clubs")}
             >
               Quay lại
             </Button>

@@ -101,7 +101,7 @@ const CreateOtherClub = () => {
           duration: 3,
         });
         setTimeout(() => {
-          navigate("/admin/list-other-club");
+          navigate("/admin/other-clubs");
         }, 3000);
       }
     } catch (error) {
@@ -214,7 +214,7 @@ const CreateOtherClub = () => {
               type="default"
               htmlType="button"
               style={{ marginRight: "20px" }}
-              onClick={() => navigate("/admin/list-other-club")}
+              onClick={() => navigate("/admin/other-clubs")}
             >
               Hủy
             </Button>

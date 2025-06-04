@@ -1,7 +1,7 @@
 import { fetchWithAuth } from "@/parts/FetchApiWithAuth";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { Client } from "@stomp/stompjs";
-import { Button, Form, Modal } from "antd";
+import { Button, Form, message, Modal } from "antd";
 import { SendHorizonalIcon, SettingsIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { DeleteOutlined } from "@ant-design/icons";
@@ -31,6 +31,7 @@ const CommentModal = ({
   const [isModalNotiOpen, setIsModalNotiOpen] = useState(false);
 
   const accessToken = localStorage.getItem("accessToken");
+  const [messageApi, contextHolder] = message.useMessage();
 
   const handleCancel = () => {
     setIsCmtModalOpen(false);
@@ -119,6 +120,16 @@ const CommentModal = ({
             }
           });
         });
+
+        client.subscribe("/user/queue/messages", function (message) {
+          const response = JSON.parse(message.body);
+          if (response.status === "error") {
+            messageApi.error({
+              content: response.message,
+              duration: 3,
+            });
+          }
+        });
       },
       onStompError: (frame) => {
         console.error("Broker reported error: " + frame.headers["message"]);
@@ -127,9 +138,7 @@ const CommentModal = ({
     });
 
     client.activate();
-
     stompRef.current = client;
-
     return () => client.deactivate();
   }, [postId]);
 
@@ -248,6 +257,7 @@ const CommentModal = ({
       width={"45%"}
       footer={null}
     >
+      {contextHolder}
       <div className="flex flex-col w-full  mt-3 mb-0">
         <div className="flex justify-center mb-4">
           <div className="text-lg font-semibold">

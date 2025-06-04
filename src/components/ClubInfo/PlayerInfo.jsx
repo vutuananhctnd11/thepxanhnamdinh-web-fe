@@ -74,7 +74,7 @@ const PlayerInfo = ({ playerId }) => {
               </div>
             </div>
           </div>
-          <div className="w-[55%] h-[80%] absolute bottom-0 right-[-8%]">
+          <div className="w-[55%] h-[75%] absolute bottom-0 right-[-8%]">
             <img
               src={playerInfo?.fullBodyImage}
               className=" h-full object-cover opacity-90 drop-shadow-[0px_00px_10px_rgba(0,0,0,0.5)]"
